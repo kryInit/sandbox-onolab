@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "sandbox-onolab"
+version = "0.1.0"
+description = ""
+authors = ["kryInit <kryinit@gmail.com>"]
+readme = "README.md"
+packages = [
+    { include = "lib" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+numpy = "^1.26.4"
+scipy = "^1.13.0"
+matplotlib = "^3.8.4"
+invoke = "^2.2.0"
+scikit-image = "^0.23.2"
+jupyter = "^1.0.0"
+pyvista = "^0.43.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
