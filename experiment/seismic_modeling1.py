@@ -68,7 +68,7 @@ def generate_input_source_devito_function(
     damping_cell_thickness: int,
     cell_meter_size: Vec2D[float],
 ) -> SparseTimeFunction:
-    src = SparseTimeFunction(name="src", grid=grid, time_order=2, space_order=0, nt=simulation_times + 2, npoint=1)
+    src = SparseTimeFunction(name="src", grid=grid, time_order=2, space_order=1, nt=simulation_times + 2, npoint=1)
     src_coordinate = (source_cell_pos_in_field + Vec2D(damping_cell_thickness, damping_cell_thickness)) * cell_meter_size
     src.coordinates.data[0, 0] = src_coordinate.x
     src.coordinates.data[0, 1] = src_coordinate.y
@@ -96,7 +96,7 @@ def generate_damping_model_devito_function(grid: Grid, damping_cell_thickness: i
 
 
 def create_simple_velocity_model_devito_function(grid: Grid, field_cell_size_y, damping_cell_thickness: int) -> Function:
-    v = Function(name="v", grid=grid, time_order=0, space_order=0)
+    v = Function(name="v", grid=grid, time_order=0, space_order=1)
 
     # 上半分を1.5[km/s], 下半分を2.5[km/s]とする
     velocity_model = 1.5 * np.ones(grid.shape)
@@ -108,7 +108,7 @@ def create_simple_velocity_model_devito_function(grid: Grid, field_cell_size_y, 
 
 def generate_operator(u: TimeFunction, src: SparseTimeFunction, damping: Function, v: Function) -> Operator:
     damping_term = damping * u.dt
-    src_term = src.inject(field=u.forward, expr=src.dt2)
+    src_term = src.inject(field=u.forward, expr=src.dt2 * v**2)
 
     pde = u.dt2 / v**2 - u.laplace + damping_term
     stencil = Eq(u.forward, solve(pde, u.forward))
@@ -127,7 +127,6 @@ def simulation(start_time: float, unit_time: float, simulation_times: int, op: O
         op.apply(time_m=t_from, time_M=t_to, dt=unit_time)
 
         field_logs[i + 1] = observed_waveform.data[0].copy()
-        # samples[i+1] = u.data[0, 52].copy()
 
     return field_logs
 
@@ -179,6 +178,21 @@ def save_field_logs_as_gif(field_logs: FieldLog, path: Path, norm: Union[Normali
             plt.close(fig)
 
 
+def visualize(params: Params, grid: Grid, source_waveform: SparseTimeFunction, field_logs: FieldLog):
+    # 表示時のcolor normalization用クラス
+    norm = TwoSlopeNorm(vmin=float(np.min(field_logs)), vcenter=0, vmax=float(np.max(field_logs)))
+
+    # show source waveform
+    plt.plot(source_waveform.data), plt.title("source waveform"), plt.show()
+
+    show_field_snapshot(field_logs[-1], grid.extent, norm)
+
+    show_samping_waveform(field_logs, 2, params.damping_cell_thickness, grid.extent, params.cell_meter_size)
+
+    img_path = output_path.joinpath("fields.gif")
+    save_field_logs_as_gif(field_logs, img_path, norm)
+
+
 def main():
     # パラメータ及びシミュレーション用変数設定
     params = Params(
@@ -211,22 +225,14 @@ def main():
     # 計算対象
     observed_waveform = TimeFunction(name="u", grid=grid, time_order=2, space_order=2)
 
-    # create operator & simulation
+    # create operator
     operator = generate_operator(observed_waveform, source_waveform, damping_model, velocity_model)
+
+    # simulate
     field_logs = simulation(params.start_time, params.unit_time, params.simulation_times, operator, observed_waveform)
 
-    # 表示時のcolor normalization用クラス
-    norm = TwoSlopeNorm(vmin=float(np.min(field_logs)), vcenter=0, vmax=float(np.max(field_logs)))
-
-    # show source waveform
-    plt.plot(source_waveform.data), plt.title("source waveform"), plt.show()
-
-    show_field_snapshot(field_logs[-1], grid.extent, norm)
-
-    show_samping_waveform(field_logs, 2, params.damping_cell_thickness, grid.extent, params.cell_meter_size)
-
-    img_path = output_path.joinpath("fields.gif")
-    # save_field_logs_as_gif(field_logs, img_path, norm)
+    # visualize
+    visualize(params, grid, source_waveform, field_logs)
 
 
 if __name__ == "__main__":
