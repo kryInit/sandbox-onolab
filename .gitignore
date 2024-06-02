@@ -1,6 +1,7 @@
 __pycache__
 /tmp
 /data-storage
+/output
 .idea
 .venv
 

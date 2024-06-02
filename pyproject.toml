@@ -1,3 +1,12 @@
+# black
+[tool.black]
+line-length = 200
+
+# adjust isort to black
+[tool.isort]
+profile = "black"
+line_length = 200
+
 [tool.poetry]
 name = "sandbox-onolab"
 version = "0.1.0"
@@ -9,7 +18,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
 numpy = "^1.26.4"
 scipy = "^1.13.0"
 matplotlib = "^3.8.4"
@@ -17,7 +26,16 @@ invoke = "^2.2.0"
 scikit-image = "^0.23.2"
 jupyter = "^1.0.0"
 pyvista = "^0.43.7"
+pydantic = "^2.7.1"
+segyio = "^1.9.12"
+devito = "^4.8.6"
+imageio = "^2.34.1"
+tqdm = "^4.66.4"
 
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.13.2"
+black = "^24.4.2"
 
 [build-system]
 requires = ["poetry-core"]
