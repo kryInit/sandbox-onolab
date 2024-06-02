@@ -1,3 +1,5 @@
+# referred to https://www.devitoproject.org/examples/seismic/tutorials/01_modelling.html
+
 from pathlib import Path
 from typing import NamedTuple, Tuple, Union
 
