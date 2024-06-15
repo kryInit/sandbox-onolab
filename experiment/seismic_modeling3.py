@@ -1,7 +1,7 @@
 # referred to https://www.devitoproject.org/examples/seismic/tutorials/03_fwi.html
 import sys
 from pathlib import Path
-from typing import Callable, List, NamedTuple, Tuple, Union
+from typing import List, NamedTuple, Tuple, Union
 
 import imageio
 import matplotlib.pyplot as plt
@@ -18,13 +18,15 @@ from lib.model import Vec2D
 set_log_level("WARNING")
 
 WaveformData = NDArray[np.float64]
+VelocityModel = NDArray[np.float64]
+DampingModel = NDArray[np.float64]
 
 WaveField = NDArray[np.float64]
-WaveFieldHistory = WaveField
+WaveFieldHistory = NDArray[np.float64]
 
 
 class Params(NamedTuple):
-    field_cell_size: Vec2D[int]
+    real_cell_size: Vec2D[int]
     cell_meter_size: Vec2D[float]
 
     # damping
@@ -39,141 +41,136 @@ class Params(NamedTuple):
     # input source
     source_peek_time: float
     source_frequency: float
-    source_cell_pos_in_field: Vec2D[int]
 
     # shorts
-    shots_pos_in_field: List[Vec2D[int]]
-    # receivers_pos_in_field: List[Vec2D[int]]
+    shots_real_cell_pos: List[Vec2D[int]]
+    receivers_real_cell_pos: List[Vec2D[int]]
+
+    @property
+    def simulation_cell_size(self) -> Vec2D[int]:
+        return self.real_cell_size + Vec2D(self.damping_cell_thickness * 2, self.damping_cell_thickness * 2)
+
+    @property
+    def simulation_meter_size(self) -> Vec2D[float]:
+        return self.simulation_cell_size * self.cell_meter_size
+
+    @property
+    def end_time(self) -> float:
+        return self.start_time + self.unit_time * self.simulation_times
+
+    @property
+    def shots_simulation_cell_pos(self) -> List[Vec2D[int]]:
+        return list(map(self.real_to_simulation_pos, self.shots_real_cell_pos))
+
+    @property
+    def shots_simulation_meter_pos(self) -> List[Vec2D[float]]:
+        return list(map(self.cell_to_meter_pos, self.shots_simulation_cell_pos))
+
+    @property
+    def receivers_simulation_cell_pos(self) -> List[Vec2D[int]]:
+        return list(map(self.real_to_simulation_pos, self.receivers_real_cell_pos))
+
+    @property
+    def receivers_simulation_meter_pos(self) -> List[Vec2D[float]]:
+        return list(map(self.cell_to_meter_pos, self.receivers_simulation_cell_pos))
+
+    def real_to_simulation_pos(self, pos: Vec2D[int]) -> Vec2D[int]:
+        return pos + Vec2D(self.damping_cell_thickness, self.damping_cell_thickness)
+
+    def cell_to_meter_pos(self, pos: Vec2D[int]) -> Vec2D[float]:
+        return Vec2D(pos.x * self.cell_meter_size.x, pos.y * self.cell_meter_size.y)
 
 
-def generate_grid(
-    field_cell_size: Vec2D[int],
-    damping_cell_thickness: int,
-    cell_meter_size: Vec2D[float],
-    origin: Vec2D[float] = Vec2D(0, 0),
-) -> Grid:
-    # damping層込みのセルサイズ
-    field_cell_size_with_damping = field_cell_size + Vec2D(damping_cell_thickness * 2, damping_cell_thickness * 2)
-    field_meter_size_with_damping = field_cell_size_with_damping * cell_meter_size
-
-    shape = field_cell_size_with_damping + Vec2D(1, 1)  # セル数 + 1
-    extent = field_meter_size_with_damping  # フィールドサイズ[m]
-
+def generate_grid(params: Params, origin: Vec2D[float] = Vec2D(0, 0)) -> Grid:
+    shape = params.simulation_cell_size
+    extent = params.simulation_meter_size
     return Grid(shape=(shape.x, shape.y), extent=(extent.x, extent.y), origin=(origin.x, origin.y))
 
 
-def generate_source_devito_function(name: str, grid: Grid, src_coordinate: Vec2D[int], src_values: NDArray[np.float64]) -> SparseTimeFunction:
-    src = SparseTimeFunction(name=name, grid=grid, time_order=2, space_order=1, nt=len(src_values) + 1, npoint=1)
-    src.coordinates.data[0, 0] = src_coordinate.y
-    src.coordinates.data[0, 1] = src_coordinate.x
-    src.data[:-1, 0] = src_values
-    return src
-
-
-def generate_input_waveform_with_ricker_wavelet(start_time: float, unit_time: float, simulation_times: int, frequency: float, source_peek_time: float) -> WaveformData:
-    time_range = np.linspace(start_time, start_time + unit_time * simulation_times, simulation_times * unit_time + 1)
-    src_values = (1.0 - 2.0 * (np.pi * frequency * (time_range - source_peek_time)) ** 2) * np.exp(-((np.pi * frequency * (time_range - source_peek_time)) ** 2))
+def generate_input_waveform_with_ricker_wavelet(params: Params) -> WaveformData:
+    time_range = np.arange(params.start_time, params.end_time + 1)
+    tmp = (np.pi * params.source_frequency * (time_range - params.source_peek_time)) ** 2
+    src_values = (1.0 - 2.0 * tmp) * np.exp(-tmp)
     return src_values
 
 
-def create_input_source(
-    grid: Grid,
-    start_time: float,
-    unit_time: float,
-    simulation_times: int,
-    frequency: float,
-    source_peek_time: float,
-    source_cell_pos_in_field: Vec2D[int],
-    damping_cell_thickness: int,
-    cell_meter_size: Vec2D[float],
-) -> SparseTimeFunction:
-    # use ricker wavelet
-    time_range = np.linspace(start_time, start_time + unit_time * simulation_times, simulation_times * unit_time + 1)
-    src_values = (1.0 - 2.0 * (np.pi * frequency * (time_range - source_peek_time)) ** 2) * np.exp(-((np.pi * frequency * (time_range - source_peek_time)) ** 2))
-    src_coordinate = (source_cell_pos_in_field + Vec2D(damping_cell_thickness, damping_cell_thickness)) * cell_meter_size
-
-    return generate_source_devito_function("src", grid, src_coordinate, src_values)
-
-
-def generate_damping_model_devito_function(grid: Grid, damping_cell_thickness: int, damping_coefficient: float) -> Function:
-    damping_model = Function(name="eta", grid=grid, space_order=0)
-
-    for i in reversed(range(damping_cell_thickness)):
-        val = (damping_cell_thickness - i) * damping_coefficient
-        damping_model.data[:, i] = val
-        damping_model.data[:, -(i + 1)] = val
-        damping_model.data[i, :] = val
-        damping_model.data[-(i + 1), :] = val
+def generate_damping_model(params: Params) -> DampingModel:
+    damping_model = np.zeros(params.simulation_cell_size)
+    for i in reversed(range(params.damping_cell_thickness)):
+        val = (params.damping_cell_thickness - i) * params.damping_coefficient
+        damping_model[:, i] = val
+        damping_model[:, -(i + 1)] = val
+        damping_model[i, :] = val
+        damping_model[-(i + 1), :] = val
 
     return damping_model
 
 
-def create_simple_velocity_model_devito_function(grid: Grid, field_cell_size_y: int, damping_cell_thickness: int) -> Function:
-    v = Function(name="v", grid=grid, time_order=0, space_order=1)
-
-    velocity_model = 2.5 * np.ones(grid.shape)
-    # velocity_model[damping_cell_thickness + field_cell_size_y // 2: -damping_cell_thickness, :] = 3
-
-    a, b = grid.shape[0] / 2, grid.shape[1] / 2
-    y, x = np.ogrid[-a : grid.shape[0] - a, -b : grid.shape[1] - b]
+def create_simple_velocity_model(params: Params) -> VelocityModel:
+    velocity_model = np.ones(params.simulation_cell_size) * 2.5
+    w, h = params.simulation_cell_size.x, params.simulation_cell_size.y
+    a, b = w / 2, h / 2
+    y, x = np.ogrid[-a : h - a, -b : w - b]
     r = 15
     velocity_model[x * x + y * y <= r * r] = 3.0
-
-    v.data[:, :] = velocity_model
-
-    return v
+    return velocity_model
 
 
-def simulate_forward_waveform(src: SparseTimeFunction, damping: Function, velocity_model: Function, grid: Grid, start_time: float, unit_time: float, simulation_times: int) -> WaveFieldHistory:
-    observed_waveform = TimeFunction(name="u", grid=grid, time_order=2, space_order=2)
-
-    u = observed_waveform  # alias(長いので
-    src_term = src.inject(field=u.forward, expr=src)
-    stencil = Eq(u.forward, solve(u.dt2 / velocity_model**2 - u.laplace + damping * u.dt, u.forward))
-    op = Operator([stencil] + src_term)
-
-    shape = observed_waveform.shape[1:]
-    field_logs = np.zeros((simulation_times, shape[0], shape[1]))
-    field_logs[0] = observed_waveform.data[0]
-
-    for i in range(1, simulation_times - 1):
-        t_from = start_time + i * unit_time
-        t_to = start_time + (i + 1) * unit_time
-        op.apply(time_m=t_from, time_M=t_to, dt=unit_time)
-
-        field_logs[i + 1] = observed_waveform.data[0].copy()
-
-    return field_logs
+def show_velocity_model(velocity_model: VelocityModel):
+    # 適当実装
+    img = velocity_model.copy()
+    tmp = np.max(np.abs(img))
+    min_value = -tmp * 2
+    img[40, 40:141] = min_value
+    img[140, 40:141] = min_value
+    img[40:141, 40] = min_value
+    img[40:141, 140] = min_value
+    plt.imshow(img, vmin=2.45, vmax=3.05, cmap="jet", extent=(0, 1.0, 1.0, 0))
+    plt.xticks([0, 0.5, 1])
+    plt.yticks([0, 0.5, 1])
+    plt.colorbar()
+    plt.title("velocity model [km/s]")
+    plt.xlabel("X [km]")
+    plt.ylabel("Depth [km]")
+    plt.show()
 
 
-def simulate_backward_waveform(src: SparseTimeFunction, damping: Function, velocity_model: Function, grid: Grid, start_time: float, unit_time: float, simulation_times: int) -> WaveFieldHistory:
-    observed_waveform = TimeFunction(name="v", grid=grid, time_order=2, space_order=2)
-    vdt2 = TimeFunction(name="v_dt2", grid=grid, time_order=2, space_order=2)
-
-    v = observed_waveform  # alias(長いので
-    src_term = src.inject(field=v.forward, expr=src)
-    vdt2_term = [Eq(vdt2.forward, v.dt2)]
-    stencil = [Eq(v.forward, solve(v.dt2 / velocity_model**2 - v.laplace + damping * v.dt, v.forward))]
-    op = Operator(stencil + src_term + vdt2_term)
-
-    shape = v.shape[1:]
-    field_logs = np.zeros((simulation_times, shape[0], shape[1]))
-    field_logs[0] = v.data[0]
-
-    for i in range(1, simulation_times - 1):
-        t_from = start_time + i * unit_time
-        t_to = start_time + (i + 1) * unit_time
-        op.apply(time_m=t_from, time_M=t_to, dt=unit_time)
-
-        field_logs[i + 1] = vdt2.data[0].copy()
-
-    return field_logs
+def show_wave_field(wave_field: WaveField, title: str):
+    # 適当実装
+    img = wave_field.copy()
+    tmp = np.max(np.abs(img))
+    min_value = -tmp * 2
+    img[40, 40:141] = min_value
+    img[140, 40:141] = min_value
+    img[40:141, 40] = min_value
+    img[40:141, 140] = min_value
+    plt.imshow(img, vmin=-tmp, vmax=tmp, cmap="seismic", extent=(-0.4, 1.4, 1.4, -0.4))
+    plt.xticks([0, 0.5, 1])
+    plt.yticks([0, 0.5, 1])
+    plt.colorbar()
+    plt.title(title)
+    plt.xlabel("X [km]")
+    plt.ylabel("Depth [km]")
+    plt.show()
 
 
-def generate_initial_velocity_model(shape: Vec2D[int]) -> NDArray[np.float64]:
-    return np.ones((shape.y, shape.x)) * 2.5
+def safe_field_history_as_gif(field_history: WaveFieldHistory):
+    # 適当実装
+    field_log = field_history.copy()
+    min_value = -np.max(np.abs(field_log))
+    field_log[:, 40, 40:141] = min_value
+    field_log[:, 140, 40:141] = min_value
+    field_log[:, 40:141, 40] = min_value
+    field_log[:, 40:141, 140] = min_value
 
-def save_field_history_as_gif(
+    path = output_path.joinpath("tmp-fields.gif")
+    tmp = float(np.max(np.abs(field_log)))
+    norm = TwoSlopeNorm(vmin=-tmp, vcenter=0, vmax=tmp)
+    save_field_history_as_gif_helper(field_log, path, norm, extent=(-0.4, 1.4, 1.4, -0.4), xticks=[0, 0.5, 1], yticks=[0, 0.5, 1], figsize=(5, 5))
+    sys.exit(-1)
+
+
+def save_field_history_as_gif_helper(
     field_history: WaveFieldHistory,
     path: Path,
     norm: Union[Normalize | None] = None,
@@ -182,7 +179,6 @@ def save_field_history_as_gif(
     extent: Union[Tuple[float, float, float, float], None] = None,
     xticks: Union[List[float], None] = None,
     yticks: Union[List[float], None] = None,
-
     title: Union[str, None] = None,
 ):
     n = field_history.shape[0]
@@ -213,10 +209,139 @@ def save_field_history_as_gif(
             plt.close(fig)
 
 
+class WaveformSimulator:
+    def __init__(self, params: Params, source_waveform: WaveformData, damping_model: DampingModel):
+        self.params = params
+        self.grid = generate_grid(params)
+        self.single_forward_source_waveform = SparseTimeFunction(
+            name="single_src", grid=self.grid, time_order=2, space_order=1, nt=params.simulation_times + 1, npoint=1, initializer=source_waveform.reshape((len(source_waveform), 1))
+        )
+        self.multi_backward_source_waveform = SparseTimeFunction(
+            name="multi_src",
+            grid=self.grid,
+            time_order=2,
+            space_order=1,
+            nt=params.simulation_times + 1,
+            npoint=len(params.receivers_real_cell_pos),
+            coordinates=np.array(list(map(lambda p: [p.y, p.x], params.receivers_simulation_meter_pos))),
+        )
+        self.damping_model_function = Function(name="damping_model", grid=self.grid, space_order=0, initializer=damping_model)
+        self.velocity_model_function = Function(name="velocity_model", grid=self.grid, time_order=0, space_order=1)
+        self.forward_observed_waveform_function = TimeFunction(name="forward_observed_waveform", grid=self.grid, time_order=2, space_order=2)
+        self.backward_observed_waveform_function = TimeFunction(name="backward_observed_waveform", grid=self.grid, time_order=2, space_order=2)
+        self.backward_observed_waveform_dt2_function = TimeFunction(name="backward_observed_waveform_dt2", grid=self.grid, time_order=2, space_order=2)
+        self.forward_simulation_operator = self._create_forward_simulation_operator(
+            self.forward_observed_waveform_function, self.single_forward_source_waveform, self.damping_model_function, self.velocity_model_function
+        )
+        self.backward_simulation_operator = self._create_backward_simulation_operator(
+            self.backward_observed_waveform_function, self.backward_observed_waveform_dt2_function, self.multi_backward_source_waveform, self.damping_model_function, self.velocity_model_function
+        )
+
+    @classmethod
+    def _create_forward_simulation_operator(cls, u: TimeFunction, src: SparseTimeFunction, damping: Function, velocity_model: Function) -> Operator:
+        src_term = src.inject(field=u.forward, expr=src)
+        stencil = Eq(u.forward, solve(u.dt2 / velocity_model**2 - u.laplace + damping * u.dt, u.forward))
+        return Operator([stencil] + src_term)
+
+    @classmethod
+    def _create_backward_simulation_operator(cls, v: TimeFunction, vdt2: TimeFunction, src: SparseTimeFunction, damping: Function, velocity_model: Function) -> Operator:
+        src_term = src.inject(field=v.forward, expr=src)
+        vdt2_term = [Eq(vdt2.forward, v.dt2)]
+        stencil = [Eq(v.forward, solve(v.dt2 / velocity_model**2 - v.laplace + damping * v.dt, v.forward))]
+        return Operator(stencil + src_term + vdt2_term)
+
+    def simulate_forward_waveform(self, shot_simulation_meter_pos: Vec2D[float], velocity_model: Union[VelocityModel, None] = None) -> WaveFieldHistory:
+        # シミュレーション用変数を破壊的に変更
+        self.single_forward_source_waveform.coordinates.data[0, :] = np.array([shot_simulation_meter_pos.y, shot_simulation_meter_pos.x])
+        if velocity_model is not None:
+            self.velocity_model_function.data[:, :] = velocity_model
+
+        field_logs = np.zeros((self.params.simulation_times + 1, self.params.simulation_cell_size.y, self.params.simulation_cell_size.x))
+        field_logs[0] = self.forward_observed_waveform_function.data[0].copy()
+
+        for i in range(1, self.params.simulation_times - 1):
+            t_from = self.params.start_time + i * self.params.unit_time
+            t_to = self.params.start_time + (i + 1) * self.params.unit_time
+            self.forward_simulation_operator.apply(time_m=t_from, time_M=t_to, dt=self.params.unit_time)
+
+            field_logs[i + 1] = self.forward_observed_waveform_function.data[0].copy()
+
+        return field_logs
+
+    def simulate_backward_waveform(self, residual_observed_waveform: WaveFieldHistory, velocity_model: Union[VelocityModel, None] = None) -> WaveFieldHistory:
+        # シミュレーション用変数を破壊的に変更
+        self.multi_backward_source_waveform.data[:, :] = residual_observed_waveform[::-1]
+        if velocity_model is not None:
+            self.velocity_model_function.data[:, :] = velocity_model
+
+        field_logs = np.zeros((self.params.simulation_times + 1, self.params.simulation_cell_size.y, self.params.simulation_cell_size.x))
+        field_logs[0] = self.backward_observed_waveform_dt2_function.data[0].copy()
+
+        for i in range(1, self.params.simulation_times - 1):
+            t_from = self.params.start_time + i * self.params.unit_time
+            t_to = self.params.start_time + (i + 1) * self.params.unit_time
+            self.backward_simulation_operator.apply(time_m=t_from, time_M=t_to, dt=self.params.unit_time)
+
+            field_logs[i + 1] = self.backward_observed_waveform_dt2_function.data[0].copy()
+
+        return field_logs[::-1]
+
+
+class Solver:
+    def __init__(self, params: Params, source_waveform: WaveformData, damping_model: DampingModel):
+        self.params = params
+        self.simulator = WaveformSimulator(params, source_waveform, damping_model)
+
+    def solve(self, true_velocity_model: VelocityModel, initial_velocity_model: VelocityModel, n_iter: int) -> VelocityModel:
+        current_velocity_model = initial_velocity_model.copy()
+        true_observed_waveforms = self._calc_true_observed_waveforms(true_velocity_model)
+
+        for th in range(n_iter):
+            grad, residual_norm_sum = self.calc_grad_with_all_shot(current_velocity_model, true_observed_waveforms)
+            alpha = 0.05 / np.max(grad)
+            current_velocity_model -= grad * alpha
+            print(f"iter: {th}, residual_norm_sum: {residual_norm_sum}, grad norm: {np.linalg.norm(grad, ord=2)}, error_norm: {np.linalg.norm(current_velocity_model - true_velocity_model, ord=2)}")
+            show_velocity_model(current_velocity_model)
+
+    def _calc_true_observed_waveforms(self, true_velocity_model: VelocityModel) -> List[WaveformData]:
+        true_observed_waveforms = []
+        for shot_pos in self.params.shots_simulation_meter_pos:
+            true_field_history = self.simulator.simulate_forward_waveform(shot_pos, true_velocity_model)
+            true_observed_waveform = np.array([true_field_history[:, p.y, p.x] for p in self.params.receivers_simulation_cell_pos]).T
+            true_observed_waveforms.append(true_observed_waveform)
+        return true_observed_waveforms
+
+    def calc_grad_with_all_shot(self, current_velocity_model: VelocityModel, true_observed_waveforms: List[WaveformData]) -> Tuple[NDArray[np.float64], float]:
+        grad = np.zeros((self.params.simulation_cell_size.y, self.params.simulation_cell_size.x))
+        residual_norm_sum = 0
+        for shot_pos, true_observed_waveform in zip(self.params.shots_simulation_meter_pos, true_observed_waveforms):
+            grad_diff, residual_norm = self.calc_grad_with_one_shot(shot_pos, current_velocity_model, true_observed_waveform)
+            grad += grad_diff
+            residual_norm_sum += residual_norm
+
+        return grad, residual_norm_sum
+
+    def calc_grad_with_one_shot(self, shot_pos: Vec2D[int], current_velocity_model: VelocityModel, true_observed_waveform: WaveformData) -> Tuple[NDArray[np.float64], float]:
+        # 推定速度モデルを用いた forward simulation
+        simulated_forward_field_history = self.simulator.simulate_forward_waveform(shot_pos, current_velocity_model)
+        simulated_observed_waveform = np.array([simulated_forward_field_history[:, p.y, p.x] for p in self.params.receivers_simulation_cell_pos]).T
+
+        # 観測データと計算データの残差を計算
+        diff_observed_waveform = simulated_observed_waveform - true_observed_waveform
+
+        # 残差データを用いてbackward simulation
+        simulated_backward_field_dt2_history = self.simulator.simulate_backward_waveform(diff_observed_waveform, current_velocity_model)
+
+        # u * v.dt2の積分をとり勾配を計算（内積で積分計算をサボっている
+        grad = np.sum(simulated_forward_field_history * simulated_backward_field_dt2_history, axis=0)
+        residual_norm = np.linalg.norm(diff_observed_waveform, ord=2) ** 2 / 2.0
+        return grad, residual_norm
+
+
 def main():
     # パラメータ及びシミュレーション用変数設定
     params = Params(
-        field_cell_size=Vec2D(100, 100),
+        real_cell_size=Vec2D(101, 101),
         cell_meter_size=Vec2D(10.0, 10.0),
         damping_cell_thickness=40,
         damping_coefficient=0.0005,
@@ -225,172 +350,21 @@ def main():
         simulation_times=1000,
         source_peek_time=100,
         source_frequency=0.01,
-        source_cell_pos_in_field=Vec2D(2, 50),
-        shots_pos_in_field=[Vec2D(42, i * 10 + 45) for i in range(10)],
+        shots_real_cell_pos=[Vec2D(2, i * 10 + 5) for i in range(10)],
+        receivers_real_cell_pos=[Vec2D(98, i) for i in range(101)],
     )
 
-    grid = generate_grid(params.field_cell_size, params.damping_cell_thickness, params.cell_meter_size)
+    source_waveform = generate_input_waveform_with_ricker_wavelet(params)
+    true_velocity_model = create_simple_velocity_model(params)
+    initial_velocity_model = np.ones((params.simulation_cell_size.y, params.simulation_cell_size.x)) * 2.5
+    damping_model = generate_damping_model(params)
 
-    # setup source
-    single_forward_source_waveform = SparseTimeFunction(name="src", grid=grid, time_order=2, space_order=1, nt=params.simulation_times * params.unit_time + 1, npoint=1)
-    single_forward_source_waveform.data[:, 0] = generate_input_waveform_with_ricker_wavelet(
-        params.start_time, params.unit_time, params.simulation_times, params.source_frequency, params.source_peek_time
+    solver = Solver(
+        params=params,
+        source_waveform=source_waveform,
+        damping_model=damping_model,
     )
-
-    # setup backward source
-    multi_backward_source_waveform = SparseTimeFunction(name="src", grid=grid, time_order=2, space_order=1, nt=params.simulation_times * params.unit_time + 1, npoint=101)
-    multi_backward_source_waveform.coordinates.data[:, 0] = np.linspace(40, 140, num=101) * 10
-    multi_backward_source_waveform.coordinates.data[:, 1] = 138 * 10
-
-    damping_model = generate_damping_model_devito_function(grid, params.damping_cell_thickness, params.damping_coefficient)
-    true_velocity_model = create_simple_velocity_model_devito_function(grid, params.field_cell_size.y, params.damping_cell_thickness)
-
-    initial_velocity_model = generate_initial_velocity_model(params.field_cell_size + Vec2D(params.damping_cell_thickness * 2, params.damping_cell_thickness * 2) + Vec2D(1, 1))
-    velocity_model_function = Function(name="velocity_model", grid=grid, time_order=0, space_order=1)
-
-    current_velocity_model = initial_velocity_model
-
-    print(f"error_norm: {np.linalg.norm(current_velocity_model - true_velocity_model.data, ord=2)}")
-
-    # img = true_velocity_model.data
-    # raw_min_value = np.min(img)
-    # tmp = np.max(np.abs(img))
-    # min_value = 2.75
-    # plt.imshow(img[40:141, 40:141], vmin=2.45, vmax=3.05, cmap='jet', extent=(0, 1.0, 1.0, 0))
-    # plt.xticks([0, 0.5, 1])
-    # plt.yticks([0, 0.5, 1])
-    # plt.colorbar()
-    # plt.title("velocity model [km/s]")
-    # plt.xlabel("X [km]")
-    # plt.ylabel("Depth [km]")
-    # plt.show()
-    # sys.exit(-1)
-
-    # plt.imshow(true_velocity_model.data, cmap='jet', vmin=2.45, vmax=3.05)
-    # plt.colorbar()
-    # plt.title("true velocity model")
-    # plt.show()
-    # sys.exit(-1)
-
-    n_iter = 50
-    for _ in range(n_iter):
-        # 速度モデルの値を更新
-        velocity_model_function.data[:, :] = current_velocity_model
-
-        grad = np.zeros(params.field_cell_size + Vec2D(params.damping_cell_thickness * 2, params.damping_cell_thickness * 2) + Vec2D(1, 1))
-        residual_norm_sum = 0
-        for idx, shot_pos in enumerate(params.shots_pos_in_field):
-            # setup source coordinate
-            single_forward_source_waveform.coordinates.data[0, 0] = shot_pos.y * 10
-            single_forward_source_waveform.coordinates.data[0, 1] = shot_pos.x * 10
-
-            # 真の速度モデルを用いた forward simulation
-            true_field_log = simulate_forward_waveform(single_forward_source_waveform, damping_model, true_velocity_model, grid, params.start_time, params.unit_time, params.simulation_times)
-            true_observed_waveform = true_field_log[:, 40:-40, 138]
-
-            # 推定速度モデルを用いた forward simulation
-            field_log_during_forward_simulation = simulate_forward_waveform(
-                single_forward_source_waveform, damping_model, velocity_model_function, grid, params.start_time, params.unit_time, params.simulation_times
-            )
-            simulated_observed_waveform = field_log_during_forward_simulation[:, 40:-40, 138]
-
-            # 観測データと計算データの残差を計算
-            diff_observed_waveform = simulated_observed_waveform - true_observed_waveform
-
-            # multi_backward_source_waveform.data[:-1, :] = diff_observed_waveform
-            multi_backward_source_waveform.data[:-1, :] = diff_observed_waveform[::-1]
-
-            # 残差データを用いてbackward simulation
-            field_log_during_backward_simulation = simulate_backward_waveform(
-                multi_backward_source_waveform, damping_model, velocity_model_function, grid, params.start_time, params.unit_time, params.simulation_times
-            )
-            dt2_field_log_during_backward_simulation = field_log_during_backward_simulation[::-1]
-
-            # img = np.array(np.sum(dt2_field_log_during_backward_simulation * field_log_during_forward_simulation, axis=0))
-            # tmp = np.max(np.abs(img))
-            # min_value = -tmp * 2
-            # img[40, 40:141] = min_value
-            # img[140, 40:141] = min_value
-            # img[40:141, 40] = min_value
-            # img[40:141, 140] = min_value
-            # plt.imshow(img, vmin=-tmp, vmax=tmp, cmap='seismic', extent=(-0.4, 1.4, 1.4, -0.4))
-            # plt.xticks([0, 0.5, 1])
-            # plt.yticks([0, 0.5, 1])
-            # plt.colorbar()
-            # plt.title("gradient of velocity model")
-            # plt.xlabel("X [km]")
-            # plt.ylabel("Depth [km]")
-            # plt.show()
-            # sys.exit(-1)
-
-            # plt.imshow(np.array(true_observed_waveform.data)[:, 40:-40])
-            # plt.colorbar(label="Amplitude")
-            # plt.title("wave field")
-            # plt.show()
-            # sys.exit(-1)
-
-            # field_log = true_field_log
-            # min_value = -np.max(np.abs(field_log))
-            # field_log[:, 40, 40:141] = min_value
-            # field_log[:, 140, 40:141] = min_value
-            # field_log[:, 40:141, 40] = min_value
-            # field_log[:, 40:141, 140] = min_value
-            #
-            # path = output_path.joinpath("tmp-fields.gif")
-            # tmp = float(np.max(np.abs(field_log)))
-            # norm = TwoSlopeNorm(vmin=-tmp, vcenter=0, vmax=tmp)
-            # save_field_history_as_gif(field_log, path, norm, extent=(-0.4, 1.4, 1.4, -0.4), xticks=[0, 0.5, 1], yticks=[0, 0.5, 1], figsize=(5, 5), field_only=True)
-            # sys.exit(-1)
-
-            grad_diff = np.sum(field_log_during_forward_simulation * dt2_field_log_during_backward_simulation, axis=0)
-            grad += grad_diff
-
-            residual_norm_sum += np.linalg.norm(diff_observed_waveform, ord=2) ** 2 / 2.0
-            print(f"    residual: {np.linalg.norm(diff_observed_waveform, ord=2)}")
-            print("    ", np.max(np.abs(field_log_during_forward_simulation)), np.max(np.abs(dt2_field_log_during_backward_simulation)))
-
-        # img = grad
-        # tmp = np.max(np.abs(img))
-        # min_value = -tmp * 2
-        # img[40, 40:141] = min_value
-        # img[140, 40:141] = min_value
-        # img[40:141, 40] = min_value
-        # img[40:141, 140] = min_value
-        # plt.imshow(img, vmin=-tmp, vmax=tmp, cmap='seismic', extent=(-0.4, 1.4, 1.4, -0.4))
-        # plt.xticks([0, 0.5, 1])
-        # plt.yticks([0, 0.5, 1])
-        # plt.colorbar()
-        # plt.title("gradient sum of velocity model by 9 shots")
-        # plt.xlabel("X [km]")
-        # plt.ylabel("Depth [km]")
-        # plt.show()
-        # sys.exit(-1)
-
-        alpha = 0.05 / np.max(grad)
-        current_velocity_model -= grad * alpha
-        print(f"residual_norm_sum: {residual_norm_sum}")
-        print(f"grad norm: {np.linalg.norm(grad, ord=2)}")
-        print(f"error_norm: {np.linalg.norm(current_velocity_model - true_velocity_model.data, ord=2)}")
-        # plt.imshow(current_velocity_model, cmap="jet", vmin=2.45, vmax=2.75)
-        # plt.colorbar(label="Amplitude")
-        # plt.title("wave field")
-        # plt.show()
-        img = current_velocity_model.copy()
-        tmp = np.max(np.abs(img))
-        min_value = -tmp * 2
-        img[40, 40:141] = min_value
-        img[140, 40:141] = min_value
-        img[40:141, 40] = min_value
-        img[40:141, 140] = min_value
-        plt.imshow(img, vmin=2.45, vmax=2.75, cmap='jet', extent=(-0.4, 1.4, 1.4, -0.4))
-        plt.xticks([0, 0.5, 1])
-        plt.yticks([0, 0.5, 1])
-        plt.colorbar()
-        plt.title("current velocity model")
-        plt.xlabel("X [km]")
-        plt.ylabel("Depth [km]")
-        plt.show()
-
+    estimated_velocity_model = solver.solve(true_velocity_model, initial_velocity_model, 10)
 
 
 if __name__ == "__main__":
