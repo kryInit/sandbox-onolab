@@ -125,7 +125,7 @@ def show_velocity_model(velocity_model: VelocityModel):
     img[140, 40:141] = min_value
     img[40:141, 40] = min_value
     img[40:141, 140] = min_value
-    plt.imshow(img, vmin=2.45, vmax=3.05, cmap="jet", extent=(0, 1.0, 1.0, 0))
+    plt.imshow(img, vmin=2.45, vmax=2.75, cmap="jet", extent=(0, 1.0, 1.0, 0))
     plt.xticks([0, 0.5, 1])
     plt.yticks([0, 0.5, 1])
     plt.colorbar()
