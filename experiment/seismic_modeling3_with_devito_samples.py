@@ -6,7 +6,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from devito import Eq, Function, Inc, Max, Min, Operator, TimeFunction, mmax, norm, set_log_level, solve
 from numpy.typing import NDArray
+from scipy.ndimage import zoom, gaussian_filter
 
+
+from lib.misc import datasets_root_path, output_path
 from lib.model import Vec2D
 from lib.seismic import AcquisitionGeometry, Receiver, SeismicModel, demo_model, plot_velocity
 from lib.seismic.acoustic import AcousticWaveSolver
@@ -99,9 +102,46 @@ class VelocityModelGradientCalculator:
         return objective, grad
 
 
+def plot_velocity_model(data: NDArray, vmin: Union[float, None] = None, vmax: Union[float, None] = None, title: str = "velocity model", cmap: str='jet'):
+    if vmin is None:
+        vmin = np.min(data)
+    if vmax is None:
+        vmax = np.max(data)
+
+    plt.imshow(data, vmin=vmin, vmax=vmax, cmap=cmap)
+    plt.colorbar()
+    plt.title(title)
+    plt.xlabel("X [km]")
+    plt.ylabel("Depth [km]")
+    plt.show()
+
+def psnr(signal0, signal1, max_value):
+    mse = np.mean((signal0.astype(float) - signal1.astype(float)) ** 2)
+    return 10 * np.log10((max_value ** 2) / mse)
+
 def main():
+    seismic_data_path = datasets_root_path.joinpath("salt-and-overthrust-models/3-D_Salt_Model/VEL_GRIDS/Saltf@@")
+
+    # Dimensions
+    nx, ny, nz = 676, 676, 210
+
+    with open(seismic_data_path, "r") as file:
+        vel = np.fromfile(file, dtype=np.dtype("float32").newbyteorder(">"))
+        vel = vel.reshape(nx, ny, nz, order="F")
+
+        # Cast type
+        vel = np.asarray(vel, dtype=float)
+
+        # THE SEG/EAGE salt-model uses positive z downwards;
+        # here we want positive upwards. Hence:
+        vel = np.flip(vel, 2)
+
+        seismic_data = np.transpose(vel, (2, 1, 0))
+
+    assert seismic_data.shape == (nz, ny, nx)
+
     params = Params(
-        real_cell_size=Vec2D(101, 101),
+        real_cell_size=Vec2D(101, 51),
         cell_meter_size=Vec2D(10.0, 10.0),
         damping_cell_thickness=40,
         start_time=0,
@@ -109,19 +149,38 @@ def main():
         simulation_times=1000,
         source_peek_time=100,
         source_frequency=0.01,
-        n_shots=9,
+        n_shots=26,
         n_receivers=101,
     )
 
     shape = (params.real_cell_size.x, params.real_cell_size.y)
     spacing = (params.cell_meter_size.x, params.cell_meter_size.y)
 
-    true_model = demo_model("circle-isotropic", vp_circle=3.0, vp_background=2.5, shape=shape, spacing=spacing, nbl=params.damping_cell_thickness)
-    current_model = demo_model("circle-isotropic", vp_circle=2.5, vp_background=2.5, shape=shape, spacing=spacing, nbl=params.damping_cell_thickness, grid=true_model.grid)
+    dsize = params.damping_cell_thickness
+    th = 400
 
-    src_coordinates = np.array([[20, true_model.domain_size[1] * 0.5]])
-    rec_coordinates = np.array([[980, y] for y in np.linspace(0, true_model.domain_size[0], num=params.n_receivers)])
-    source_locations = np.array([[30, y] for y in np.linspace(0.0, (params.real_cell_size.y - 1) * params.cell_meter_size.y, num=params.n_shots)])
+    raw_target = seismic_data[:, th].T / 1000
+    target = zoom(raw_target, 51.0 / nz, order=3)[:101, :51]
+
+    initial_vp = target.copy()
+    for _ in range(10):
+        initial_vp = gaussian_filter(initial_vp, sigma=1)
+
+    true_model = SeismicModel(space_order=2, vp=target, origin=(0, 0), shape=shape, dtype=np.float32, spacing=spacing, nbl=params.damping_cell_thickness, bcs="damp", fs=False)
+    current_model = SeismicModel(space_order=2, vp=initial_vp, origin=(0, 0), shape=shape, dtype=np.float32, spacing=spacing, nbl=params.damping_cell_thickness, bcs="damp", fs=False)
+
+    # plot_velocity_model(seismic_data[:, th] / 1000, vmin=1.5, vmax=5)
+    # plot_velocity(true_model)
+    plot_velocity_model(true_model.vp.data[dsize:-dsize, dsize:-dsize].T, vmin=1.5, vmax=5)
+    # plot_velocity_model(current_model.vp.data[dsize:-dsize, dsize:-dsize].T, vmin=1.5, vmax=5)
+
+    # src_coordinates = np.array([[30, true_model.domain_size[1] * 0.5]])
+    # rec_coordinates = np.array([[30, x] for x in np.linspace(0, true_model.domain_size[1], num=params.n_receivers)])
+    # source_locations = np.array([[980, x] for x in np.linspace(0.0, true_model.domain_size[1], num=params.n_shots)])
+
+    src_coordinates = np.array([[30, true_model.domain_size[1] * 0.5]])
+    rec_coordinates = np.array([[x, 30] for x in np.linspace(0, true_model.domain_size[0], num=params.n_receivers)])
+    source_locations = np.array([[x, 30] for x in np.linspace(0.0, true_model.domain_size[0], num=params.n_shots)])
 
     geometry = AcquisitionGeometry(true_model, rec_coordinates, src_coordinates, params.start_time, params.simulation_times, f0=params.source_frequency, src_type="Ricker")
     solver = AcousticWaveSolver(true_model, geometry, space_order=4)
@@ -130,9 +189,9 @@ def main():
 
     n_iters = 1000
 
-    l1_norm_weight = 5
-    gamma1 = 0.001
-    gamma2 = 50
+    l1_norm_weight = 1
+    gamma1 = 0.0001
+    gamma2 = 100
 
     def prox_l1(signal, gamma):
         return np.sign(signal) * np.maximum(np.abs(signal) - gamma, 0)
@@ -164,11 +223,12 @@ def main():
         history[i] = residual_norm_sum
         diff = current_model.vp.data - true_model.vp.data
         history1[i] = np.sum(diff * diff)
-        print(f"Objective value is {residual_norm_sum} at iteration {i+1}, {history1[i]}")
+        print(f"Objective value is {residual_norm_sum} at iteration {i + 1}, {history1[i]}")
         # if i % 100 == 0 or (i != 0 and history[i-1] < history[i]):
-        if i % 100 == 0:
-            print(f"showed: {i}")
-            plot_velocity(current_model)
+        # if i % 100 == 0:
+        print(f"showed: {i}")
+        plot_velocity_model(current_model.vp.data[dsize:-dsize, dsize:-dsize].T, vmin=1.5, vmax=5)
+        print(f"psnr: {psnr(true_model.vp.data[dsize:-dsize, dsize:-dsize].T, current_model.vp.data[dsize:-dsize, dsize:-dsize].T, 5)}")
 
     # Plot inverted velocity model
     # plot_velocity(current_model)

@@ -7,8 +7,8 @@ from lib.misc import datasets_root_path, project_root_path
 
 def show_images():
     n = 128
-    seismic_data_path = datasets_root_path.joinpath("fault-seg/seis/0.dat")
-    fault_data_path = datasets_root_path.joinpath("fault-seg/fault/0.dat")
+    seismic_data_path = datasets_root_path.joinpath("fault-seg/train/seis/0.dat")
+    fault_data_path = datasets_root_path.joinpath("fault-seg/train/fault/0.dat")
     seismic_data = np.fromfile(seismic_data_path, dtype=np.single).reshape((n, n, n))
     fault_data = np.fromfile(fault_data_path, dtype=np.single).reshape((n, n, n))
     print(seismic_data.shape, fault_data.shape)
