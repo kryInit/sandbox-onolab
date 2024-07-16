@@ -4,14 +4,13 @@ from typing import List, NamedTuple, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
-from devito import Eq, Function, Inc, Max, Min, Operator, TimeFunction, mmax, norm, set_log_level, solve
+from devito import Eq, Function, Inc, Operator, TimeFunction, norm, set_log_level, solve
 from numpy.typing import NDArray
-from scipy.ndimage import zoom, gaussian_filter
+from scipy.ndimage import gaussian_filter, zoom
 
-
-from lib.misc import datasets_root_path, output_path
+from lib.misc import datasets_root_path
 from lib.model import Vec2D
-from lib.seismic import AcquisitionGeometry, Receiver, SeismicModel, demo_model, plot_velocity
+from lib.seismic import AcquisitionGeometry, Receiver, SeismicModel
 from lib.seismic.acoustic import AcousticWaveSolver
 
 # devitoのlogの抑制
@@ -102,7 +101,7 @@ class VelocityModelGradientCalculator:
         return objective, grad
 
 
-def plot_velocity_model(data: NDArray, vmin: Union[float, None] = None, vmax: Union[float, None] = None, title: str = "velocity model", cmap: str='jet'):
+def plot_velocity_model(data: NDArray, vmin: Union[float, None] = None, vmax: Union[float, None] = None, title: str = "velocity model", cmap: str = "jet"):
     if vmin is None:
         vmin = np.min(data)
     if vmax is None:
@@ -115,9 +114,11 @@ def plot_velocity_model(data: NDArray, vmin: Union[float, None] = None, vmax: Un
     plt.ylabel("Depth [km]")
     plt.show()
 
+
 def psnr(signal0, signal1, max_value):
     mse = np.mean((signal0.astype(float) - signal1.astype(float)) ** 2)
-    return 10 * np.log10((max_value ** 2) / mse)
+    return 10 * np.log10((max_value**2) / mse)
+
 
 def main():
     seismic_data_path = datasets_root_path.joinpath("salt-and-overthrust-models/3-D_Salt_Model/VEL_GRIDS/Saltf@@")
@@ -166,8 +167,12 @@ def main():
     for _ in range(10):
         initial_vp = gaussian_filter(initial_vp, sigma=1)
 
+    initial_vp = np.zeros(target.shape) * 2.5
+
     true_model = SeismicModel(space_order=2, vp=target, origin=(0, 0), shape=shape, dtype=np.float32, spacing=spacing, nbl=params.damping_cell_thickness, bcs="damp", fs=False)
     current_model = SeismicModel(space_order=2, vp=initial_vp, origin=(0, 0), shape=shape, dtype=np.float32, spacing=spacing, nbl=params.damping_cell_thickness, bcs="damp", fs=False)
+
+    print(f"initial psnr: {psnr(true_model.vp.data[dsize:-dsize, dsize:-dsize].T, current_model.vp.data[dsize:-dsize, dsize:-dsize].T, 5)}")
 
     # plot_velocity_model(seismic_data[:, th] / 1000, vmin=1.5, vmax=5)
     # plot_velocity(true_model)
@@ -189,10 +194,6 @@ def main():
 
     n_iters = 1000
 
-    l1_norm_weight = 1
-    gamma1 = 0.0001
-    gamma2 = 100
-
     def prox_l1(signal, gamma):
         return np.sign(signal) * np.maximum(np.abs(signal) - gamma, 0)
 
@@ -202,33 +203,94 @@ def main():
     history = np.zeros((n_iters, 1))
     history1 = np.zeros((n_iters, 1))
 
-    y = D(current_model.vp.data)
+    # flag = 'normal'
+    # flag = 'admm'
+    flag = "pds"
 
-    for i in range(0, n_iters):
-        residual_norm_sum, direction = ssolver.calc_grad(params, current_model.vp, source_locations)
+    if flag == "normal":
+        step_size = 0.0026
+        for i in range(0, n_iters):
+            residual_norm_sum, direction = ssolver.calc_grad(params, current_model.vp, source_locations)
 
-        grad = -direction.data
+            grad = -direction.data / params.n_shots
 
-        # update velocity model with box constraint
-        # step_size = 0.05 / mmax(direction)
-        # current_model.vp.data[:] = np.clip(current_model.vp.data + step_size * direction.data, 2.0, 3.5)
+            # update velocity model with box constraint
+            current_model.vp.data[:] = current_model.vp.data - step_size * grad
 
-        # current_model.vp.data[:] = np.clip(current_model.vp.data + 0.001 * direction.data, 2.0, 3.5)
+            history[i] = residual_norm_sum
+            diff = current_model.vp.data - true_model.vp.data
+            history1[i] = np.sum(diff * diff)
+            print(f"Objective value is {residual_norm_sum} at iteration {i + 1}, {history1[i]}")
+            # if i % 100 == 0 or (i != 0 and history[i-1] < history[i]):
+            # if i % 100 == 0:
+            print(f"showed: {i}")
+            plot_velocity_model(current_model.vp.data[dsize:-dsize, dsize:-dsize].T, vmin=1.5, vmax=5)
+            print(f"psnr: {psnr(true_model.vp.data[dsize:-dsize, dsize:-dsize].T, current_model.vp.data[dsize:-dsize, dsize:-dsize].T, 5)}")
 
-        prev_x = current_model.vp.data.copy()
-        current_model.vp.data[:] = current_model.vp.data[:] - gamma1 * (grad + Dt(y))
-        y = y + gamma2 * D(2 * current_model.vp.data - prev_x)
-        y = y - gamma2 * prox_l1(y / gamma2, l1_norm_weight / gamma2)
+    if flag == "admm":
+        l1_norm_weight = 1
+        rho = 0.001
+        gamma = 0.001
+        tau = 0.001
+        eta = current_model.vp.data
+        beta = np.zeros(eta.shape)
+        for i in range(0, n_iters):
+            residual_norm_sum, direction = ssolver.calc_grad(params, current_model.vp, source_locations)
 
-        history[i] = residual_norm_sum
-        diff = current_model.vp.data - true_model.vp.data
-        history1[i] = np.sum(diff * diff)
-        print(f"Objective value is {residual_norm_sum} at iteration {i + 1}, {history1[i]}")
-        # if i % 100 == 0 or (i != 0 and history[i-1] < history[i]):
-        # if i % 100 == 0:
-        print(f"showed: {i}")
-        plot_velocity_model(current_model.vp.data[dsize:-dsize, dsize:-dsize].T, vmin=1.5, vmax=5)
-        print(f"psnr: {psnr(true_model.vp.data[dsize:-dsize, dsize:-dsize].T, current_model.vp.data[dsize:-dsize, dsize:-dsize].T, 5)}")
+            grad = -direction.data / params.n_shots
+
+            # update velocity model with box constraint
+            # step_size = 0.05 / mmax(direction)
+            # current_model.vp.data[:] = np.clip(current_model.vp.data + step_size * direction.data, 2.0, 3.5)
+
+            # current_model.vp.data[:] = np.clip(current_model.vp.data + 0.001 * direction.data, 2.0, 3.5)
+
+            v = current_model.vp.data
+            v[:] = v - rho * (grad - gamma * (eta - v - beta))
+            eta = Dt(prox_l1(D(v + beta), l1_norm_weight / gamma))
+            beta = beta + tau * (v - eta)
+
+            history[i] = residual_norm_sum
+            diff = current_model.vp.data - true_model.vp.data
+            history1[i] = np.sum(diff * diff)
+            print(f"Objective value is {residual_norm_sum} at iteration {i + 1}, {history1[i]}")
+            # if i % 100 == 0 or (i != 0 and history[i-1] < history[i]):
+            # if i % 100 == 0:
+            print(f"showed: {i}")
+            plot_velocity_model(current_model.vp.data[dsize:-dsize, dsize:-dsize].T, vmin=1.5, vmax=5)
+            print(f"psnr: {psnr(true_model.vp.data[dsize:-dsize, dsize:-dsize].T, current_model.vp.data[dsize:-dsize, dsize:-dsize].T, 5)}")
+
+    if flag == "pds":
+        l1_norm_weight = 1
+        gamma1 = 0.0001
+        gamma2 = 100
+        y = D(current_model.vp.data)
+        for i in range(0, n_iters):
+            residual_norm_sum, direction = ssolver.calc_grad(params, current_model.vp, source_locations)
+
+            grad = -direction.data
+
+            # update velocity model with box constraint
+            # step_size = 0.05 / mmax(direction)
+            # current_model.vp.data[:] = np.clip(current_model.vp.data + step_size * direction.data, 2.0, 3.5)
+
+            # current_model.vp.data[:] = np.clip(current_model.vp.data + 0.001 * direction.data, 2.0, 3.5)
+
+            prev_x = current_model.vp.data.copy()
+            x = current_model.vp.data
+            x[:] = x - gamma1 * (grad + Dt(y))
+            y = y + gamma2 * D(2 * x - prev_x)
+            y = y - gamma2 * prox_l1(y / gamma2, l1_norm_weight / gamma2)
+
+            history[i] = residual_norm_sum
+            diff = current_model.vp.data - true_model.vp.data
+            history1[i] = np.sum(diff * diff)
+            print(f"Objective value is {residual_norm_sum} at iteration {i + 1}, {history1[i]}")
+            # if i % 100 == 0 or (i != 0 and history[i-1] < history[i]):
+            # if i % 100 == 0:
+            print(f"showed: {i}")
+            plot_velocity_model(current_model.vp.data[dsize:-dsize, dsize:-dsize].T, vmin=1.5, vmax=5)
+            print(f"psnr: {psnr(true_model.vp.data[dsize:-dsize, dsize:-dsize].T, current_model.vp.data[dsize:-dsize, dsize:-dsize].T, 5)}")
 
     # Plot inverted velocity model
     # plot_velocity(current_model)
