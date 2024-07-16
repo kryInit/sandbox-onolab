@@ -10,8 +10,8 @@ from scipy.ndimage import gaussian_filter, zoom
 
 from lib.misc import datasets_root_path
 from lib.model import Vec2D
-from lib.seismic import AcquisitionGeometry, Receiver, SeismicModel
-from lib.seismic.acoustic import AcousticWaveSolver
+from lib.seismic.devito_example import AcquisitionGeometry, Receiver, SeismicModel
+from lib.seismic.devito_example.acoustic import AcousticWaveSolver
 
 # devitoのlogの抑制
 set_log_level("WARNING")
