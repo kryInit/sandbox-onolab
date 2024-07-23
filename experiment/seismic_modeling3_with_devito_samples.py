@@ -167,8 +167,6 @@ def main():
     for _ in range(10):
         initial_vp = gaussian_filter(initial_vp, sigma=1)
 
-    initial_vp = np.zeros(target.shape) * 2.5
-
     true_model = SeismicModel(space_order=2, vp=target, origin=(0, 0), shape=shape, dtype=np.float32, spacing=spacing, nbl=params.damping_cell_thickness, bcs="damp", fs=False)
     current_model = SeismicModel(space_order=2, vp=initial_vp, origin=(0, 0), shape=shape, dtype=np.float32, spacing=spacing, nbl=params.damping_cell_thickness, bcs="damp", fs=False)
 
