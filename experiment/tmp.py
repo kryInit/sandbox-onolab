@@ -136,7 +136,6 @@ receiver_locations = np.array([[x, 30] for x in np.linspace(0, width, num=params
 # )
 
 grad_calculator = FastParallelVelocityModelGradientCalculator(
-    20,
     true_velocity_model,
     initial_velocity_model,
     shape,
@@ -148,6 +147,7 @@ grad_calculator = FastParallelVelocityModelGradientCalculator(
     source_locations,
     receiver_locations
 )
+print("initialized")
 
 # n_iters = 1000
 # for i in range(0, n_iters):
@@ -165,17 +165,17 @@ gamma2 = 0.0001
 residual_norm_sum_history = np.zeros(0)
 velocity_model_diff_history = np.zeros(0)
 
-v = grad_calculator.current_model.vp.data
+v = initial_velocity_model.copy()
 y = D(v)
 th = -1
 # try:
 while True:
     th += 1
-    residual_norm_sum, grad = grad_calculator.calc_grad()
+    residual_norm_sum, grad = grad_calculator.calc_grad(v)
 
     prev_v = v.copy()
 
-    v[:] = v - gamma1 * grad
+    v = v - gamma1 * grad
     # v[:] = v - gamma1 * (grad + Dt(y))
     # v[:] = prox_box_constraint(v, 1, 3)
     # y = y + gamma2 * D(2 * v - prev_v)
