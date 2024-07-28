@@ -12,7 +12,7 @@ from lib.misc import datasets_root_path, output_path
 from lib.model import Vec2D
 from lib.seismic.devito_example import AcquisitionGeometry, SeismicModel
 from lib.seismic.devito_example.acoustic import AcousticWaveSolver
-from lib.seismic.fast_parallel_velocity_model_gradient_calculator import FastParallelVelocityModelGradientCalculator
+from lib.seismic.fast_parallel_velocity_model_gradient_calculator import FastParallelVelocityModelGradientCalculator, FastParallelVelocityModelProps
 from lib.seismic.velocity_model_gradient_calculator import VelocityModelGradientCalculator
 from lib.visualize.show_velocity_model import show_velocity_model
 
@@ -127,37 +127,29 @@ source_locations = np.array([[x, 30] for x in np.linspace(0, width, num=params.n
 receiver_locations = np.array([[x, 30] for x in np.linspace(0, width, num=params.n_receivers)])
 
 
-true_model = SeismicModel(space_order=2, vp=true_velocity_model.T, origin=(0, 0), shape=shape, dtype=np.float32, spacing=spacing, nbl=params.damping_cell_thickness, bcs="damp", fs=False)
+# true_model = SeismicModel(space_order=2, vp=true_velocity_model.T, origin=(0, 0), shape=shape, dtype=np.float32, spacing=spacing, nbl=params.damping_cell_thickness, bcs="damp", fs=False)
 current_model = SeismicModel(space_order=2, vp=initial_velocity_model.T, origin=(0, 0), shape=shape, dtype=np.float32, spacing=spacing, nbl=params.damping_cell_thickness, bcs="damp", fs=False)
-geometry = AcquisitionGeometry(true_model, receiver_locations, np.array([[0, 0]]), params.start_time, params.simulation_times, f0=params.source_frequency, src_type="Ricker")
-simulator = AcousticWaveSolver(true_model, geometry, space_order=4)
-grad_calculator = VelocityModelGradientCalculator(
-    true_model,
-    geometry,
-    simulator
-)
-
-# grad_calculator = FastParallelVelocityModelGradientCalculator(
-#     true_velocity_model,
-#     initial_velocity_model,
-#     shape,
-#     spacing,
-#     params.damping_cell_thickness,
-#     params.start_time,
-#     params.simulation_times,
-#     params.source_frequency,
-#     source_locations,
-#     receiver_locations
+# geometry = AcquisitionGeometry(true_model, receiver_locations, np.array([[0, 0]]), params.start_time, params.simulation_times, f0=params.source_frequency, src_type="Ricker")
+# simulator = AcousticWaveSolver(true_model, geometry, space_order=4)
+# grad_calculator = VelocityModelGradientCalculator(
+#     true_model,
+#     geometry,
+#     simulator
 # )
+
+grad_calculator = FastParallelVelocityModelGradientCalculator(FastParallelVelocityModelProps(
+    true_velocity_model,
+    initial_velocity_model,
+    shape,
+    spacing,
+    params.damping_cell_thickness,
+    params.start_time,
+    params.simulation_times,
+    params.source_frequency,
+    source_locations,
+    receiver_locations
+))
 print("initialized")
-
-# n_iters = 1000
-# for i in range(0, n_iters):
-#     residual_norm_sum, grad = grad_calculator.calc_grad(current_model.vp, source_locations)
-#     current_model.vp.data[:] -= 0.000001 * grad
-#     print(f"redisual norm sum {residual_norm_sum}")
-
-start_time = time.time()
 
 # l1_norm_weight = 1
 alpha = 220.07382
@@ -167,20 +159,24 @@ gamma2 = 0.0001
 residual_norm_sum_history = np.zeros(0)
 velocity_model_diff_history = np.zeros(0)
 
+dsize = params.damping_cell_thickness
+vm_shape = (params.real_cell_size[0] + dsize * 2, params.real_cell_size[1] + dsize * 2)
 v = current_model.vp.data.copy()
+# v = current_model.vp.data
 y = D(v)
 th = -1
 # try:
-print(v.shape)
+
+start_time = time.time()
 while True:
     th += 1
-    residual_norm_sum, grad = grad_calculator.calc_grad(current_model.vp, source_locations)
+    # residual_norm_sum, grad = grad_calculator.calc_grad(current_model.vp, source_locations)
     dsize = params.damping_cell_thickness
-    # residual_norm_sum, grad = grad_calculator.calc_grad(v[dsize:-dsize, dsize:-dsize])
+    residual_norm_sum, grad = grad_calculator.calc_grad(v)
 
     prev_v = v.copy()
 
-    v = v - gamma1 * grad
+    v[:] = v - gamma1 * grad
     # v[:] = v - gamma1 * (grad + Dt(y))
     # v[:] = prox_box_constraint(v, 1, 3)
     # y = y + gamma2 * D(2 * v - prev_v)
@@ -197,15 +193,19 @@ while True:
     print(
         f"iters: {th+1}, objective: {residual_norm_sum_history[th]: .1f} {"↓" if improved_objective else "↑"}, vm diff: {velocity_model_diff_history[th]: .3f} {"↓" if improved_vm_diff else "↑"}, psnr: {psnr(true_velocity_model, v_core, 3): .4f}"
     )
-    if th % 10 == 0:
-        show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=3, vmin=1)
-        if th != 0:
-            break
+    # if th % 10 == 0:
+        # show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=3, vmin=1)
+    if th == 100:
+        break
 # except:
     # current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     # filename = f"gamma1={gamma1},gamma2={gamma2},{current_time}.npz"
     # save_path = output_path.joinpath(filename)
     # np.savez(save_path, v, y, velocity_model_diff_history, residual_norm_sum_history)
 
+v_core = v[dsize:-dsize, dsize:-dsize].T
+show_velocity_model(v_core, title=f"Velocity model at iteration {10000}", vmax=3, vmin=1)
 
 print(f"elapsed: {time.time() - start_time}")
+# 子プロセスを解放
+del grad_calculator
