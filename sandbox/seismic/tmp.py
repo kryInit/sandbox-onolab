@@ -93,6 +93,8 @@ class Params(NamedTuple):
     n_receivers: int
 
 
+print("HI")
+
 params = Params(
     real_cell_size=Vec2D(101, 51),
     cell_meter_size=Vec2D(10.0, 10.0),
@@ -165,13 +167,16 @@ gamma2 = 0.0001
 residual_norm_sum_history = np.zeros(0)
 velocity_model_diff_history = np.zeros(0)
 
-v = initial_velocity_model.copy()
+v = grad_calculator.current_model.vp.data.copy()
 y = D(v)
 th = -1
 # try:
+print(v.shape)
 while True:
     th += 1
-    residual_norm_sum, grad = grad_calculator.calc_grad(v)
+    # residual_norm_sum, grad = grad_calculator.calc_grad(current_model.vp, source_locations)
+    dsize = params.damping_cell_thickness
+    residual_norm_sum, grad = grad_calculator.calc_grad(v[dsize:-dsize, dsize:-dsize])
 
     prev_v = v.copy()
 
@@ -181,7 +186,6 @@ while True:
     # y = y + gamma2 * D(2 * v - prev_v)
     # y = y - gamma2 * proj_fast_l1_ball(y / gamma2, alpha)
 
-    dsize = params.damping_cell_thickness
     v_core = v[dsize:-dsize, dsize:-dsize].T
 
     velocity_model_diff = v_core - true_velocity_model

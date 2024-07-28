@@ -32,6 +32,7 @@ devito = "^4.8.6"
 imageio = "^2.34.1"
 tqdm = "^4.66.4"
 joblib = "^1.4.2"
+pytest = "^8.3.2"
 
 
 [tool.poetry.group.dev.dependencies]
