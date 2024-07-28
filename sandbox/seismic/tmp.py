@@ -127,28 +127,28 @@ source_locations = np.array([[x, 30] for x in np.linspace(0, width, num=params.n
 receiver_locations = np.array([[x, 30] for x in np.linspace(0, width, num=params.n_receivers)])
 
 
-# true_model = SeismicModel(space_order=2, vp=true_velocity_model.T, origin=(0, 0), shape=shape, dtype=np.float32, spacing=spacing, nbl=params.damping_cell_thickness, bcs="damp", fs=False)
-# current_model = SeismicModel(space_order=2, vp=initial_velocity_model.T, origin=(0, 0), shape=shape, dtype=np.float32, spacing=spacing, nbl=params.damping_cell_thickness, bcs="damp", fs=False)
-# geometry = AcquisitionGeometry(true_model, receiver_locations, np.array([[0, 0]]), params.start_time, params.simulation_times, f0=params.source_frequency, src_type="Ricker")
-# simulator = AcousticWaveSolver(true_model, geometry, space_order=4)
-# grad_calculator = VelocityModelGradientCalculator(
-#     true_model,
-#     geometry,
-#     simulator
-# )
-
-grad_calculator = FastParallelVelocityModelGradientCalculator(
-    true_velocity_model,
-    initial_velocity_model,
-    shape,
-    spacing,
-    params.damping_cell_thickness,
-    params.start_time,
-    params.simulation_times,
-    params.source_frequency,
-    source_locations,
-    receiver_locations
+true_model = SeismicModel(space_order=2, vp=true_velocity_model.T, origin=(0, 0), shape=shape, dtype=np.float32, spacing=spacing, nbl=params.damping_cell_thickness, bcs="damp", fs=False)
+current_model = SeismicModel(space_order=2, vp=initial_velocity_model.T, origin=(0, 0), shape=shape, dtype=np.float32, spacing=spacing, nbl=params.damping_cell_thickness, bcs="damp", fs=False)
+geometry = AcquisitionGeometry(true_model, receiver_locations, np.array([[0, 0]]), params.start_time, params.simulation_times, f0=params.source_frequency, src_type="Ricker")
+simulator = AcousticWaveSolver(true_model, geometry, space_order=4)
+grad_calculator = VelocityModelGradientCalculator(
+    true_model,
+    geometry,
+    simulator
 )
+
+# grad_calculator = FastParallelVelocityModelGradientCalculator(
+#     true_velocity_model,
+#     initial_velocity_model,
+#     shape,
+#     spacing,
+#     params.damping_cell_thickness,
+#     params.start_time,
+#     params.simulation_times,
+#     params.source_frequency,
+#     source_locations,
+#     receiver_locations
+# )
 print("initialized")
 
 # n_iters = 1000
@@ -167,16 +167,16 @@ gamma2 = 0.0001
 residual_norm_sum_history = np.zeros(0)
 velocity_model_diff_history = np.zeros(0)
 
-v = grad_calculator.current_model.vp.data.copy()
+v = current_model.vp.data.copy()
 y = D(v)
 th = -1
 # try:
 print(v.shape)
 while True:
     th += 1
-    # residual_norm_sum, grad = grad_calculator.calc_grad(current_model.vp, source_locations)
+    residual_norm_sum, grad = grad_calculator.calc_grad(current_model.vp, source_locations)
     dsize = params.damping_cell_thickness
-    residual_norm_sum, grad = grad_calculator.calc_grad(v[dsize:-dsize, dsize:-dsize])
+    # residual_norm_sum, grad = grad_calculator.calc_grad(v[dsize:-dsize, dsize:-dsize])
 
     prev_v = v.copy()
 
