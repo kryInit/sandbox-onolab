@@ -1,7 +1,8 @@
-from multiprocessing import Queue, Process
-from multiprocessing.shared_memory import SharedMemory
-import numpy as np
 import time
+from multiprocessing import Process, Queue
+from multiprocessing.shared_memory import SharedMemory
+
+import numpy as np
 
 global_shape = (10,)
 shared_shape = (10,)
@@ -89,5 +90,5 @@ def main():
     print(f"elapsed: {time.time() - start_time}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,12 +1,9 @@
-from multiprocessing import Queue, Process
+from multiprocessing import Process, Queue
 from multiprocessing.shared_memory import SharedMemory
-from typing import List, Tuple, NamedTuple
-
-import joblib
+from typing import List, NamedTuple, Tuple
 
 import numpy as np
 import numpy.typing as npt
-from devito import set_log_level
 from devito import Eq, Function, Inc, Operator, TimeFunction, norm, solve
 from numpy.typing import NDArray
 
@@ -32,7 +29,7 @@ class FastParallelVelocityModelGradientCalculator:
         self.n_shots = len(props.source_locations)
 
         dsize = props.damping_cell_thickness
-        vm_shape = (props.shape[1] + dsize * 2, props.shape[0] + dsize * 2)
+        vm_shape = (props.shape[0] + dsize * 2, props.shape[1] + dsize * 2)
 
         self.velocity_model_shared_memory = SharedMemory(create=True, size=np.prod(vm_shape) * np.dtype(np.float32).itemsize)
         self.velocity_model = np.ndarray(vm_shape, dtype=np.float32, buffer=self.velocity_model_shared_memory.buf)
@@ -48,7 +45,7 @@ class FastParallelVelocityModelGradientCalculator:
             self.residual_norms.append(residual)
 
             grad_shared_memory = SharedMemory(create=True, size=np.prod(vm_shape) * np.dtype(np.float32).itemsize)
-            grad = np.ndarray((vm_shape[1], vm_shape[0]), dtype=np.float32, buffer=grad_shared_memory.buf)
+            grad = np.ndarray(vm_shape, dtype=np.float32, buffer=grad_shared_memory.buf)
             self.vm_grad_shared_memories.append(grad_shared_memory)
             self.vm_grads.append(grad)
 
@@ -56,7 +53,13 @@ class FastParallelVelocityModelGradientCalculator:
         self.output_queue = Queue()
 
         print("process initializing...")
-        self.processes = [Process(target=calc_grad_worker, args=(props, i, self.velocity_model_shared_memory.name, self.vm_grad_shared_memories[i].name, self.residual_norm_shared_memories[i].name, self.input_queue, self.output_queue)) for i in range(self.n_shots)]
+        self.processes = [
+            Process(
+                target=calc_grad_worker,
+                args=(props, i, self.velocity_model_shared_memory.name, self.vm_grad_shared_memories[i].name, self.residual_norm_shared_memories[i].name, self.input_queue, self.output_queue),
+            )
+            for i in range(self.n_shots)
+        ]
         for p in self.processes:
             p.start()
 
@@ -85,7 +88,7 @@ class FastParallelVelocityModelGradientCalculator:
             grad_shared_memory.unlink()
 
     def calc_grad(self, current_velocity_model: npt.NDArray) -> Tuple[float, NDArray[np.float32]]:
-        self.velocity_model[:] = current_velocity_model.T
+        self.velocity_model[:] = current_velocity_model
 
         for i in range(self.n_shots):
             self.input_queue.put(0)
@@ -103,26 +106,31 @@ class FastParallelVelocityModelGradientCalculator:
 
 
 def calc_grad_worker(
-        props: FastParallelVelocityModelProps,
-        idx: int,
-        velocity_model_shared_memory_name: str,
-        vm_grad_shared_memory_name: str,
-        residual_norm_shared_memory_name: str,
-        input_queue: Queue,
-        output_queue: Queue
+    props: FastParallelVelocityModelProps,
+    idx: int,
+    velocity_model_shared_memory_name: str,
+    vm_grad_shared_memory_name: str,
+    residual_norm_shared_memory_name: str,
+    input_queue: Queue,
+    output_queue: Queue,
 ):
-    vm_shape = (props.shape[1] + props.damping_cell_thickness*2, props.shape[0] + props.damping_cell_thickness*2)
+    vm_shape = (props.shape[0] + props.damping_cell_thickness * 2, props.shape[1] + props.damping_cell_thickness * 2)
 
     velocity_model_shared_memory = SharedMemory(name=velocity_model_shared_memory_name)
     velocity_model = np.ndarray(vm_shape, dtype=np.float32, buffer=velocity_model_shared_memory.buf)
 
     vm_grad_shared_memory = SharedMemory(name=vm_grad_shared_memory_name)
-    vm_grad = np.ndarray((vm_shape[1], vm_shape[0]), dtype=np.float32, buffer=vm_grad_shared_memory.buf)
+    vm_grad = np.ndarray(vm_shape, dtype=np.float32, buffer=vm_grad_shared_memory.buf)
 
     residual_norm_shared_memory = SharedMemory(name=residual_norm_shared_memory_name)
     residual_norm = np.ndarray(1, dtype=np.float32, buffer=residual_norm_shared_memory.buf)
 
     grad_calculator = FastParallelVelocityModelGradientCalculatorHelper(props, idx)
+
+    # velocity_modelの初期化を行う
+    # current_model.vp.dataを用いるのはdamping層込みの値で初期化したいから
+    if idx == 0:
+        velocity_model[:] = grad_calculator.current_model.vp.data
 
     # 初期化が終わったことを伝える
     output_queue.put(0)
@@ -145,8 +153,12 @@ def calc_grad_worker(
 
 class FastParallelVelocityModelGradientCalculatorHelper:
     def __init__(self, props: FastParallelVelocityModelProps, idx: int):
-        self.true_model = SeismicModel(space_order=2, vp=props.true_velocity_model.T, origin=(0, 0), shape=props.shape, dtype=np.float32, spacing=props.spacing, nbl=props.damping_cell_thickness, bcs="damp", fs=False)
-        self.current_model = SeismicModel(space_order=2, vp=props.initial_velocity_model.T, origin=(0, 0), shape=props.shape, dtype=np.float32, spacing=props.spacing, nbl=props.damping_cell_thickness, bcs="damp", fs=False)
+        self.true_model = SeismicModel(
+            space_order=2, vp=props.true_velocity_model, origin=(0, 0), shape=props.shape, dtype=np.float32, spacing=props.spacing, nbl=props.damping_cell_thickness, bcs="damp", fs=False
+        )
+        self.current_model = SeismicModel(
+            space_order=2, vp=props.initial_velocity_model, origin=(0, 0), shape=props.shape, dtype=np.float32, spacing=props.spacing, nbl=props.damping_cell_thickness, bcs="damp", fs=False
+        )
 
         self.geometry = AcquisitionGeometry(self.true_model, props.receiver_locations, np.array([[0, 0]]), props.start_time, props.end_time, f0=props.source_frequency, src_type="Ricker")
         self.geometry.src_positions[0][:] = props.source_locations[idx]
@@ -156,7 +168,6 @@ class FastParallelVelocityModelGradientCalculatorHelper:
         self.grad_operator = self._create_grad_op(self.true_model, self.geometry, self.simulator)
 
         self.observed_waveform = self._calc_true_observed_waveform(self.true_model, self.geometry, self.simulator)
-
 
     @classmethod
     def _create_grad_op(cls, true_model: SeismicModel, geometry: AcquisitionGeometry, solver: AcousticWaveSolver) -> Operator:
@@ -182,7 +193,7 @@ class FastParallelVelocityModelGradientCalculatorHelper:
         calculated_waveform = Receiver(name="d_syn", grid=self.true_model.grid, time_range=self.geometry.time_axis, coordinates=self.geometry.rec_positions)
 
         # 現在のvelocity modelの値をupdate
-        self.current_model.vp.data[:] = current_velocity_model.T
+        self.current_model.vp.data[:] = current_velocity_model
 
         # 現在のモデル: vp_in を用いて、計算データ波形(calculated_waveform)を計算
         _, calculated_wave_field, _ = self.simulator.forward(vp=self.current_model.vp, save=True, rec=calculated_waveform)
@@ -191,7 +202,7 @@ class FastParallelVelocityModelGradientCalculatorHelper:
         residual.data[:] = calculated_waveform.data - self.observed_waveform
 
         # 雑なobjective計算
-        objective = 0.5 * np.sum(np.abs(residual.data ** 2))
+        objective = 0.5 * np.sum(np.abs(residual.data**2))
 
         # ちゃんとしたobjective計算
         # objective = 0.5 * norm(residual) ** 2
@@ -199,4 +210,3 @@ class FastParallelVelocityModelGradientCalculatorHelper:
         self.grad_operator.apply(rec=residual, grad=grad, u=calculated_wave_field, dt=self.simulator.dt, vp=self.current_model.vp)
 
         return objective, -grad.data
-
