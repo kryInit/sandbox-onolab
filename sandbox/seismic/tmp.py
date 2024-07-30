@@ -1,6 +1,6 @@
-import datetime
-import os
+import signal
 import time
+from datetime import datetime
 from typing import NamedTuple, Tuple
 
 import numpy as np
@@ -11,11 +11,8 @@ from scipy.ndimage import gaussian_filter, zoom
 from lib.dataset import load_seismic_datasets__salt_and_overthrust_models
 from lib.misc import datasets_root_path, output_path
 from lib.model import Vec2D
-from lib.seismic.devito_example import AcquisitionGeometry, SeismicModel
-from lib.seismic.devito_example.acoustic import AcousticWaveSolver
-from lib.seismic.fast_parallel_velocity_model_gradient_calculator import FastParallelVelocityModelGradientCalculator, FastParallelVelocityModelProps
-from lib.seismic.velocity_model_gradient_calculator import VelocityModelGradientCalculator
-from lib.visualize.show_velocity_model import show_velocity_model
+from lib.seismic import FastParallelVelocityModelGradientCalculator, FastParallelVelocityModelProps
+from lib.visualize import show_velocity_model
 
 # devitoのlogの抑制
 set_log_level("WARNING")
@@ -109,14 +106,18 @@ def main():
     )
 
     seismic_data_path = datasets_root_path.joinpath("salt-and-overthrust-models/3-D_Salt_Model/VEL_GRIDS/Saltf@@")
-    data = load_seismic_datasets__salt_and_overthrust_models(seismic_data_path).transpose((1, 0, 2)).astype(np.float32) / 1500.0
+    data = load_seismic_datasets__salt_and_overthrust_models(seismic_data_path).transpose((1, 0, 2)).astype(np.float32) / 1000.0
 
     raw_true_velocity_model = data[300]
     true_velocity_model = zoom_and_crop(raw_true_velocity_model, (51, 101))
-    initial_velocity_model = smoothing_with_gaussian_filter(true_velocity_model, 10, 1)
+    initial_velocity_model = smoothing_with_gaussian_filter(true_velocity_model, 20, 1)
+
+    show_velocity_model(true_velocity_model, vmax=4.5, vmin=1.5, title="true velocity model")
+    show_velocity_model(initial_velocity_model, vmax=4.5, vmin=1.5, title="initial velocity model")
 
     shape = (params.real_cell_size.y, params.real_cell_size.x)
     spacing = (params.cell_meter_size.y, params.cell_meter_size.x)
+    dsize = params.damping_cell_thickness
 
     width = ((params.real_cell_size - Vec2D(1, 1)) * params.cell_meter_size).x
     source_locations = np.array([[30, x] for x in np.linspace(0, width, num=params.n_shots)])
@@ -137,6 +138,10 @@ def main():
         )
     )
 
+    algorithm = "pds"
+
+    assert algorithm == "pds" or algorithm == "gradient"
+
     # l1_norm_weight = 1
     alpha = 220.07382
     gamma1 = 0.00001
@@ -148,49 +153,54 @@ def main():
     v = grad_calculator.velocity_model.copy()
     y = D(v)
     th = -1
-    # try:
-
     start_time = time.time()
-    while True:
-        th += 1
-        dsize = params.damping_cell_thickness
-        residual_norm_sum, grad = grad_calculator.calc_grad(v)
+    try:
+        while True:
+            th += 1
+            residual_norm_sum, grad = grad_calculator.calc_grad(v)
 
-        # v = v - gamma1 * grad
+            if algorithm == "gradient":
+                v = v - gamma1 * grad
 
-        prev_v = v.copy()
-        v = v - gamma1 * (grad + Dt(y))
-        v = prox_box_constraint(v, 1, 3)
-        y = y + gamma2 * D(2 * v - prev_v)
-        y = y - gamma2 * proj_fast_l1_ball(y / gamma2, alpha)
+            elif algorithm == "pds":
+                prev_v = v.copy()
+                v = v - gamma1 * (grad + Dt(y))
+                v = prox_box_constraint(v, 1.5, 4.5)
+                y = y + gamma2 * D(2 * v - prev_v)
+                y = y - gamma2 * proj_fast_l1_ball(y / gamma2, alpha)
+
+            v_core = v[dsize:-dsize, dsize:-dsize]
+
+            velocity_model_diff = v_core - true_velocity_model
+            velocity_model_diff_history = np.append(velocity_model_diff_history, np.sum(velocity_model_diff * velocity_model_diff))
+            residual_norm_sum_history = np.append(residual_norm_sum_history, residual_norm_sum)
+
+            improved_objective = th == 0 or residual_norm_sum_history[th] < residual_norm_sum_history[th - 1]
+            improved_vm_diff = th == 0 or velocity_model_diff_history[th] < velocity_model_diff_history[th - 1]
+            print(
+                f"iters: {th+1}, objective: {residual_norm_sum_history[th]: .1f} {"↓" if improved_objective else "↑"}, vm diff: {velocity_model_diff_history[th]: .3f} {"↓" if improved_vm_diff else "↑"}, psnr: {psnr(true_velocity_model, v_core, 3): .4f}"
+            )
+            if (th + 1) % 100 == 0:
+                show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=4.5, vmin=1.5)
+    finally:
+        # ref: https://qiita.com/qualitia_cdev/items/f536002791671c6238e3
+        signal.signal(signal.SIGTERM, signal.SIG_IGN)
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+        current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        filename = f"gamma1={gamma1},gamma2={gamma2},{current_time}.npz"
+        save_path = output_path.joinpath(filename)
+        np.savez(save_path, v, y, velocity_model_diff_history, residual_norm_sum_history)
 
         v_core = v[dsize:-dsize, dsize:-dsize]
+        show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=4.5, vmin=1.5)
 
-        velocity_model_diff = v_core - true_velocity_model
-        velocity_model_diff_history = np.append(velocity_model_diff_history, np.sum(velocity_model_diff * velocity_model_diff))
-        residual_norm_sum_history = np.append(residual_norm_sum_history, residual_norm_sum)
+        print(f"elapsed: {time.time() - start_time}")
+        # 子プロセスを解放
+        del grad_calculator
 
-        improved_objective = th == 0 or residual_norm_sum_history[th] < residual_norm_sum_history[th - 1]
-        improved_vm_diff = th == 0 or velocity_model_diff_history[th] < velocity_model_diff_history[th - 1]
-        print(
-            f"iters: {th+1}, objective: {residual_norm_sum_history[th]: .1f} {"↓" if improved_objective else "↑"}, vm diff: {velocity_model_diff_history[th]: .3f} {"↓" if improved_vm_diff else "↑"}, psnr: {psnr(true_velocity_model, v_core, 3): .4f}"
-        )
-        # if th % 10 == 0:
-        # show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=3, vmin=1)
-        if th == 100:
-            break
-    # except:
-    # current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    # filename = f"gamma1={gamma1},gamma2={gamma2},{current_time}.npz"
-    # save_path = output_path.joinpath(filename)
-    # np.savez(save_path, v, y, velocity_model_diff_history, residual_norm_sum_history)
-
-    v_core = v[dsize:-dsize, dsize:-dsize]
-    show_velocity_model(v_core, title=f"Velocity model at iteration {10000}", vmax=3, vmin=1)
-
-    print(f"elapsed: {time.time() - start_time}")
-    # 子プロセスを解放
-    del grad_calculator
+        signal.signal(signal.SIGTERM, signal.SIG_DFL)
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 
 if __name__ == "__main__":
