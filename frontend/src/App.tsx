@@ -20,8 +20,7 @@ const centeringProps = {
 } as const;
 
 const fetchNpzFile = async (fileName: string): Promise<ArrayBuffer> => {
-    const baseUrl = `${window.location.origin}${window.location.pathname}`;
-    const targetUrl = `${baseUrl}data/${fileName}`;
+    const targetUrl = `${window.location.href}data/${fileName}`;
     const response = await fetch(targetUrl);
     if (!response.ok) {
         throw new Error("ファイルのダウンロードに失敗しました");
