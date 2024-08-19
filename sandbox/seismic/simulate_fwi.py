@@ -1,7 +1,7 @@
 import signal
 import time
 from datetime import datetime
-from typing import NamedTuple, Tuple
+from typing import NamedTuple, Tuple, Literal, Union
 from colorama import Fore, Style
 
 import numpy as np
@@ -62,7 +62,16 @@ class Params(NamedTuple):
     noise_sigma: float
 
 
-def main():
+class NesterovParams(NamedTuple):
+    prev_v: npt.NDArray
+    rho: float
+    gamma: float
+
+
+def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: Union[Literal['pds'], Literal['gradient'], Literal['gd_nesterov'], Literal['pds_nesterov']], gamma1: float, gamma2: float, parent_file_path: str | None):
+    if algorithm == "gradient" or algorithm == "gd_nesterov":
+        gamma2 = None
+
     params = Params(
         real_cell_size=Vec2D(101, 51),
         cell_meter_size=Vec2D(10.0, 10.0),
@@ -72,13 +81,14 @@ def main():
         simulation_times=1000,
         source_peek_time=100,
         source_frequency=0.01,
-        n_shots=10,
+        n_shots=n_shots,
         n_receivers=101,
-        noise_sigma=5
+        noise_sigma=noise_sigma
     )
 
     seismic_data_path = datasets_root_path.joinpath("salt-and-overthrust-models/3-D_Salt_Model/VEL_GRIDS/Saltf@@")
     data = load_seismic_datasets__salt_and_overthrust_models(seismic_data_path).transpose((1, 0, 2)).astype(np.float32) / 1000.0
+    assert 1.5 <= np.min(data) and np.max(data) <= 4.5
 
     raw_true_velocity_model = data[300]
     true_velocity_model = zoom_and_crop(raw_true_velocity_model, (51, 101))
@@ -111,21 +121,10 @@ def main():
         )
     )
 
-    # algorithm = "pds"
-    algorithm = "gradient"
-
-    assert algorithm == "pds" or algorithm == "gradient"
-
     # l1_norm_weight = 1
-    alpha = 220.07382
-    gamma1 = 1e-5
-    gamma2 = 0.002 if algorithm == 'pds' else None
+    alpha = np.sum(np.abs(diff_op.D(true_velocity_model)))
 
-    max_iters = 10000
-
-    saved_state_file_name = None
-    # saved_state_file_name = '2024-08-06_11-47-59,nshots=24,gamma1=1e-05,gamma2=None.npz'
-    if saved_state_file_name == None:
+    if parent_file_path is None:
         residual_norm_sum_history = []
         velocity_model_diff_history = []
         psnr_value_history = []
@@ -134,7 +133,7 @@ def main():
         y = diff_op.D(v)
         th = -1
     else:
-        saved_state = np.load(output_path.joinpath(saved_state_file_name))
+        saved_state = np.load(output_path.joinpath(parent_file_path))
         v = saved_state['arr_0']
         y = saved_state['arr_1']
         velocity_model_diff_history = list(saved_state['arr_2'])
@@ -142,14 +141,31 @@ def main():
         psnr_value_history = list(saved_state['arr_4'])
         th = len(residual_norm_sum_history) - 1
 
+    nesterov_params = NesterovParams(v.copy(), 1, 0)
+
     start_time = time.time()
     try:
         while True:
             th += 1
             residual_norm_sum, grad = grad_calculator.calc_grad(v)
 
+            if np.isnan(residual_norm_sum):
+                break
+
             if algorithm == "gradient":
                 v = v - gamma1 * grad
+
+            elif algorithm == "gd_nesterov":
+                tmp_v = v - gamma1 * grad
+
+                prev_v = nesterov_params.prev_v
+                next_prev_v = tmp_v.copy()
+                prev_rho = nesterov_params.rho
+                next_rho = (1 + (1 + 4 * prev_rho ** 2) ** 0.5) / 2
+                next_gamma = (prev_rho - 1) / nesterov_params.rho
+                nesterov_params = NesterovParams(next_prev_v, next_rho, next_gamma)
+
+                v = tmp_v + nesterov_params.gamma * (tmp_v - prev_v)
 
             elif algorithm == "pds":
                 prev_v = v.copy()
@@ -157,6 +173,25 @@ def main():
                 v = prox_box_constraint(v, 1.5, 4.5)
                 y = y + gamma2 * diff_op.D(2 * v - prev_v)
                 y = y - gamma2 * proj_fast_l1_ball(y / gamma2, alpha)
+
+            elif algorithm == "pds_nesterov":
+                prev_v_for_pds = v.copy()
+
+                tmp_v = v - gamma1 * (grad + diff_op.Dt(y))
+                tmp_v = prox_box_constraint(tmp_v, 1.5, 4.5)
+
+                y = y + gamma2 * diff_op.D(2 * tmp_v - prev_v_for_pds)
+                y = y - gamma2 * proj_fast_l1_ball(y / gamma2, alpha)
+
+                prev_v_for_nesterov = nesterov_params.prev_v
+                next_prev_v = tmp_v.copy()
+                prev_rho = nesterov_params.rho
+                next_rho = (1 + (1 + 4 * prev_rho ** 2) ** 0.5) / 2
+                next_gamma = (prev_rho - 1) / nesterov_params.rho
+                nesterov_params = NesterovParams(next_prev_v, next_rho, next_gamma)
+
+                v = tmp_v + nesterov_params.gamma * (tmp_v - prev_v_for_nesterov)
+
 
             v_core = v[dsize:-dsize, dsize:-dsize]
 
@@ -177,11 +212,11 @@ def main():
             rzj = f"{Fore.RED}{Style.BRIGHT}↓{Fore.RESET}{Style.RESET_ALL}"
 
             print(
-                f"iters: {th+1}, objective: {residual_norm_sum_history[th]: .1f} {gzj if improved_objective else rzk}, vm diff: {velocity_model_diff_history[th]: .3f} {gzj if improved_vm_diff else rzk}, psnr: {psnr_value: .4f} {gzk if improved_psnr else rzj}"
+                f"iters: {th+1}, objective: {residual_norm_sum_history[th]: .1f} {gzj if improved_objective else rzk}, vm diff: {velocity_model_diff_history[th]: .3f} {gzj if improved_vm_diff else rzk}, psnr: {psnr_value: .4f} {gzk if improved_psnr else rzj}, rho: {nesterov_params.rho: .4f}, gamma: {nesterov_params.gamma: .4f}"
             )
             # if (th + 1) % 100 == 0:
             #     show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=4.5, vmin=1.5)
-            if th == max_iters-1:
+            if th == max_n_iters-1:
                 break
 
     finally:
@@ -190,7 +225,7 @@ def main():
         signal.signal(signal.SIGINT, signal.SIG_IGN)
 
         current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        filename = f"{current_time},nshots={params.n_shots},gamma1={gamma1},gamma2={gamma2},niters={th+1},sigma={params.noise_sigma}.npz"
+        filename = f"{current_time},{algorithm},nshots={params.n_shots},gamma1={gamma1},gamma2={gamma2},niters={th+1},sigma={params.noise_sigma},.npz"
         save_path = output_path.joinpath(filename)
         np.savez(save_path, v, y, np.array(velocity_model_diff_history), np.array(residual_norm_sum_history), np.array(psnr_value_history))
 
@@ -206,4 +241,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    simulate_fwi(10000, 24, 0, "pds_nesterov", 1e-5, 10, None)
+    simulate_fwi(10000, 24, 1, "pds_nesterov", 1e-5, 10, None)
+    simulate_fwi(100000, 24, 0, "gradient", 1e-5, 0, None)
+    simulate_fwi(100000, 24, 0, "pds", 1e-5, 10, None)
+
+
+
+    # simulate_fwi(60000, 24, 1, "pds", 1e-5, 0.01, '2024-08-09_01-50-11,nshots=24,gamma1=1e-05,gamma2=0.01,niters=30000,sigma=1.npz')
+

@@ -75,6 +75,19 @@ class VelocityModelGradientCalculator:
             self.solver.forward(vp=self.true_model.vp, rec=observed_waveform)
 
             true_observed_waveforms.append(observed_waveform.data[:].copy())
+
+            import sys
+            s = true_observed_waveforms[-1]
+            plt.imshow(s, extent=(0, 10, 0, 10))
+            plt.show()
+            plt.imshow(s + np.random.normal(0, 1, s.shape), extent=(0, 10, 0, 10))
+            plt.show()
+            plt.imshow(gaussian_filter(s + np.random.normal(0, 1, s.shape), sigma=1), extent=(0, 10, 0, 10))
+            plt.show()
+            print(psnr(s, s + np.random.normal(0, 1, s.shape), np.max(s)))
+            print(psnr(s, gaussian_filter(s + np.random.normal(0, 1, s.shape), sigma=1), np.max(s)))
+            sys.exit(-1)
+
         return true_observed_waveforms
 
     def calc_grad(self, params: Params, current_velocity_model: Function, source_locations: NDArray[np.float64]) -> Tuple[float, Function]:
@@ -174,7 +187,7 @@ def main():
 
     # plot_velocity_model(seismic_data[:, th] / 1000, vmin=1.5, vmax=5)
     # plot_velocity(true_model)
-    plot_velocity_model(true_model.vp.data[dsize:-dsize, dsize:-dsize].T, vmin=1.5, vmax=5)
+    # plot_velocity_model(true_model.vp.data[dsize:-dsize, dsize:-dsize].T, vmin=1.5, vmax=5)
     # plot_velocity_model(current_model.vp.data[dsize:-dsize, dsize:-dsize].T, vmin=1.5, vmax=5)
 
     # src_coordinates = np.array([[30, true_model.domain_size[1] * 0.5]])

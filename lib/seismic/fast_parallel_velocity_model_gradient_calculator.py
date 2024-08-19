@@ -4,8 +4,9 @@ from typing import List, NamedTuple, Tuple
 
 import numpy as np
 import numpy.typing as npt
-from devito import Eq, Function, Inc, Operator, TimeFunction, norm, solve
+from devito import Eq, Function, Inc, Operator, TimeFunction, solve, norm
 from numpy.typing import NDArray
+from scipy.ndimage import gaussian_filter
 
 from lib.seismic.devito_example import AcquisitionGeometry, Receiver, SeismicModel
 from lib.seismic.devito_example.acoustic import AcousticWaveSolver
@@ -22,6 +23,7 @@ class FastParallelVelocityModelProps(NamedTuple):
     source_frequency: float
     source_locations: npt.NDArray
     receiver_locations: npt.NDArray
+    noise_sigma: float
 
 
 class FastParallelVelocityModelGradientCalculator:
@@ -167,7 +169,14 @@ class FastParallelVelocityModelGradientCalculatorHelper:
 
         self.grad_operator = self._create_grad_op(self.true_model, self.geometry, self.simulator)
 
-        self.observed_waveform = self._calc_true_observed_waveform(self.true_model, self.geometry, self.simulator)
+        self.observed_waveform = self._calc_true_observed_waveform(self.true_model, self.geometry, self.simulator, props.noise_sigma)
+
+        self.noise_sigma = props.noise_sigma
+
+    @classmethod
+    def _add_gauss_noise(cls, observed_waveform_data: npt.NDArray[np.float32], sigma: float) -> npt.NDArray[np.float32]:
+        noise = np.random.normal(0, sigma, observed_waveform_data.shape)
+        return observed_waveform_data + noise
 
     @classmethod
     def _create_grad_op(cls, true_model: SeismicModel, geometry: AcquisitionGeometry, solver: AcousticWaveSolver) -> Operator:
@@ -182,10 +191,10 @@ class FastParallelVelocityModelGradientCalculatorHelper:
         return Operator(eqns + rec_term + [gradient_update], subs=true_model.spacing_map, name="Gradient")
 
     @classmethod
-    def _calc_true_observed_waveform(cls, true_model: SeismicModel, geometry: AcquisitionGeometry, simulator: AcousticWaveSolver) -> List[NDArray]:
+    def _calc_true_observed_waveform(cls, true_model: SeismicModel, geometry: AcquisitionGeometry, simulator: AcousticWaveSolver, noise_sigma: float) -> NDArray:
         observed_waveform = Receiver(name="d_obs", grid=true_model.grid, time_range=geometry.time_axis, coordinates=geometry.rec_positions)
         simulator.forward(vp=true_model.vp, rec=observed_waveform)
-        return observed_waveform.data.copy()
+        return cls._add_gauss_noise(observed_waveform.data.copy(), noise_sigma)
 
     def calc_grad(self, current_velocity_model: npt.NDArray) -> Tuple[float, NDArray[np.float32]]:
         grad = Function(name="grad", grid=self.true_model.grid)
@@ -197,6 +206,7 @@ class FastParallelVelocityModelGradientCalculatorHelper:
 
         # 現在のモデル: vp_in を用いて、計算データ波形(calculated_waveform)を計算
         _, calculated_wave_field, _ = self.simulator.forward(vp=self.current_model.vp, save=True, rec=calculated_waveform)
+        calculated_waveform.data[:] = calculated_waveform.data
 
         # 観測データと計算データの残差を計算
         residual.data[:] = calculated_waveform.data - self.observed_waveform
