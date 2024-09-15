@@ -1,62 +1,30 @@
-import React, { createContext, useContext, useEffect, useState, useRef, useMemo } from "react";
-import { SelfBuildingSquareSpinner } from "react-epic-spinners";
-import { Button, Checkbox, FluentProvider, Input, makeStyles, shorthands, Text, tokens, webLightTheme } from "@fluentui/react-components";
-import { PythonRunner, usePythonRunner } from "./python-runner/PythonRunner.ts";
-import { SetupStatus } from "./python-runner/pyodide-worker/PyodideWorkerInterface.ts";
-import { ReactiveDiv } from "./components/ReactiveDiv.tsx";
+import React, {createContext, useContext, useEffect, useMemo, useRef, useState} from "react";
+import {
+    Button,
+    Checkbox,
+    FluentProvider,
+    Input,
+    makeStyles,
+    shorthands,
+    Text,
+    tokens,
+    webLightTheme
+} from "@fluentui/react-components";
+import {PythonRunner, usePythonRunner} from "./python-runner/PythonRunner.ts";
+import {ReactiveDiv} from "./components/ReactiveDiv.tsx";
 
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
-import { DataAttributes } from "./DataAttribute.ts";
-
-const centeringProps = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100%",
-    width: "100%",
-} as const;
-
-const fetchNpzFile = async (fileName: string): Promise<ArrayBuffer> => {
-    const targetUrl = `${window.location.href}data/${fileName}`;
-    const response = await fetch(targetUrl);
-    if (!response.ok) {
-        throw new Error("ファイルのダウンロードに失敗しました");
-    }
-    return await response.arrayBuffer();
-};
-
-const LoadingScreen = ({ message }: { message: SetupStatus | string }) => {
-    const MessageComponent = () =>
-        typeof message === "string" ? (
-            <Text>{message}</Text>
-        ) : (
-            <Text>
-                <Text style={{ fontFamily: "Menlo" }}>{message.target}</Text>
-                {message.type === "initialize" ? "を初期化しています..." : "を読み込んでいます..."}
-            </Text>
-        );
-
-    return (
-        <div
-            style={{
-                ...centeringProps,
-                gap: "10px",
-                backgroundColor: "gray",
-            }}
-        >
-            <SelfBuildingSquareSpinner color={"black"} />
-            <MessageComponent />
-        </div>
-    );
-};
+import {DataAttributes} from "./fwi-result-data/DataAttribute.ts";
+import {fetchFWIResultNpz} from "./fwi-result-data/fetchFWIResultNpz.ts";
+import {centeringProps} from "./utils/generalStyles.ts";
+import {LoadingScreen} from "./components/LoadingScreen.tsx";
 
 const loadData = async (pythonRunner: PythonRunner, filePaths: string[]): Promise<number[][][] | null> => {
     if (!pythonRunner.status.isAvailable) return null;
 
-    const npzBuffers = await Promise.all(filePaths.map(fetchNpzFile));
+    const npzBuffers = await Promise.all(filePaths.map(fetchFWIResultNpz));
 
     return await pythonRunner.exec<"npzBuffers", number[][][]>(
         ["npzBuffers"],
@@ -171,13 +139,13 @@ const Chart: React.FC<ChartProps> = React.memo(({ yLogScale, title, tickInterval
     );
 });
 
-type ResultChartProps = {
+type FWIResultChartProps = {
     rowAttrs: DataRowAttribute[];
     setRowAttrs: React.Dispatch<React.SetStateAction<DataRowAttribute[]>>;
     filterRowAttr: (rowAttr: DataRowAttribute) => boolean;
 };
 
-const ResultChart: React.FC<ResultChartProps> = ({ rowAttrs, setRowAttrs, filterRowAttr }) => {
+const FWIResultChart: React.FC<FWIResultChartProps> = ({ rowAttrs, setRowAttrs, filterRowAttr }) => {
     const startTime = useMemo(() => performance.now(), []);
     const [psnrChartLines, setPsnrChartLines] = useState<ChartLine[] | null>(null);
     const [objectiveChartLines, setObjectiveChartLines] = useState<ChartLine[] | null>(null);
@@ -752,7 +720,7 @@ const App: React.FC = () => {
                         <DataSummaryPanel rowAttrs={rowAttrs} setRowAttrs={setRowAttrs} setFilterRowAttr={setFilterRowAttr} />
                     </div>
                     <div style={{ width: "65%", height: "100%" }}>
-                        <ResultChart rowAttrs={rowAttrs} setRowAttrs={setRowAttrs} filterRowAttr={filterRowAttr} />
+                        <FWIResultChart rowAttrs={rowAttrs} setRowAttrs={setRowAttrs} filterRowAttr={filterRowAttr} />
                     </div>
                 </div>
             </div>
