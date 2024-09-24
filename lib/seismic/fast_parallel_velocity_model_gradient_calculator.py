@@ -24,6 +24,7 @@ class FastParallelVelocityModelProps(NamedTuple):
     source_locations: npt.NDArray
     receiver_locations: npt.NDArray
     noise_sigma: float
+    n_jobs: int
 
 
 class FastParallelVelocityModelGradientCalculator:
@@ -36,20 +37,10 @@ class FastParallelVelocityModelGradientCalculator:
         self.velocity_model_shared_memory = SharedMemory(create=True, size=np.prod(vm_shape) * np.dtype(np.float32).itemsize)
         self.velocity_model = np.ndarray(vm_shape, dtype=np.float32, buffer=self.velocity_model_shared_memory.buf)
 
-        self.residual_norm_shared_memories = []
-        self.vm_grad_shared_memories = []
-        self.residual_norms = []
-        self.vm_grads = []
-        for i in range(self.n_shots):
-            residual_shared_memory = SharedMemory(create=True, size=1 * np.dtype(np.float32).itemsize)
-            residual = np.ndarray(1, dtype=np.float32, buffer=residual_shared_memory.buf)
-            self.residual_norm_shared_memories.append(residual_shared_memory)
-            self.residual_norms.append(residual)
-
-            grad_shared_memory = SharedMemory(create=True, size=np.prod(vm_shape) * np.dtype(np.float32).itemsize)
-            grad = np.ndarray(vm_shape, dtype=np.float32, buffer=grad_shared_memory.buf)
-            self.vm_grad_shared_memories.append(grad_shared_memory)
-            self.vm_grads.append(grad)
+        self.residual_norm_shared_memories = SharedMemory(create=True, size=self.n_shots * np.dtype(np.float32).itemsize)
+        self.vm_grad_shared_memories = SharedMemory(create=True, size=self.n_shots * np.prod(vm_shape) * np.dtype(np.float32).itemsize)
+        self.residual_norms = np.ndarray(self.n_shots, dtype=np.float32, buffer=self.residual_norm_shared_memories.buf)
+        self.vm_grads = np.ndarray((self.n_shots, vm_shape[0], vm_shape[1]), dtype=np.float32, buffer=self.vm_grad_shared_memories.buf)
 
         self.input_queue = Queue()
         self.output_queue = Queue()
@@ -58,7 +49,7 @@ class FastParallelVelocityModelGradientCalculator:
         self.processes = [
             Process(
                 target=calc_grad_worker,
-                args=(props, i, self.velocity_model_shared_memory.name, self.vm_grad_shared_memories[i].name, self.residual_norm_shared_memories[i].name, self.input_queue, self.output_queue),
+                args=(props, i, self.velocity_model_shared_memory.name, self.vm_grad_shared_memories.name, self.residual_norm_shared_memories.name, self.input_queue, self.output_queue),
             )
             for i in range(self.n_shots)
         ]
@@ -80,20 +71,16 @@ class FastParallelVelocityModelGradientCalculator:
 
         self.velocity_model_shared_memory.close()
         self.velocity_model_shared_memory.unlink()
-
-        for residual_norm in self.residual_norm_shared_memories:
-            residual_norm.close()
-            residual_norm.unlink()
-
-        for grad_shared_memory in self.vm_grad_shared_memories:
-            grad_shared_memory.close()
-            grad_shared_memory.unlink()
+        self.residual_norm_shared_memories.close()
+        self.residual_norm_shared_memories.unlink()
+        self.vm_grad_shared_memories.close()
+        self.vm_grad_shared_memories.unlink()
 
     def calc_grad(self, current_velocity_model: npt.NDArray) -> Tuple[float, NDArray[np.float32]]:
         self.velocity_model[:] = current_velocity_model
 
         for i in range(self.n_shots):
-            self.input_queue.put(0)
+            self.input_queue.put(i)
 
         for _ in range(self.n_shots):
             self.output_queue.get()
@@ -101,7 +88,7 @@ class FastParallelVelocityModelGradientCalculator:
         objective = 0
         grad_value = np.zeros_like(current_velocity_model)
         for i in range(self.n_shots):
-            objective += self.residual_norms[i][0]
+            objective += self.residual_norms[i]
             grad_value += self.vm_grads[i]
 
         return objective, grad_value
@@ -116,16 +103,17 @@ def calc_grad_worker(
     input_queue: Queue,
     output_queue: Queue,
 ):
+    n_shots = len(props.source_locations)
     vm_shape = (props.shape[0] + props.damping_cell_thickness * 2, props.shape[1] + props.damping_cell_thickness * 2)
 
     velocity_model_shared_memory = SharedMemory(name=velocity_model_shared_memory_name)
     velocity_model = np.ndarray(vm_shape, dtype=np.float32, buffer=velocity_model_shared_memory.buf)
 
     vm_grad_shared_memory = SharedMemory(name=vm_grad_shared_memory_name)
-    vm_grad = np.ndarray(vm_shape, dtype=np.float32, buffer=vm_grad_shared_memory.buf)
+    vm_grad = np.ndarray((n_shots, vm_shape[0], vm_shape[1]), dtype=np.float32, buffer=vm_grad_shared_memory.buf)
 
     residual_norm_shared_memory = SharedMemory(name=residual_norm_shared_memory_name)
-    residual_norm = np.ndarray(1, dtype=np.float32, buffer=residual_norm_shared_memory.buf)
+    residual_norm = np.ndarray(n_shots, dtype=np.float32, buffer=residual_norm_shared_memory.buf)
 
     grad_calculator = FastParallelVelocityModelGradientCalculatorHelper(props, idx)
 
@@ -144,8 +132,8 @@ def calc_grad_worker(
 
         residual_norm_sum, grad = grad_calculator.calc_grad(velocity_model)
 
-        vm_grad[:] = grad
-        residual_norm[0] = residual_norm_sum
+        vm_grad[idx] = grad
+        residual_norm[idx] = residual_norm_sum
 
         output_queue.put(0)
 
