@@ -73,7 +73,7 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
         gamma2 = None
 
     params = Params(
-        real_cell_size=Vec2D(101, 51),
+        real_cell_size=Vec2D(150, 65),
         cell_meter_size=Vec2D(10.0, 10.0),
         damping_cell_thickness=40,
         start_time=0,
@@ -82,20 +82,53 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
         source_peek_time=100,
         source_frequency=0.01,
         n_shots=n_shots,
-        n_receivers=101,
+        n_receivers=151,
         noise_sigma=noise_sigma
     )
 
+    vmax, vmin = 4.5, 1.5
+    # vmax, vmin = 5.8, 2
+
+
     seismic_data_path = datasets_root_path.joinpath("salt-and-overthrust-models/3-D_Salt_Model/VEL_GRIDS/Saltf@@")
-    data = load_seismic_datasets__salt_and_overthrust_models(seismic_data_path).transpose((1, 0, 2)).astype(np.float32) / 1000.0
-    assert 1.5 <= np.min(data) and np.max(data) <= 4.5
+    seismic_data = load_seismic_datasets__salt_and_overthrust_models(seismic_data_path).transpose((1, 0, 2)).astype(np.float32) / 1000.0
+    assert 1.5 <= np.min(seismic_data) and np.max(seismic_data) <= 4.5
 
-    raw_true_velocity_model = data[300]
-    true_velocity_model = zoom_and_crop(raw_true_velocity_model, (51, 101))
-    initial_velocity_model = smoothing_with_gaussian_filter(true_velocity_model, 20, 1)
+    raw_true_velocity_model = seismic_data[300]
+    true_velocity_model = zoom_and_crop(raw_true_velocity_model, (65, 150))
+    initial_velocity_model = zoom_and_crop(smoothing_with_gaussian_filter(seismic_data[300], 1, 80), (65, 150))
 
-    show_velocity_model(true_velocity_model, vmax=4.5, vmin=1.5, title="true velocity model")
-    show_velocity_model(initial_velocity_model, vmax=4.5, vmin=1.5, title="initial velocity model")
+    # seismic_data_path = datasets_root_path.joinpath("salt-and-overthrust-models/3-D_Overthrust_Model_Disk1/3D-Velocity-Grid/overthrust.vites")
+    # nx, ny, nz = 801, 801, 187
+    # with open(seismic_data_path, "r") as file:
+    #     vel = np.fromfile(file, dtype=np.dtype("float32").newbyteorder(">"))
+    #     vel = vel.reshape(nx, ny, nz, order="F")
+    #     vel = np.asarray(vel, dtype=float)
+    #     vel = np.flip(vel, 2)
+    #     seismic_data = np.transpose(vel, (2, 1, 0))
+    #     seismic_data[:] = seismic_data[::-1]
+    #
+    # # true_velocity_model = zoom_and_crop(seismic_data[:, 444], (70, 70)) / 1000
+    # true_velocity_model = zoom_and_crop(seismic_data[:-50, 444, 100:], (65, 150)) / 1000
+    # # true_velocity_model = zoom_and_crop(seismic_data[:-50, 444, 100:], (500, 1000)) / 1000
+
+    # seismic_data_path = datasets_root_path.joinpath("salt-and-overthrust-models/3-D_Salt_Model/VEL_GRIDS/Saltf@@")
+    # data = load_seismic_datasets__salt_and_overthrust_models(seismic_data_path).transpose((1, 0, 2)).astype(np.float32) / 1000.0
+    # assert 1.5 <= np.min(data) and np.max(data) <= 4.5
+
+    # raw_true_velocity_model = data[300]
+    # true_velocity_model = zoom_and_crop(raw_true_velocity_model, (51, 70))
+
+    # seismic_data_path = datasets_root_path.joinpath("open-fwi/tmp/model1.npy")
+    # true_velocity_model = np.load(seismic_data_path)[0, 0] / 1000
+    # initial_velocity_model = smoothing_with_gaussian_filter(true_velocity_model, 20, 1)
+    # initial_velocity_model = zoom_and_crop(smoothing_with_gaussian_filter(seismic_data, 1, 80)[:-50, 444, 100:], (65, 150)) / 1000
+
+    show_velocity_model(true_velocity_model, vmax=vmax, vmin=vmin, title="true velocity model")
+    show_velocity_model(initial_velocity_model, vmax=vmax, vmin=vmin, title="initial velocity model")
+
+    # import sys
+    # sys.exit(-1)
 
     shape = (params.real_cell_size.y, params.real_cell_size.x)
     spacing = (params.cell_meter_size.y, params.cell_meter_size.x)
@@ -117,7 +150,8 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
             params.source_frequency,
             source_locations,
             receiver_locations,
-            params.noise_sigma
+            params.noise_sigma,
+            15
         )
     )
 
@@ -170,7 +204,7 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
             elif algorithm == "pds":
                 prev_v = v.copy()
                 v = v - gamma1 * (grad + diff_op.Dt(y))
-                v = prox_box_constraint(v, 1.5, 4.5)
+                v = prox_box_constraint(v, vmin, vmax)
                 y = y + gamma2 * diff_op.D(2 * v - prev_v)
                 y = y - gamma2 * proj_fast_l1_ball(y / gamma2, alpha)
 
@@ -178,7 +212,7 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
                 prev_v_for_pds = v.copy()
 
                 tmp_v = v - gamma1 * (grad + diff_op.Dt(y))
-                tmp_v = prox_box_constraint(tmp_v, 1.5, 4.5)
+                tmp_v = prox_box_constraint(tmp_v, vmin, vmax)
 
                 y = y + gamma2 * diff_op.D(2 * tmp_v - prev_v_for_pds)
                 y = y - gamma2 * proj_fast_l1_ball(y / gamma2, alpha)
@@ -196,7 +230,7 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
             v_core = v[dsize:-dsize, dsize:-dsize]
 
             velocity_model_diff = v_core - true_velocity_model
-            psnr_value = calc_psnr(true_velocity_model, v_core, 4.5)
+            psnr_value = calc_psnr(true_velocity_model, v_core, vmax)
 
             velocity_model_diff_history.append(np.sum(velocity_model_diff * velocity_model_diff))
             residual_norm_sum_history.append(residual_norm_sum)
@@ -215,7 +249,7 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
                 f"iters: {th+1}, objective: {residual_norm_sum_history[th]: .1f} {gzj if improved_objective else rzk}, vm diff: {velocity_model_diff_history[th]: .3f} {gzj if improved_vm_diff else rzk}, psnr: {psnr_value: .4f} {gzk if improved_psnr else rzj}, rho: {nesterov_params.rho: .4f}, gamma: {nesterov_params.gamma: .4f}"
             )
             # if (th + 1) % 100 == 0:
-            #     show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=4.5, vmin=1.5)
+            #     show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin)
             if th == max_n_iters-1:
                 break
 
@@ -227,10 +261,10 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
         current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         filename = f"{current_time},{algorithm},nshots={params.n_shots},gamma1={gamma1},gamma2={gamma2},niters={th+1},sigma={params.noise_sigma},.npz"
         save_path = output_path.joinpath(filename)
-        np.savez(save_path, v, y, np.array(velocity_model_diff_history), np.array(residual_norm_sum_history), np.array(psnr_value_history))
+        # np.savez(save_path, v, y, np.array(velocity_model_diff_history), np.array(residual_norm_sum_history), np.array(psnr_value_history))
 
         v_core = v[dsize:-dsize, dsize:-dsize]
-        show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=4.5, vmin=1.5)
+        show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin)
 
         print(f"elapsed: {time.time() - start_time}")
         # 子プロセスを解放
@@ -241,10 +275,7 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
 
 
 if __name__ == "__main__":
-    simulate_fwi(10000, 24, 0, "pds_nesterov", 1e-5, 10, None)
-    simulate_fwi(10000, 24, 1, "pds_nesterov", 1e-5, 10, None)
-    simulate_fwi(100000, 24, 0, "gradient", 1e-5, 0, None)
-    simulate_fwi(100000, 24, 0, "pds", 1e-5, 10, None)
+    simulate_fwi(100000, 15, 0, "pds", 1e-4, 100, None)
 
 
 

@@ -76,17 +76,17 @@ class VelocityModelGradientCalculator:
 
             true_observed_waveforms.append(observed_waveform.data[:].copy())
 
-            import sys
-            s = true_observed_waveforms[-1]
-            plt.imshow(s, extent=(0, 10, 0, 10))
-            plt.show()
-            plt.imshow(s + np.random.normal(0, 1, s.shape), extent=(0, 10, 0, 10))
-            plt.show()
-            plt.imshow(gaussian_filter(s + np.random.normal(0, 1, s.shape), sigma=1), extent=(0, 10, 0, 10))
-            plt.show()
-            print(psnr(s, s + np.random.normal(0, 1, s.shape), np.max(s)))
-            print(psnr(s, gaussian_filter(s + np.random.normal(0, 1, s.shape), sigma=1), np.max(s)))
-            sys.exit(-1)
+            # import sys
+            # s = true_observed_waveforms[-1]
+            # plt.imshow(s, extent=(0, 10, 0, 10))
+            # plt.show()
+            # plt.imshow(s + np.random.normal(0, 1, s.shape), extent=(0, 10, 0, 10))
+            # plt.show()
+            # plt.imshow(gaussian_filter(s + np.random.normal(0, 1, s.shape), sigma=1), extent=(0, 10, 0, 10))
+            # plt.show()
+            # print(psnr(s, s + np.random.normal(0, 1, s.shape), np.max(s)))
+            # print(psnr(s, gaussian_filter(s + np.random.normal(0, 1, s.shape), sigma=1), np.max(s)))
+            # sys.exit(-1)
 
         return true_observed_waveforms
 
@@ -97,6 +97,13 @@ class VelocityModelGradientCalculator:
         objective = 0.0
 
         observed_waveforms = self._calc_true_observed_waveforms(params, source_locations)
+        # import matplotlib.pyplot as plt
+        # print(observed_waveforms[0].shape)
+        # for i in range(len(observed_waveforms)):
+        #     plt.imshow(observed_waveforms[i], extent=(0, 1, 0, 1))
+        #     plt.show()
+        # import sys
+        # sys.exit(-1)
 
         for i in range(params.n_shots):
             self.geometry.src_positions[0, :] = source_locations[i, :]
