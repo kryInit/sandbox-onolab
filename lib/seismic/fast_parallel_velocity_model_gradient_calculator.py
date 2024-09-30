@@ -27,7 +27,7 @@ class FastParallelVelocityModelProps(NamedTuple):
     n_jobs: int
 
 # FIXME
-time_length = 906
+time_length = 791
 
 class FastParallelVelocityModelGradientCalculator:
     def __init__(self, props: FastParallelVelocityModelProps):

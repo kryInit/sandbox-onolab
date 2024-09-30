@@ -8,13 +8,16 @@ import numpy as np
 import numpy.typing as npt
 from devito import set_log_level
 from scipy.ndimage import gaussian_filter, zoom
+from skimage.metrics import structural_similarity as ssim
+
 
 from lib.dataset import load_seismic_datasets__salt_and_overthrust_models
 from lib.misc import datasets_root_path, output_path
 from lib.model import Vec2D
 from lib.seismic import FastParallelVelocityModelGradientCalculator, FastParallelVelocityModelProps
+from lib.signal_processing.norm import L12_norm
 import lib.signal_processing.diff_operator as diff_op
-from lib.signal_processing.proximal_operator import proj_fast_l1_ball, prox_box_constraint
+from lib.signal_processing.proximal_operator import proj_fast_l1_ball, prox_box_constraint, proj_L12_norm_ball
 from lib.visualize import show_velocity_model
 
 # devitoのlogの抑制
@@ -68,12 +71,12 @@ class NesterovParams(NamedTuple):
     gamma: float
 
 
-def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: Union[Literal['pds'], Literal['gradient'], Literal['gd_nesterov'], Literal['pds_nesterov']], gamma1: float, gamma2: float, parent_file_path: str | None):
+def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: Union[Literal['pds'], Literal['gradient'], Literal['gd_nesterov'], Literal['pds_nesterov'], Literal['pds_with_L12norm']], gamma1: float, gamma2: float, parent_file_path: str | None):
     if algorithm == "gradient" or algorithm == "gd_nesterov":
         gamma2 = None
 
     params = Params(
-        real_cell_size=Vec2D(150, 65),
+        real_cell_size=Vec2D(100, 50),
         cell_meter_size=Vec2D(10.0, 10.0),
         damping_cell_thickness=40,
         start_time=0,
@@ -82,7 +85,7 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
         source_peek_time=100,
         source_frequency=0.01,
         n_shots=n_shots,
-        n_receivers=151,
+        n_receivers=101,
         noise_sigma=noise_sigma
     )
 
@@ -95,8 +98,8 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
     assert 1.5 <= np.min(seismic_data) and np.max(seismic_data) <= 4.5
 
     raw_true_velocity_model = seismic_data[300]
-    true_velocity_model = zoom_and_crop(raw_true_velocity_model, (65, 150))
-    initial_velocity_model = zoom_and_crop(smoothing_with_gaussian_filter(seismic_data[300], 1, 80), (65, 150))
+    true_velocity_model = zoom_and_crop(raw_true_velocity_model,  (params.real_cell_size.y, params.real_cell_size.x))
+    initial_velocity_model = zoom_and_crop(smoothing_with_gaussian_filter(seismic_data[300], 1, 80),  (params.real_cell_size.y, params.real_cell_size.x))
 
     # seismic_data_path = datasets_root_path.joinpath("salt-and-overthrust-models/3-D_Overthrust_Model_Disk1/3D-Velocity-Grid/overthrust.vites")
     # nx, ny, nz = 801, 801, 187
@@ -108,25 +111,12 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
     #     seismic_data = np.transpose(vel, (2, 1, 0))
     #     seismic_data[:] = seismic_data[::-1]
     #
-    # # true_velocity_model = zoom_and_crop(seismic_data[:, 444], (70, 70)) / 1000
-    # true_velocity_model = zoom_and_crop(seismic_data[:-50, 444, 100:], (65, 150)) / 1000
-    # # true_velocity_model = zoom_and_crop(seismic_data[:-50, 444, 100:], (500, 1000)) / 1000
+    # true_velocity_model = zoom_and_crop(seismic_data[:-50, 444, 100:], (params.real_cell_size.y, params.real_cell_size.x)) / 1000
+    # initial_velocity_model = zoom_and_crop(smoothing_with_gaussian_filter(seismic_data[:, 444], 1, 80)[:-50, 100:], (params.real_cell_size.y, params.real_cell_size.x)) / 1000
 
-    # seismic_data_path = datasets_root_path.joinpath("salt-and-overthrust-models/3-D_Salt_Model/VEL_GRIDS/Saltf@@")
-    # data = load_seismic_datasets__salt_and_overthrust_models(seismic_data_path).transpose((1, 0, 2)).astype(np.float32) / 1000.0
-    # assert 1.5 <= np.min(data) and np.max(data) <= 4.5
-
-    # raw_true_velocity_model = data[300]
-    # true_velocity_model = zoom_and_crop(raw_true_velocity_model, (51, 70))
-
-    # seismic_data_path = datasets_root_path.joinpath("open-fwi/tmp/model1.npy")
-    # true_velocity_model = np.load(seismic_data_path)[0, 0] / 1000
-    # initial_velocity_model = smoothing_with_gaussian_filter(true_velocity_model, 20, 1)
-    # initial_velocity_model = zoom_and_crop(smoothing_with_gaussian_filter(seismic_data, 1, 80)[:-50, 444, 100:], (65, 150)) / 1000
-
-    show_velocity_model(true_velocity_model, vmax=vmax, vmin=vmin, title="true velocity model")
-    show_velocity_model(initial_velocity_model, vmax=vmax, vmin=vmin, title="initial velocity model")
-
+    # show_velocity_model(true_velocity_model, vmax=vmax, vmin=vmin, title="true velocity model", cmap='coolwarm')
+    # show_velocity_model(initial_velocity_model, vmax=vmax, vmin=vmin, title="initial velocity model", cmap='coolwarm')
+    #
     # import sys
     # sys.exit(-1)
 
@@ -151,20 +141,22 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
             source_locations,
             receiver_locations,
             params.noise_sigma,
-            15
+            20
         )
     )
 
     # l1_norm_weight = 1
-    alpha = np.sum(np.abs(diff_op.D(true_velocity_model)))
+    alpha = (np.sum(np.abs(diff_op.D(true_velocity_model))) if algorithm != "pds_with_L12norm" else L12_norm(diff_op.D(true_velocity_model))) / 2
+    print(np.sum(np.abs(diff_op.D(true_velocity_model))), L12_norm(diff_op.D(true_velocity_model)), alpha)
 
     if parent_file_path is None:
         residual_norm_sum_history = []
         velocity_model_diff_history = []
         psnr_value_history = []
+        ssim_value_history = []
 
         v = grad_calculator.velocity_model.copy()
-        y = diff_op.D(v)
+        y = diff_op.D(v[dsize:-dsize, dsize:-dsize])
         th = -1
     else:
         saved_state = np.load(output_path.joinpath(parent_file_path))
@@ -173,6 +165,7 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
         velocity_model_diff_history = list(saved_state['arr_2'])
         residual_norm_sum_history = list(saved_state['arr_3'])
         psnr_value_history = list(saved_state['arr_4'])
+        ssim_value_history = list(saved_state['arr_5'])
         th = len(residual_norm_sum_history) - 1
 
     nesterov_params = NesterovParams(v.copy(), 1, 0)
@@ -203,10 +196,22 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
 
             elif algorithm == "pds":
                 prev_v = v.copy()
-                v = v - gamma1 * (grad + diff_op.Dt(y))
-                v = prox_box_constraint(v, vmin, vmax)
-                y = y + gamma2 * diff_op.D(2 * v - prev_v)
+                tmp = grad.copy()
+                tmp[dsize:-dsize, dsize:-dsize] += diff_op.Dt(y)
+                v = v - gamma1 * tmp
+                v[dsize:-dsize, dsize:-dsize] = prox_box_constraint(v[dsize:-dsize, dsize:-dsize], vmin, vmax)
+                y = y + gamma2 * diff_op.D(2 * v[dsize:-dsize, dsize:-dsize] - prev_v[dsize:-dsize, dsize:-dsize])
                 y = y - gamma2 * proj_fast_l1_ball(y / gamma2, alpha)
+
+            elif algorithm == "pds_with_L12norm":
+                prev_v = v.copy()
+
+                tmp = grad.copy()
+                tmp[dsize:-dsize, dsize:-dsize] += diff_op.Dt(y)
+                v = v - gamma1 * tmp
+                v[dsize:-dsize, dsize:-dsize] = prox_box_constraint(v[dsize:-dsize, dsize:-dsize], vmin, vmax)
+                y = y + gamma2 * diff_op.D(2 * v[dsize:-dsize, dsize:-dsize] - prev_v[dsize:-dsize, dsize:-dsize])
+                y = y - gamma2 * proj_L12_norm_ball(y / gamma2, alpha)
 
             elif algorithm == "pds_nesterov":
                 prev_v_for_pds = v.copy()
@@ -231,25 +236,39 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
 
             velocity_model_diff = v_core - true_velocity_model
             psnr_value = calc_psnr(true_velocity_model, v_core, vmax)
+            ssim_value = ssim(true_velocity_model, v_core, data_range=vmax - vmin)
 
             velocity_model_diff_history.append(np.sum(velocity_model_diff * velocity_model_diff))
             residual_norm_sum_history.append(residual_norm_sum)
             psnr_value_history.append(psnr_value)
+            ssim_value_history.append(ssim_value)
 
             improved_objective = th == 0 or residual_norm_sum_history[th] < residual_norm_sum_history[th - 1]
             improved_vm_diff = th == 0 or velocity_model_diff_history[th] < velocity_model_diff_history[th - 1]
             improved_psnr = th == 0 or psnr_value_history[th] > psnr_value_history[th - 1]
+            improved_ssim = th == 0 or ssim_value_history[th] > ssim_value_history[th - 1]
 
             gzk = f"{Fore.GREEN}{Style.BRIGHT}↑{Fore.RESET}{Style.RESET_ALL}"
             gzj = f"{Fore.GREEN}{Style.BRIGHT}↓{Fore.RESET}{Style.RESET_ALL}"
             rzk = f"{Fore.RED}{Style.BRIGHT}↑{Fore.RESET}{Style.RESET_ALL}"
             rzj = f"{Fore.RED}{Style.BRIGHT}↓{Fore.RESET}{Style.RESET_ALL}"
 
+            current_diff = np.sum(np.abs(diff_op.D(v_core))) if algorithm != "pds_with_L12norm" else L12_norm(diff_op.D(v_core))
+
             print(
-                f"iters: {th+1}, objective: {residual_norm_sum_history[th]: .1f} {gzj if improved_objective else rzk}, vm diff: {velocity_model_diff_history[th]: .3f} {gzj if improved_vm_diff else rzk}, psnr: {psnr_value: .4f} {gzk if improved_psnr else rzj}, rho: {nesterov_params.rho: .4f}, gamma: {nesterov_params.gamma: .4f}"
+                f"iters: {th+1}, "
+                f"objective: {residual_norm_sum_history[th]: .1f} {gzj if improved_objective else rzk}, "
+                f"vm diff: {velocity_model_diff_history[th]: .3f} {gzj if improved_vm_diff else rzk}, "
+                f"psnr: {psnr_value: .4f} {gzk if improved_psnr else rzj}, "
+                f"ssim: {ssim_value: .4f} {gzk if improved_ssim else rzj}, "
+                f"rho: {nesterov_params.rho: .4f}, "
+                f"gamma: {nesterov_params.gamma: .4f}, "
+                f"diff: {current_diff: .4f}, "
             )
-            # if (th + 1) % 100 == 0:
-            #     show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin)
+            # show_velocity_model(grad[dsize:-dsize, dsize:-dsize], title=f"Velocity model at iteration {th + 1}", cmap='coolwarm')
+            if (th + 1) % 1000 == 0:
+                # show_velocity_model(v, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
+                show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
             if th == max_n_iters-1:
                 break
 
@@ -261,10 +280,10 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
         current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         filename = f"{current_time},{algorithm},nshots={params.n_shots},gamma1={gamma1},gamma2={gamma2},niters={th+1},sigma={params.noise_sigma},.npz"
         save_path = output_path.joinpath(filename)
-        # np.savez(save_path, v, y, np.array(velocity_model_diff_history), np.array(residual_norm_sum_history), np.array(psnr_value_history))
+        np.savez(save_path, v, y, np.array(velocity_model_diff_history), np.array(residual_norm_sum_history), np.array(psnr_value_history), np.array(ssim_value_history))
 
         v_core = v[dsize:-dsize, dsize:-dsize]
-        show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin)
+        show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
 
         print(f"elapsed: {time.time() - start_time}")
         # 子プロセスを解放
@@ -275,7 +294,10 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
 
 
 if __name__ == "__main__":
-    simulate_fwi(100000, 15, 0, "pds", 1e-4, 100, None)
+    # simulate_fwi(2000, 20, 0, "pds_with_L12norm", 1e-4, 100, None)
+    # simulate_fwi(5000, 20, 0, "gradient", 1e-4, 100, None)
+    simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None)
+    # simulate_fwi(2000, 20, 0, "gradient", 1e-4, 100, None)
 
 
 
