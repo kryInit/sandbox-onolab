@@ -1,0 +1,13 @@
+Full waveform inversion (FWI)\cite{FWI}は、観測seismic dataから地下構造を再構築することを目的としている.
+観測seismic dataは地下構造から生成されるため逆問題であるが、不良設定であり、解の質は初期値に依存する.
+その問題を解決するためにTikhonov regularization\cite{tikhonov}やTotal Variation (TV)\cite{TV}, Total Generalized Variation (TGV)\cite{TGV}が適用されてきた.
+TV, directional TV, high order TV, TGVを正則化として使用するもの\cite{FWI-with-TV-regularization,FWI-with-directional-TV-regularization,FWI-with-high-order-TV-regularization,FWI-with-TGV-regularization}, TVを制約として使用するもの\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2}が提案されている.
+\{制約と正則化を比較し、制約の利点について述べる, 基本的にはバランスパラメータの調整に対するものになりそう(値の設定が直感的, n shots, ノイズの大きさに依存せず、地下情報のみの事前知識で決定できる(本当？))\}\cite{constraints-vs-penalties-in-FWI}
+TV制約をFWIに適用する従来手法\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2}では準ニュートン法(L-BFGS法)を用いて通常のFWIの目的関数を最適化する際、制約を満たすようにパラメータの変更分を計算する.
+ここで、制約を満たすような変更分を計算するために別の最適化が必要であり、二重ループとなり計算コストが高い.
+また、制約を導入する過程で線形ではない変換を線形として捉える, 使用する最適化手法の外側で制約を強制するなどの近似を使用している.
+本稿では〜
+
+
+
+

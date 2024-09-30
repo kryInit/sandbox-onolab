@@ -1,0 +1,211 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% 信号処理シンポジウム用 LaTeX Style
+%
+% 使い方：
+%
+% \documentstyle[sips,10pt]{jarticle}  % for LaTeX 2.09 users
+%
+% \documentclass[10pt]{jarticle}       % for LaTeX2e users
+% \usepackage{sips}
+% \usepackage{latexsym}
+% \usepackage[dvips]{graphicx}
+%
+%% もし本文が英文ならば，日本語のタイトルと著者は不要です．
+%% その場合，下記の \OnlyEnglishtrue を有効にしてください．
+%% 英語のタイトルと著者のみを表示します．
+%% ただし，\jtitle, \jauthor, \jaddressの行は削字しないでくだ
+%% さい．
+%
+%%\OnlyEnglishtrue
+%
+% \jtitle{...}          % 和文タイトル
+% \etitle{...}          % 英文タイトル
+% \jauthor{...}         % 和文氏名
+% \eauthor{...}         % 英文氏名
+% \jaddress{....}       % 和文所属
+% \eaddress{....}       % 英文所属
+%
+% \begin{document}
+% \maketitle
+%
+% \begin{summary}
+%   ここに 300 字程度でアブストラクトを書いてください．
+% \end{summary}
+%
+% \section{...}
+%  \subsection{...}
+%   \subsubsection{...}
+%
+% \section{...}
+% .
+% .
+% .
+% \begin{thebibliography}{99}
+% \bibitem{...}
+% \bibitem{...}
+%    .
+%    .
+%    .
+% \end{thebibliography}
+%
+% \end{document}
+%
+
+%-----------------------------------------------------------------
+% マージンの設定（変更禁止）
+%-----------------------------------------------------------------
+\setlength{\columnsep}{5mm}
+\setlength{\textwidth}{176mm}
+\setlength{\textheight}{244mm}
+\addtolength{\topmargin}{-20mm}
+\addtolength{\oddsidemargin}{-30mm}
+\addtolength{\evensidemargin}{-30mm}
+%-----------------------------------------------------------------
+% タイトル部
+%-----------------------------------------------------------------
+\newif\ifOnlyEnglish
+%\OnlyEnglishtrue
+
+\def\jtitle#1{\gdef\@jtitle{#1}}        % Japanese Title
+\def\jauthor#1{\gdef\@jauthor{#1}}      % Japanese Authors
+\def\jaddress#1{\gdef\@jaddress{#1}}    % Japanese Address
+\def\etitle#1{\gdef\@etitle{#1}}        % English Title
+\def\eauthor#1{\gdef\@eauthor{#1}}      % English Authors
+\def\eaddress#1{\gdef\@eaddress{#1}}    % English Address
+%
+\def\maketitle{
+\twocolumn[
+\begin{center}%
+\ifOnlyEnglish%
+\else% OnlyEnglish
+{\LARGE \bf \@jtitle \par} \vskip 0.0em%    % JTitle
+\fi% OnlyEnglish
+{\large \bf \@etitle \par} \vskip 1.5em%    % ETitle
+\ifOnlyEnglish%
+\else %OnlyEnglish%
+{\large \lineskip .5em \begin{tabular}[t]{c} \@jauthor \end{tabular}\par%
+\@jaddress \par}
+\vskip 1.5em%
+\fi %OnlyEnglish%
+{\large \lineskip .5em \begin{tabular}[t]{c} \@eauthor \end{tabular}\par%
+\@eaddress \par}
+\end{center} \par%
+\vskip 1.5em
+]
+\sloppy \flushbottom
+\parindent 1.0em
+
+\leftmargini 2.6em \leftmargin\leftmargini
+\leftmarginv .5em \leftmarginvi .5em
+\thispagestyle{empty}
+\pagestyle{empty}
+}
+%-----------------------------------------------------------------
+% Section
+%-----------------------------------------------------------------
+\def\section{\@startsection {section}{1}
+  {\z@}{1.5ex plus 0.5ex minus .2ex}
+  {1.0ex plus 0.3ex minus .2ex}
+  {\normalsize\bf}}
+\def\subsection{\@startsection{subsection}{2}
+  {\z@}{1.5ex plus 0.2ex minus .2ex}
+  {0.8ex plus .2ex}{\normalsize\bf\raggedright}}
+\def\subsubsection{\@startsection{subsubsection}{3}
+  {\z@}{1ex plus 0.5ex minus .2ex}
+  {0.8ex plus .2ex}{\normalsize\bf\raggedright}}
+
+%-----------------------------------------------------------------
+% アブストラクト
+%-----------------------------------------------------------------
+\newenvironment{summary}{\noindent
+{\bf アブストラクト}\hskip1pc}{\par}
+
+%-----------------------------------------------------------------
+% from fleqn.sty
+%-----------------------------------------------------------------
+
+\def\[{\relax\ifmmode\@badmath\else
+\parsep 4pt plus 2pt minus 1pt
+\topsep 8pt plus 2pt minus 4pt
+\itemsep 4pt plus 2pt minus 1pt
+\begin{trivlist}\item[]\leavevmode
+ \hbox to\linewidth\bgroup$ \displaystyle
+ \hskip\mathindent\bgroup\fi}
+\def\]{\relax\ifmmode \egroup $\hfil \egroup \end{trivlist}\else \@badmath \fi}
+
+\def\equation{\refstepcounter{equation}
+\parsep 4pt plus 2pt minus 1pt
+\topsep 8pt plus 2pt minus 4pt
+\itemsep 4pt plus 2pt minus 1pt
+\trivlist \item[]\leavevmode
+ \hbox to\linewidth\bgroup $ \displaystyle
+\hskip\mathindent}
+\def\endequation{$\hfil \displaywidth\linewidth\@eqnnum\egroup \endtrivlist}
+
+\def\eqnarray{\stepcounter{equation}
+\parsep 4pt plus 2pt minus 1pt
+\topsep 8pt plus 2pt minus 4pt
+\itemsep 4pt plus 2pt minus 1pt
+\let\@currentlabel=\theequation
+\global\@eqnswtrue
+\global\@eqcnt\z@\tabskip\mathindent\let\\=\@eqncr
+\abovedisplayskip\topsep\ifvmode\advance\abovedisplayskip\partopsep\fi
+\belowdisplayskip\abovedisplayskip
+\belowdisplayshortskip\abovedisplayskip
+\abovedisplayshortskip\abovedisplayskip
+$$\halign to
+\linewidth\bgroup\@eqnsel\hskip\@centering$\displaystyle\tabskip\z@
+ {##}$&\global\@eqcnt\@ne \hskip .8\arraycolsep \hfil${##}$\hfil
+ &\global\@eqcnt\tw@ \hskip .8\arraycolsep $\displaystyle{##}$\hfil
+ \tabskip\@centering&\llap{##}\tabskip\z@\cr}
+\def\endeqnarray{\@@eqncr\egroup
+ \global\advance\c@equation\m@ne$$\global\@ignoretrue }
+\newdimen\mathindent
+\mathindent = 1zw
+
+\def\@eqnnum{(\theequation)\hspace*{3mm}}
+
+%-----------------------------------------------------------------
+% \cite コマンド ieice.sty から
+%-----------------------------------------------------------------
+\newcount\@minsofar
+\newcount\@min
+\newcount\@cite@temp
+\def\@citex[#1]#2{%
+\if@filesw \immediate \write \@auxout {\string \citation {#2}}\fi
+\@tempcntb\m@ne \let\@h@ld\relax \def\@citea{}%
+\@min\m@ne%
+\@cite{%
+  \@for \@citeb:=#2\do {\@ifundefined {b@\@citeb}%
+    {\@h@ld\@citea\@tempcntb\m@ne{\bf ?}%
+    \@warning {Citation `\@citeb ' on page \thepage \space undefined}}%
+{\@minsofar\z@ \@for \@scan@cites:=#2\do {%
+  \@ifundefined{b@\@scan@cites}%
+    {\@cite@temp\m@ne}
+    {\@cite@temp\number\csname b@\@scan@cites \endcsname \relax}%% <
+\ifnum\@cite@temp > \@min% select the next one to list
+    \ifnum\@minsofar = \z@
+      \@minsofar\number\@cite@temp
+      \edef\@scan@copy{\@scan@cites}\else
+    \ifnum\@cite@temp < \@minsofar %% >
+      \@minsofar\number\@cite@temp
+      \edef\@scan@copy{\@scan@cites}\fi\fi\fi}\@tempcnta\@min %% <
+  \ifnum\@minsofar > \z@ % some more
+    \advance\@tempcnta\@ne
+    \@min\@minsofar
+    \ifnum\@tempcnta=\@minsofar %   Number follows previous--hold on to it
+      \ifx\@h@ld\relax
+        \edef \@h@ld{\@citea\csname b@\@scan@copy\endcsname}%
+      \else
+%       \edef\@h@ld{\ifmmode{]〜[}\else]〜[\fi\csname b@\@scan@copy\endcsname}%
+       \edef\@h@ld{\ifmmode{]-[}\else]--[\fi\csname b@\@scan@copy\endcsname}%
+       \fi
+    \else \@h@ld\@citea\csname b@\@scan@copy\endcsname
+          \let\@h@ld\relax
+  \fi % no more
+\fi}%
+\def\@citea{],\penalty\@highpenalty\,[}}\@h@ld}{#1}}
+%-----------------------------------------------------------------
+% End
+%-----------------------------------------------------------------

@@ -1,0 +1,38 @@
+\subsection{Mathematical Tools}\label{subsec:mathematical-tools}
+$\vecx \in \realNumber^{\intN \times \intM}$ に対してL1,2ノルムは以下のように定義されます
+\begin{equation} \label{eq:L12NormDefinitionEq} \LOneTwoNormDefinition \notag \end{equation}
+$\vecx \in \realNumber^{\intN}$ に対してTV\cite{TV}は以下のように定義されます
+\begin{equation} \label{eq:TVDefinitionEq} \TotalVariationDefinition \notag \end{equation}
+fに対するconvex conjugate functionは以下のように定義されます
+\begin{equation} \label{eq:ConjugateFunctionDefinitionEq} \conjugateFunctionDefinition \notag \end{equation}
+indicator functionは以下のように定義されます
+\begin{equation} \label{eq:IndicatorFunctionDefinitionEq} \indicatorFunctionDefinition \notag \end{equation}
+proximity operatorは$f$, $\gamma$に対して以下のように定義されます
+\begin{equation} \label{eq:ProximityOperatorDefinitionEq} \proximityOperatorDefinition \notag \end{equation}
+indicator functionに対するproximity operatorは以下のように求められます.
+\begin{equation} \label{eq:ProximityOperatorDefinitionWithIndicatorFunctionEq}
+\proximityOperator{ \gamma \indicatorFunction{C}{\cdot} }{\vecx} = P_C(\vecx) \coloneq \argmin{\vecy \in C} \LTwoNorm{\vecy - \vecx}
+\notag
+\end{equation}
+box constraintに対するproximity operatorは以下のように求められます.
+\begin{equation} \label{eq:ProximityOperatorForBoxConstraint} \proximityOperatorForBoxConstraint \notag \end{equation}
+凸共役関数に対するproximity operatorは以下のように求められます.
+\begin{equation} \label{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq} \proximityOperatorDefinitionWithConvexConjugateFunction \notag \end{equation}
+L1ノルムの上界制約に対するproximity operatorは以下のように求められます\cite{L1-ball-projection}(同論文内で計算量的により高速なアルゴリズムも提案されています).
+\begin{equation} \label{eq:ProximityOperatorForL1Ball} \projLOneBall \notag \end{equation}
+L12ノルムの上界制約に対するproximity operatorは以下のように求められます\cite{L12-ball-projection}.
+\begin{equation} \label{eq:ProximityOperatorForL12Ball} \projLOneTwoBall \notag \end{equation}
+
+\subsection{Primal-Dual Splitting Algorithm}\label{subsec:primal-dual-splitting-algorithm}
+Primal-Dual Splitting Algorithm\cite{PDS}は以下の問題に対して適用されます
+\begin{equation} \label{eq:PDSPrimalEq} \PDSPrimal \notag \end{equation}
+PDSでは、以下の更新を反復的に行うことで解を求めます
+\begin{equation} \label{eq:PDSSubStepX} \PDSSubStepX \notag \end{equation}
+\begin{equation} \label{eq:PDSSubStepY} \PDSSubStepY \notag \end{equation}
+
+\subsection{Full Waveform Inversion}\label{subsec:full-waveform-inversion}
+
+FWIの目的関数以下のように定義されます
+\begin{equation} \label{eq:FWIObjective} E(\velModel) = \FWIObjective \end{equation}
+ここで、$\seismicData_{\mathrm{obs}}$は観測された地震データ、$\seismicData_{\mathrm{cal}(\velModel)}$は速度モデル$\velModel$に対する計算された地震データです。
+また、FWIの勾配はadjoint state methodを用いて計算可能です\cite{FWI-gradient}.

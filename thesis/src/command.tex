@@ -1,0 +1,72 @@
+% vec
+\newcommand{\vecx}{\bm{x}}
+\newcommand{\vecy}{\bm{y}}
+
+% utils
+\newcommand{\argmax}[1]{\underset{#1}{\mathrm{argmax}}}
+\newcommand{\argmin}[1]{\underset{#1}{\mathrm{argmin}}}
+\newcommand{\minimize}[1]{\underset{#1}{\mathrm{min}}}
+\newcommand{\maximize}[1]{\underset{#1}{\mathrm{min}}}
+\newcommand{\LOneNorm}[1]{\lVert #1 \rVert _1}
+\newcommand{\LTwoNorm}[1]{\lVert #1 \rVert _2}
+\newcommand{\LOneTwoNorm}[1]{\lVert #1 \rVert _{1,2}}
+\newcommand{\TV}[1]{\mathrm{TV}(#1)}
+\newcommand{\realNumber}{\mathbb{R}}
+\newcommand{\intN}{\mathrm{N}}
+\newcommand{\intM}{\mathrm{M}}
+
+\newcommand{\LOneTwoNormDefinition}{\LOneTwoNorm{\vecx} \coloneq  \sum_{\mathfrak{g} \in \mathfrak{G}} \LTwoNorm{\vecx_\mathfrak{g}}}
+\newcommand{\TotalVariationDefinition}{\TV{\vecx} \coloneq \LOneTwoNorm{\diffOperator \vecx} = \sum_{i=1}^{\intN} \sqrt{d_{h,i}^2 + d_{v,i}^2}}
+\newcommand{\conjugateFunctionDefinition}{f^*(\vecy) \coloneq \sup_{\vecx} \left\{ \vecx^T \vecy - f(\vecx) \right\}}
+
+% indicator function
+\newcommand{\indicatorFunction}[2]{\iota_{#1}(#2)}
+\newcommand{\indicatorFunctionDefinition}{\indicatorFunction{C}{\vecx} \coloneq \begin{cases} 0 & \text{if } \vecx \in C \\ \infty & \text{otherwise} \end{cases} }
+
+% proximity operator
+\newcommand{\proximityOperator}[2]{\mathrm{prox}_{#1}(#2)}
+\newcommand{\proximityOperatorDefinition}{\proximityOperator{ \gamma f }{\vecx} := \argmin{\vecy \in \realNumber^N} \left\{ f(\vecy) + \frac{1}{2 \gamma} \LTwoNorm{\vecy - \vecx}^2 \right\}}
+\newcommand{\proximityOperatorDefinitionWithConvexConjugateFunction}{\proximityOperator{ \gamma f^* }{\vecx} = \vecx - \gamma \proximityOperator{ f / \gamma }{\vecx / \gamma} }
+\newcommand{\proximityOperatorForBoxConstraint}{ P_{[a,b]^N}({\vecx}) = \text{min}( \text{max} (\vecx, a), b) }
+\newcommand{\projLOneTwoBall}{
+    \begin{aligned}
+        & P_{ \{ \bm a \mid \LOneTwoNorm{ \bm a } \le \alpha \} }({\vecx}) = [ \bm p_1^T, \ldots, \bm p_N^T ]^T \\
+        & \ \ \ \ \text{with} \ \  \begin{aligned}
+            & \bm p_i = \begin{cases}
+                0                                              & \text{if} \ \LTwoNorm{\vecx_i} = 0 \\
+                \bm \beta_i \frac {\vecx_i} {\LTwoNorm{\vecx}} & \text{otherwise}
+            \end{cases} \\
+            & \bm \beta = P_{ \{ \bm a \mid \LOneNorm{ \bm a } \le \alpha \} }({[ \LTwoNorm{ \vecx_1^T }, \ldots, \LTwoNorm{ \vecx_N^T } ]}) \\
+        \end{aligned}
+    \end{aligned}
+}
+
+\newcommand{\projLOneBall}{
+    \begin{aligned}
+        & P_{ \{ \bm a \mid \LOneNorm{ \bm a } \le \alpha \} }({\vecx}) = \text{SoftThrethold}(\vecx, \beta)  \\
+        & \ \ \ \ \text{with} \ \  \begin{aligned}
+            & \bm x_{\text{abs}} = \text{abs}(\vecx) \\
+            & \bm y              = \text{sort}_{\text{desc}}(\vecx_{\text{abs}}) \\
+            & \beta'             = \text{max} \{ \frac 1 i ((\sum_{j=1}^i \bm y_j) - \alpha) \mid i = 1, \ldots, N \} \\
+            & \beta              = \text{max} \{ \beta', 0 \} \\
+        \end{aligned}
+    \end{aligned}
+}
+
+% Primal-Dual Splitting
+\newcommand{\PDSPrimal}{\minimize { \vecx \in \realNumber^N } \left\{ f(\vecx) + g(\vecx) + h(\bm{L} \vecx) \right\} }
+\newcommand{\PDSDual}{\minimize { \vecy \in \realNumber^M } \left\{ (f+g)^*(-\bm{L}^T \vecy) + h^*(\vecy) \right\} }
+\newcommand{\PDSSubStepX}{\vecx^{(k+1)} = \proximityOperator{\gamma_1 g}{\vecx^{(k)} - \gamma_1( \nabla f(\vecx^{(k)}) + \bm{L}^T \vecy^{(k)} )}}
+\newcommand{\PDSSubStepY}{\vecy^{(k+1)} = \proximityOperator{\gamma_2 h^*}{\vecy^{(k)} + \gamma_2 \bm{L} (2\vecx^{(k+1)} - \vecx^{(k)}) }}
+
+% seismic + related proposed method
+\newcommand{\diffOperator}{\mathbf{D}}
+\newcommand{\velModel}{\bm{m}}
+\newcommand{\seismicData}{\bm{u}}
+
+% FWI objective
+\newcommand{\FWIObjective}{ \frac {1} {2} \LTwoNorm { \seismicData_{\mathrm{obs}} - \seismicData_{\mathrm{cal}(\velModel)} }^2 }
+\newcommand{\FWIObjectiveWithTVConstraint}{ \FWIObjective \ \ \ \text{s.t.} \ \ \TV{\velModel} \le \alpha \ , \ \velModel_{i,j} \in [a,b] }
+\newcommand{\FWIObjectiveWithTVConstraintWithIndicatorFunction}{ \FWIObjective + \indicatorFunction{\LOneTwoNorm{\cdot} \le \alpha}{\diffOperator \velModel} + \indicatorFunction{[a,b]}{\velModel} }
+\newcommand{\FWIGradient}{  }
+

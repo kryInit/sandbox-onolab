@@ -4,5 +4,7 @@ __pycache__
 /output
 .idea
 .venv
+/thesis/out/*
+!/thesis/out/main.pdf
 
 .DS_Store

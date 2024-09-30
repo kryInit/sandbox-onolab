@@ -1,0 +1,75 @@
+%
+%  信号処理シンポジウム用テンプレート
+%
+
+\documentclass[10pt]{jarticle}
+\usepackage{sips}
+\usepackage{bm}
+\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+%\usepackage[dvips]{graphicx}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{setspace} % 行間調整のためのパッケージ
+
+\input{src/command}
+
+% もし本文が英文ならば，日本語のタイトルと著者は不要です．
+% その場合，下記の \OnlyEnglishtrue を有効にしてください．
+% 英語のタイトルと著者のみを表示します．
+% ただし，\jtitle, \jauthor, \jaddressの行は削字しないでくだ
+% さい．
+
+\OnlyEnglishtrue
+
+\jtitle{信号処理シンポジウム}
+
+\etitle{Efficient Full Waveform Inversion Subject To A Total Variation Constraint}
+
+\jauthor{
+}
+
+\eauthor{
+  Yudai INADA, Shingo TAKEMOTO and Shunsuke ONO
+}
+
+\jaddress{
+}
+
+\eaddress{
+  Institute of Science Tokyo
+}
+
+\begin{document}
+\maketitle
+
+\input{src/0-summary}
+
+\section{Introduction}\label{sec:Introduction}
+\input{src/1-introduction}
+
+\section{PRELIMINARIES}\label{sec:Preliminaries}
+\input{src/2-preliminaries}
+
+\section{Proposed Method}\label{sec:ProposedMethod}
+\input{src/3-proposed-method}
+
+\section{EXPERIMENTS}\label{sec:Experiments}
+\input{src/4-experiments}
+
+\begin{spacing}{0.9}
+    \bibliographystyle{IEEEtran}
+    \small
+    \setlength{\itemsep}{0pt}
+    \bibliography{references}
+\end{spacing}
+
+%\begin{thebibliography}{99}
+%    \bibitem{full-waveform-inversion} A. Tarantola, ``Inversion of seismic reflection data in the acoustic approximation,'' Geophysics, vol. 49, no. 8, pp. 1259–1266, Aug. 1984.
+%    \bibitem{l12-ball-projection} G. Chierchia, N. Pustelnik, J.-C. Pesquet, and B. Pesquet-Popescu, ``Epigraphical projection and proximal tools for solving constrained convex optimization problems,'' Signal, Image and Video Processing, vol. 9, no. 8, pp. 1737–1749, Nov. 2015
+%    \bibitem{total-variation} L. I. Rudin, S. Osher, and E. Fatemi, ``Nonlinear total variation based noise removal algorithms,'' Phys. D, vol. 60, no. 1-4, pp. 259–268, Nov. 1992.
+%    \bibitem{FWI-total-variation} L. I. Rudin, S. Osher, and E. Fatemi, ``Nonlinear total variation based noise removal algorithms,'' Phys. D, vol. 60, no. 1-4, pp. 259–268, Nov. 1992.
+%\end{thebibliography}
+
+\end{document}
