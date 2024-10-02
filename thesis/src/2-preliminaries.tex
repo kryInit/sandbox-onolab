@@ -15,15 +15,15 @@ indicator functionに対するproximity operatorは以下のように求めら�
 \end{equation}
 box constraintに対するproximity operatorは以下のように求められます.
 \begin{equation} \label{eq:ProximityOperatorForBoxConstraint} \projBoxSolution \end{equation}
-凸共役関数に対するproximity operatorは以下のように求められます.
+凸共役関数に対するproximity operatorは以下のように求められます\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function}.
 \begin{equation} \label{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq} \proximityOperatorDefinitionWithConvexConjugateFunction \end{equation}
-L1ノルムの上界制約に対するproximity operatorは以下のように求められます\cite{L1-ball-projection}(同論文内で計算量的により高速なアルゴリズムも提案されています).
+L1ノルムの上界制約に対するproximity operatorは以下のように求められます\cite{L1-ball-projection}(より高速なアルゴリズムも提案されています\cite{fast-L1-ball-projection}).
 \begin{equation} \label{eq:ProximityOperatorForL1Ball}  \projLOneBallSolution \end{equation}
 L12ノルムの上界制約に対するproximity operatorは以下のように求められます\cite{L12-ball-projection}.
 \begin{equation} \label{eq:ProximityOperatorForL12Ball} \projLOneTwoBallSolution \end{equation}
 
 \subsection{Primal-Dual Splitting Algorithm}\label{subsec:primal-dual-splitting-algorithm}
-Primal-Dual Splitting Algorithm\cite{PDS}は以下の問題に対して適用されます
+Primal-Dual Splitting Algorithm\cite{PDS0,PDS1,PDS2,PDS3}は以下の問題に対して適用されます
 \begin{equation} \label{eq:PDSPrimalEq} \PDSPrimal \end{equation}
 PDSでは、以下の更新を反復的に行うことで解を求めます
 \begin{equation} \label{eq:PDSSubStepX} \PDSSubStepX \end{equation}
