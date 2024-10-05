@@ -5,4 +5,5 @@ PDSを適用するために、制約をindicator functionとして目的関数�
 \begin{equation} \label{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction} \FWIObjectiveWithTVConstraintWithIndicatorFunction \end{equation}
 PDSを適用し、得られたstepは以下の通りとなります
 \begin{equation} \label{eq:FWIWithPDS} \FWIWithPDS \notag \end{equation}
-ここで、$\projBox{\cdot}$ , $\projLOneTwoBall{\cdot}$ はそれぞれ\eqref{eq:ProximityOperatorForBoxConstraint},\eqref{eq:ProximityOperatorForL12Ball}により計算可能です.
+ここで、$\projBox{\cdot}$ , $\projLOneTwoBall{\cdot}$ はそれぞれ\eqref{eq:ProximityOperatorForBoxConstraint},\eqref{eq:ProximityOperatorForL12Ball}により,
+勾配${\nabla E(\cdot)}$はadjoint-state method\cite{FWI-gradient}により計算可能です.

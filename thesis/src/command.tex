@@ -7,6 +7,7 @@
 \newcommand{\argmin}[1]{\underset{#1}{\mathrm{argmin}}}
 \newcommand{\minimize}[1]{\underset{#1}{\mathrm{min}}}
 \newcommand{\maximize}[1]{\underset{#1}{\mathrm{min}}}
+\newcommand{\Norm}[2]{\lVert #1 \rVert}
 \newcommand{\LOneNorm}[1]{\lVert #1 \rVert _1}
 \newcommand{\LTwoNorm}[1]{\lVert #1 \rVert _2}
 \newcommand{\LOneTwoNorm}[1]{\lVert #1 \rVert _{1,2}}
@@ -17,7 +18,7 @@
 
 \newcommand{\LOneTwoNormDefinition}{\LOneTwoNorm{\vecx} \coloneq  \sum_{\mathfrak{g} \in \mathfrak{G}} \LTwoNorm{\vecx_\mathfrak{g}}}
 \newcommand{\TotalVariationDefinition}{\TV{\vecx} \coloneq \LOneTwoNorm{\diffOperator \vecx} = \sum_{i=1}^{\intN} \sqrt{d_{h,i}^2 + d_{v,i}^2}}
-\newcommand{\conjugateFunctionDefinition}{f^*(\vecy) \coloneq \sup_{\vecx} \left\{ \vecx^T \vecy - f(\vecx) \right\}}
+\newcommand{\conjugateFunctionDefinition}{f^*(\vecx) \coloneq \sup_{\vecy \in \realNumber^N} \left\{ \vecy^T \vecx - f(\vecy) \right\}}
 
 % indicator function
 \newcommand{\indicatorFunction}[2]{\iota_{#1}(#2)}
@@ -70,14 +71,14 @@
 
 % FWI objective
 \newcommand{\FWIObjectiveDefinition}{ E(\velModel) = \frac {1} {2} \LTwoNorm { \seismicData_{\mathrm{obs}} - \seismicData_{\mathrm{cal}(\velModel)} }^2 }
-\newcommand{\FWIObjectiveWithTVConstraint}{ E(\velModel) \ \ \ \text{s.t.} \ \ \TV{\velModel} \le \alpha \ , \ \velModel_{i,j} \in [a,b]^N }
+\newcommand{\FWIObjectiveWithTVConstraint}{ E(\velModel) \ \ \ \text{s.t.} \ \ \TV{\velModel} \le \alpha \ , \ \velModel_{i} \in [a,b]^N }
 \newcommand{\FWIObjectiveWithTVConstraintWithIndicatorFunction}{ E(\velModel) + \indicatorFunction{\LOneTwoNorm{\cdot} \le \alpha}{\diffOperator \velModel} + \indicatorFunction{[a,b]^N}{\velModel} }
 \newcommand{\FWIWithPDS}{
     \begin{aligned}
         & \widetilde{\velModel}^{(k+1)} = \velModel^{(k)} - \gamma_1( \nabla E(\velModel^{(k)}) + \bm{D}^T \vecy^{(k)} ) \\
         & \velModel^{(k+1)}             = \projBox{\widetilde{\velModel}^{(k+1)}} \\
         & \widetilde{\vecy}^{(k+1)}     = \vecy^{(k)} + \gamma_2 \bm{D} (2\velModel^{(k+1)} - \velModel^{(k)}) \\
-        & \vecx^{(k+1)}                 = \widetilde{\vecy}^{(k+1)} - \gamma_2 \projLOneTwoBall{\frac 1 {\gamma_2} {\widetilde{\bm y}^{(k+1)}}}
+        & \vecy^{(k+1)}                 = \widetilde{\vecy}^{(k+1)} - \gamma_2 \projLOneTwoBall{\frac 1 {\gamma_2} {\widetilde{\bm y}^{(k+1)}}}
     \end{aligned}
 }
 

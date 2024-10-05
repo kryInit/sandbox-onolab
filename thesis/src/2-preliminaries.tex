@@ -1,37 +1,54 @@
 \subsection{Mathematical Tools}\label{subsec:mathematical-tools}
-$\vecx \in \realNumber^{\intN \times \intM}$ に対してL1,2ノルムは以下のように定義されます
+
+Throughout this paper, we denote vectors and matrices by boldface lowercase letters (e.g., $\vecx$) and boldface uppercase letters (e.g., $\bm{X}$), respectively.
+The operator norm of a vector and matrix is denoted by $\Norm{\cdot}__{\text{op}}$.
+
+For $\vecx \in \realNumber^{\intN}$, the mixed $l_{1,2}$ norm is defined as follows:
 \begin{equation} \label{eq:L12NormDefinitionEq} \LOneTwoNormDefinition \end{equation}
-$\vecx \in \realNumber^{\intN}$ に対してTV\cite{TV}は以下のように定義されます
+where $\mathfrak{G}$ is a set of groups, $\vecx_{\mathfrak{g}}$ is the $\mathfrak{g}$-th group of $\vecx$.
+
+For $\vecx \in \realNumber^{\intN}$, the total variation (TV)\cite{TV} is defined as follows:
 \begin{equation} \label{eq:TVDefinitionEq} \TotalVariationDefinition \end{equation}
-fに対するconvex conjugate functionは以下のように定義されます
+here, $d_{h,i}$ and $d_{v,i}$ are the horizontal and vertical differences of the $i$-th element of $\vecx$, respectively, when vector $\vecx$ is considered as a matrix.
+
+For proper lower-semicontinuous convex function $f \in \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the convex conjugate function is defined as follows:
 \begin{equation} \label{eq:ConjugateFunctionDefinitionEq} \conjugateFunctionDefinition \end{equation}
-indicator functionは以下のように定義されます
+
+For a set $C \subset \realNumber^N$ and $\vecx \in \realNumber^N$, the indicator function is defined as follows:
 \begin{equation} \label{eq:IndicatorFunctionDefinitionEq} \indicatorFunctionDefinition \end{equation}
-proximity operatorは$f$, $\gamma$に対して以下のように定義されます
+
+For $\gamma > 0$, $f \in \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the proximity operator is defined as follows:
 \begin{equation} \label{eq:ProximityOperatorDefinitionEq} \proximityOperatorDefinition \end{equation}
-indicator functionに対するproximity operatorは以下のように求められます.
+
+The proximity operator for the convex conjugate function is expressed as follows\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function}:
+\begin{equation} \label{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq} \proximityOperatorDefinitionWithConvexConjugateFunction \end{equation}
+
+The proximity operator for the indicator function is expressed as follows.
 \begin{equation} \label{eq:ProximityOperatorDefinitionWithIndicatorFunctionEq}
 \proximityOperator{ \gamma \indicatorFunction{C}{\cdot} }{\vecx} = P_C(\vecx) \coloneq \argmin{\vecy \in C} \LTwoNorm{\vecy - \vecx}
 \end{equation}
-box constraintに対するproximity operatorは以下のように求められます.
+
+The proximity operator for the box constraint is expressed as follows.
 \begin{equation} \label{eq:ProximityOperatorForBoxConstraint} \projBoxSolution \end{equation}
-凸共役関数に対するproximity operatorは以下のように求められます\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function}.
-\begin{equation} \label{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq} \proximityOperatorDefinitionWithConvexConjugateFunction \end{equation}
-L1ノルムの上界制約に対するproximity operatorは以下のように求められます\cite{L1-ball-projection}(より高速なアルゴリズムも提案されています\cite{fast-L1-ball-projection}).
+
+The proximity operator for the $l_1$ norm upper bound constraint is expressed as follows\cite{L1-ball-projection}(faster algorithms are also proposed\cite{fast-L1-ball-projection}):
 \begin{equation} \label{eq:ProximityOperatorForL1Ball}  \projLOneBallSolution \end{equation}
-L12ノルムの上界制約に対するproximity operatorは以下のように求められます\cite{L12-ball-projection}.
+
+The proximity operator for the $l_{1,2}$ norm upper bound constraint is expressed as follows\cite{L12-ball-projection}:
 \begin{equation} \label{eq:ProximityOperatorForL12Ball} \projLOneTwoBallSolution \end{equation}
 
 \subsection{Primal-Dual Splitting Algorithm}\label{subsec:primal-dual-splitting-algorithm}
-Primal-Dual Splitting Algorithm\cite{PDS0,PDS1,PDS2,PDS3}は以下の問題に対して適用されます
+The Primal-Dual Splitting (PDS) Algorithm\cite{PDS0,PDS1,PDS2,PDS3} is applied to the following problem:
 \begin{equation} \label{eq:PDSPrimalEq} \PDSPrimal \end{equation}
-PDSでは、以下の更新を反復的に行うことで解を求めます
+where $\bm{L} \in \realNumber^{\intM \times \intN}$, $f$ is differentiable convex function and $g,h$ are convex functions whose proximity operator can be computed efficiently(proximable).
+
+The PDS algorithm solve by iteratively updating the following:
 \begin{equation} \label{eq:PDSSubStepX} \PDSSubStepX \end{equation}
 \begin{equation} \label{eq:PDSSubStepY} \PDSSubStepY \end{equation}
+where $\gamma_1, \gamma_2$ are step sizes.
+for more details and convergence rates, please refer to\cite{PDS2}.
 
 \subsection{Full Waveform Inversion}\label{subsec:full-waveform-inversion}
-
-FWIの目的関数以下のように定義されます
+In general, an objective function of FWI is defined as follows:
 \begin{equation} \label{eq:FWIObjective} \FWIObjectiveDefinition \end{equation}
-ここで、$\seismicData_{\mathrm{obs}}$は観測された地震データ、$\seismicData_{\mathrm{cal}(\velModel)}$は速度モデル$\velModel$に対する計算された地震データです。
-また、FWIの勾配はadjoint state methodを用いて計算可能です\cite{FWI-gradient}.
+where $\velModel$ is velocity model, $\seismicData_{\mathrm{obs}}$ is the observed seismic data, and $\seismicData_{\mathrm{cal}(\velModel)}$ is the calculated seismic data with the velocity model.
