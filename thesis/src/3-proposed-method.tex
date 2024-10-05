@@ -1,9 +1,11 @@
-制約付きFWIの目的関数を、PDSを用いて求解します
-TV制約, box制約付きFWIは以下の式で表されます
+We solve the objective function of the TV and box constrained FWI using PDS, which is expressed by the following equation:
 \begin{equation} \label{eq:FWIObjectiveWithTVConstraint} \FWIObjectiveWithTVConstraint \end{equation}
-PDSを適用するために、制約をindicator functionとして目的関数に組み込みます
+where $\alpha$ is the upper bound of the $l_{1,2}$ norm, and $a$ and $b$ are the lower and upper bounds of the velocity model, respectively.
+
+To apply PDS, the constraints are integrated into the objective function as indicator functions:
 \begin{equation} \label{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction} \FWIObjectiveWithTVConstraintWithIndicatorFunction \end{equation}
-PDSを適用し、得られたstepは以下の通りとなります
+
+The steps obtained by applying PDS are as follows:
 \begin{equation} \label{eq:FWIWithPDS} \FWIWithPDS \notag \end{equation}
-ここで、$\projBox{\cdot}$ , $\projLOneTwoBall{\cdot}$ はそれぞれ\eqref{eq:ProximityOperatorForBoxConstraint},\eqref{eq:ProximityOperatorForL12Ball}により,
-勾配${\nabla E(\cdot)}$はadjoint-state method\cite{FWI-gradient}により計算可能です.
+Here, $\projBox{\cdot}$ and $\projLOneTwoBall{\cdot}$ are given by\eqref{eq:ProximityOperatorForBoxConstraint} and \eqref{eq:ProximityOperatorForL12Ball}, respectively, and the gradient ${\nabla E(\cdot)}$ can be computed using the adjoint-state method \cite{FWI-gradient}.
+
