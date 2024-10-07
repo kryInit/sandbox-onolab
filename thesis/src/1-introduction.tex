@@ -1,36 +1,37 @@
-%Full waveform inversion (FWI)\cite{FWI0,FWI1}は、観測seismic dataから地下構造を再構築することを目的としている.
-%観測seismic dataは地下構造から生成されるため逆問題であるが、不良設定であり、解の質は初期値に依存する\cite{FWI1}.
-%一般的な定式化は観測データとmodeled dataとの二乗誤差を最小化するが、他の定式化も提案されている\cite{CustomFWI0,CustomFWI1,CustomFWI2,CustomFWI3,CustomFWI4,CustomFWI5}.
-%他には、正則化・制約によるアプローチも存在し, Tikhonov regularization\cite{tikhonov}やTotal Variation (TV)\cite{TV}, Total Generalized Variation (TGV)\cite{TGV}などが適用されてきた.
-%TV, directional TV, high order TV, TGVを正則化として使用するもの\cite{FWI-with-TV-regularization,FWI-with-directional-TV-regularization,FWI-with-high-order-TV-regularization,FWI-with-TGV-regularization}, TVを制約として使用するもの\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3}が提案されている.
-%近年では、観測データから直接地下構造を推定するNNも提案されている\cite{ML-FWI0,ML-FWI1,ML-FWI2,ML-FWI3}.
+%Full waveform inversion (FWI)~\cite{FWI0,FWI1}は、観測seismic dataから地下構造を再構築することを目的としている.
+%観測seismic dataは地下構造から生成されるため逆問題であるが、不良設定であり、解の質は初期値に依存する~\cite{FWI1}.
+%一般的な定式化は観測データとmodeled dataとの二乗誤差を最小化するが、他の定式化も提案されている~\cite{CustomFWI0,CustomFWI1,CustomFWI2,CustomFWI3,CustomFWI4,CustomFWI5}.
+%他には、正則化・制約によるアプローチも存在し, Tikhonov regularization~\cite{tikhonov}やTotal Variation (TV)~\cite{TV}, Total Generalized Variation (TGV)~\cite{TGV}などが適用されてきた.
+%TV, directional TV, high order TV, TGVを正則化として使用するもの~\cite{FWI-with-TV-regularization,FWI-with-directional-TV-regularization,FWI-with-high-order-TV-regularization,FWI-with-TGV-regularization}, TVを制約として使用するもの~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3}が提案されている.
+%近年では、観測データから直接地下構造を推定するNNも提案されている~\cite{ML-FWI0,ML-FWI1,ML-FWI2,ML-FWI3}.
 %ただし、NNは学習データとなる観測データが大量に必要であり、観測データは観測方法により変わり得るため、推定対象だけでなく観測方法にも依存して学習データ学習が必要であるため、 以前として最適化による復元は有用である
 %
-%\{制約と正則化を比較し、制約の利点について述べる, 基本的にはバランスパラメータの調整に対するものになりそう(値の設定が直感的, n shots, ノイズの大きさに依存せず、地下情報のみの事前知識で決定できる(本当？))\}\cite{constraints-vs-penalties-in-FWI}
-%TV制約をFWIに適用する従来手法\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2}では準ニュートン法(L-BFGS法)を用いて通常のFWIの目的関数を最適化する際、制約を満たすようにパラメータの変更分を計算する.
+%\{制約と正則化を比較し、制約の利点について述べる, 基本的にはバランスパラメータの調整に対するものになりそう(値の設定が直感的, n shots, ノイズの大きさに依存せず、地下情報のみの事前知識で決定できる(本当？))\}~\cite{constraints-vs-penalties-in-FWI}
+%TV制約をFWIに適用する従来手法~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2}では準ニュートン法(L-BFGS法)を用いて通常のFWIの目的関数を最適化する際、制約を満たすようにパラメータの変更分を計算する.
 %ここで、制約を満たすような変更分を計算するために別の最適化が必要であり、二重ループとなり計算コストが高い.
 %また、制約を導入する過程で線形ではない変換を線形として捉える, 使用する最適化手法の外側で制約を強制するなどの近似を使用している.
 %本稿では〜
 
-Full waveform inversion (FWI)\cite{FWI0,FWI1} aims to reconstruct subsurface properties from observed seismic data.
+
+Full waveform inversion (FWI)~\cite{FWI0,FWI1} aims to reconstruct subsurface properties from observed seismic data.
 Since the observed seismic data are generated from the subsurface properties, FWI is formulated as an inverse problem.
-However, it is ill-posed, and the quality of the solution depends heavily on the initial model provided\cite{FWI1}.
+However, it is ill-posed, and the quality of the solution depends heavily on the initial model provided~\cite{FWI1}.
 
 In general, FWI reconstruct the subsurface properties by solving an optimization problem that minimizes the squared error between the observed data and the modeled data.
-To stabilize the inversion and achieve more accurate reconstruction, other formulations have been proposed\cite{CustomFWI0,CustomFWI1,CustomFWI2,CustomFWI3,CustomFWI4,CustomFWI5}.
-Adding regularizations or constraints to the objective function has also been proposed, such as Tikhonov regularization\cite{tikhonov}, Total Variation (TV)\cite{TV}, and Total Generalized Variation (TGV)\cite{TGV}.
-For example, studies have used regularization of Tikhonov\cite{FWI-with-tikhonov-regularization}, TV\cite{FWI-with-TV-regularization}, directional TV\cite{FWI-with-directional-TV-regularization}, high-order TV\cite{FWI-with-high-order-TV-regularization}, and TGV\cite{FWI-with-TGV-regularization}.
-TV has also been used as a constraint\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3}.
+To stabilize the inversion and achieve more accurate reconstruction, other formulations have been proposed~\cite{CustomFWI0,CustomFWI1,CustomFWI2,CustomFWI3,CustomFWI4,CustomFWI5}.
+Adding regularizations or constraints to the objective function has also been proposed, such as Tikhonov regularization~\cite{tikhonov}, Total Variation (TV)~\cite{TV}, and Total Generalized Variation (TGV)~\cite{TGV}.
+For example, studies have used regularization of Tikhonov~\cite{FWI-with-tikhonov-regularization}, TV~\cite{FWI-with-TV-regularization}, directional TV~\cite{FWI-with-directional-TV-regularization}, high-order TV~\cite{FWI-with-high-order-TV-regularization}, and TGV~\cite{FWI-with-TGV-regularization}.
+TV has also been used as a constraint~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3}.
 
-Recently, neural networks (NNs) have also been proposed to estimate subsurface properties directly from observed data\cite{ML-FWI0,ML-FWI1,ML-FWI2,ML-FWI3}.
+Recently, neural networks (NNs) have also been proposed to estimate subsurface properties directly from observed data~\cite{ML-FWI0,ML-FWI1,ML-FWI2,ML-FWI3}.
 However, NNs require a large amount of observed data as training data, and since the dimensions of the observed data may vary depending on the observation method, training data must be prepared not only for each target prior but also for each observation method.
 Therefore, reconstruction using optimization is still useful.
 
 Also, the value of the squared error between the observed data and the modeled data, which is the objective function of FWI, changes depending on the observation method.
 Therefore, The parameters of the regularization must be chosen accordingly.
-However, the TV constraint has the advantage that the parameters can be determined only from prior knowledge of the subsurface properties\cite{constraints-vs-penalties-in-FWI}.
+However, the TV constraint has the advantage that the parameters can be determined only from prior knowledge of the subsurface properties~\cite{constraints-vs-penalties-in-FWI}.
 
-In conventional methods that apply the TV constraint to FWI\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2}, when optimizing the usual FWI objective function using quasi-Newton methods such as the L-BFGS method, the parameter updates are computed to satisfy the constraints.
+In conventional methods that apply the TV constraint to FWI~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2}, when optimizing the usual FWI objective function using quasi-Newton methods such as the L-BFGS method, the parameter updates are computed to satisfy the constraints.
 Here, another optimization is required to compute the updates that satisfy the constraints, resulting in a double loop and high computational cost.
 Moreover, approximations are used in the process of introducing constraints, such as treating non-linear transformations as linear or enforcing constraints outside the optimization method.
 

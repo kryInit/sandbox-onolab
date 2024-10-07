@@ -7,7 +7,7 @@ For $\vecx \in \realNumber^{\intN}$, the mixed $l_{1,2}$ norm is defined as foll
 \begin{equation} \label{eq:L12NormDefinitionEq} \LOneTwoNormDefinition \end{equation}
 where $\mathfrak{G}$ is a set of groups, $\vecx_{\mathfrak{g}}$ is the $\mathfrak{g}$-th group of $\vecx$.
 
-For $\vecx \in \realNumber^{\intN}$, the total variation (TV)\cite{TV} is defined as follows:
+For $\vecx \in \realNumber^{\intN}$, the total variation (TV)~\cite{TV} is defined as follows:
 \begin{equation} \label{eq:TVDefinitionEq} \TotalVariationDefinition \end{equation}
 here, $d_{h,i}$ and $d_{v,i}$ are the horizontal and vertical differences of the $i$-th element of $\vecx$, respectively, when vector $\vecx$ is considered as a matrix.
 
@@ -20,7 +20,7 @@ For a set $C \subset \realNumber^N$ and $\vecx \in \realNumber^N$, the indicator
 For $\gamma > 0$, $f \in \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the proximity operator is defined as follows:
 \begin{equation} \label{eq:ProximityOperatorDefinitionEq} \proximityOperatorDefinition \end{equation}
 
-The proximity operator for the convex conjugate function is expressed as follows\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function}:
+The proximity operator for the convex conjugate function is expressed as follows~\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function}:
 \begin{equation} \label{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq} \proximityOperatorDefinitionWithConvexConjugateFunction \end{equation}
 
 The proximity operator for the indicator function is expressed as follows.
@@ -31,14 +31,14 @@ The proximity operator for the indicator function is expressed as follows.
 The proximity operator for the box constraint is expressed as follows.
 \begin{equation} \label{eq:ProximityOperatorForBoxConstraint} \projBoxSolution \end{equation}
 
-The proximity operator for the $l_1$ norm upper bound constraint is expressed as follows\cite{L1-ball-projection}(faster algorithms are also proposed\cite{fast-L1-ball-projection}):
+The proximity operator for the $l_1$ norm upper bound constraint is expressed as follows~\cite{L1-ball-projection}(faster algorithms are also proposed~\cite{fast-L1-ball-projection}):
 \begin{equation} \label{eq:ProximityOperatorForL1Ball}  \projLOneBallSolution \end{equation}
 
-The proximity operator for the $l_{1,2}$ norm upper bound constraint is expressed as follows\cite{L12-ball-projection}:
+The proximity operator for the $l_{1,2}$ norm upper bound constraint is expressed as follows~\cite{L12-ball-projection}:
 \begin{equation} \label{eq:ProximityOperatorForL12Ball} \projLOneTwoBallSolution \end{equation}
 
 \subsection{Primal-Dual Splitting Algorithm}\label{subsec:primal-dual-splitting-algorithm}
-The Primal-Dual Splitting (PDS) Algorithm\cite{PDS0,PDS1,PDS2,PDS3} is applied to the following problem:
+The Primal-Dual Splitting (PDS) Algorithm~\cite{PDS0,PDS1,PDS2,PDS3} is applied to the following problem:
 \begin{equation} \label{eq:PDSPrimalEq} \PDSPrimal \end{equation}
 where $\bm{L} \in \realNumber^{\intM \times \intN}$, $f$ is differentiable convex function and $g,h$ are convex functions whose proximity operator can be computed efficiently(proximable).
 
@@ -46,7 +46,7 @@ The PDS algorithm solve by iteratively updating the following:
 \begin{equation} \label{eq:PDSSubStepX} \PDSSubStepX \end{equation}
 \begin{equation} \label{eq:PDSSubStepY} \PDSSubStepY \end{equation}
 where $\gamma_1, \gamma_2$ are step sizes.
-for more details, please refer to\cite{PDS2}.
+for more details, please refer to~\cite{PDS2}.
 
 \subsection{Full Waveform Inversion}\label{subsec:full-waveform-inversion}
 In general, an objective function of FWI is defined as follows:
