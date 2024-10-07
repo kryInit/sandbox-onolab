@@ -11,7 +11,12 @@
 \usepackage{mathtools}
 %\usepackage[dvips]{graphicx}
 \usepackage[dvipdfmx]{graphicx}
-\usepackage{setspace} % 行間調整のためのパッケージ
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{multicol}
+
 
 \input{src/command}
 
@@ -55,13 +60,16 @@
 \section{Proposed Method}\label{sec:ProposedMethod}
 \input{src/3-proposed-method}
 
+
 \section{EXPERIMENTS}\label{sec:Experiments}
 \input{src/4-experiments}
 
 \section{CONCLUSION}\label{sec:Conclusion}
 \input{src/5-conclusion}
 
-\begin{spacing}{0.9}
+\clearpage
+
+\begin{spacing}{0.85}
     \bibliographystyle{IEEEtran}
     \small
     \setlength{\itemsep}{0pt}

@@ -31,32 +31,27 @@
 \newcommand{\projBox}[1]{ P_{[a,b]^N}(#1) }
 \newcommand{\projBoxSolution}{ \projBox{\vecx} = \text{min}( \text{max} (\vecx, a), b) }
 \newcommand{\projLOneTwoBall}[1]{P_{ \{ \bm a \mid \LOneTwoNorm{ \bm a } \le \alpha \} }(#1)}
-\newcommand{\projLOneTwoBallSolution}{
-    \begin{aligned}[t]
-        & \projLOneTwoBall{\vecx} = [ \bm p_1^T, \ldots, \bm p_N^T ]^T \\
-        & \text{where} \\
-        & \ \ \ \ \begin{aligned}
-            & \bm p_i = \begin{cases}
-                0                                              & \text{if} \ \LTwoNorm{\vecx_i} = 0 \\
-                \bm \beta_i \frac {\vecx_i} {\LTwoNorm{\vecx}} & \text{otherwise}
-            \end{cases} \\
-            & \bm \beta = P_{ \{ \bm a \mid \LOneNorm{ \bm a } \le \alpha \} }({[ \LTwoNorm{ \vecx_1^T }, \ldots, \LTwoNorm{ \vecx_N^T } ]}) \\
-        \end{aligned}
+\newcommand{\projLOneTwoBallSolution}{ \projLOneTwoBall{\vecx} = [ \bm p_1^T, \ldots, \bm p_N^T ]^T }
+\newcommand{\projLOneTwoBallSolutionWhere}{
+    \begin{aligned}
+        & \bm p_i = \begin{cases}
+            0                                              & \text{if} \ \LTwoNorm{\vecx_i} = 0 \\
+            \bm \beta_i \frac {\vecx_i} {\LTwoNorm{\vecx}} & \text{otherwise}
+        \end{cases} \\
+        & \bm \beta = P_{ \{ \bm a \mid \LOneNorm{ \bm a } \le \alpha \} }({[ \LTwoNorm{ \vecx_1^T }, \ldots, \LTwoNorm{ \vecx_N^T } ]}) \\
     \end{aligned}
 }
 \newcommand{\projLOneBall}[1]{P_{ \{ \bm a \mid \LOneNorm{ \bm a } \le \alpha \} }(#1)}
-\newcommand{\projLOneBallSolution}{
-    \begin{aligned}[t]
-        & \projLOneBall{\vecx} = \text{SoftThrethold}(\vecx, \beta)  \\
-        & \text{where} \\
-        & \ \ \ \ \begin{aligned}
-            & \bm x_{\text{abs}} = \text{abs}(\vecx) \\
-            & \bm y              = \text{sort}_{\text{desc}}(\vecx_{\text{abs}}) \\
-            & \beta'             = \text{max} \{ \frac 1 i ((\sum_{j=1}^i \bm y_j) - \alpha) \mid i = 1, \ldots, N \} \\
-            & \beta              = \text{max} \{ \beta', 0 \} \\
-        \end{aligned}
+\newcommand{\projLOneBallSolution}{\projLOneBall{\vecx} = \text{SoftThrethold}(\vecx, \beta)}
+\newcommand{\projLOneBallSolutionWhere}{
+    \begin{aligned}
+        & \bm x_{\text{abs}} = \text{abs}(\vecx) \\
+        & \bm y              = \text{sort}_{\text{desc}}(\vecx_{\text{abs}}) \\
+        & \beta'             = \text{max} \{ \frac 1 i ((\sum_{j=1}^i \bm y_j) - \alpha) \mid i = 1, \ldots, N \} \\
+        & \beta              = \text{max} \{ \beta', 0 \} \\
     \end{aligned}
 }
+
 
 % Primal-Dual Splitting
 \newcommand{\PDSPrimal}{\minimize { \vecx \in \realNumber^N } \left\{ f(\vecx) + g(\vecx) + h(\bm{L} \vecx) \right\} }
@@ -71,14 +66,18 @@
 
 % FWI objective
 \newcommand{\FWIObjectiveDefinition}{ E(\velModel) = \frac {1} {2} \LTwoNorm { \seismicData_{\mathrm{obs}} - \seismicData_{\mathrm{cal}(\velModel)} }^2 }
-\newcommand{\FWIObjectiveWithTVConstraint}{ E(\velModel) \ \ \ \text{s.t.} \ \ \TV{\velModel} \le \alpha \ , \ \velModel \in [a,b]^N }
+\newcommand{\FWIGradientDefinition}{ \nabla E(\velModel) = \seismicData_{\mathrm{obs}} - \nabla \seismicData_{\mathrm{cal}(\velModel)} }
+\newcommand{\FWIObjectiveWithTVConstraint}{ E(\velModel) \ \ \ \text{s.t.} \ \ \LOneTwoNorm{\diffOperator \velModel} \le \alpha \ , \ \velModel \in [a,b]^N }
 \newcommand{\FWIObjectiveWithTVConstraintWithIndicatorFunction}{ E(\velModel) + \indicatorFunction{\LOneTwoNorm{\cdot} \le \alpha}{\diffOperator \velModel} + \indicatorFunction{[a,b]^N}{\velModel} }
 \newcommand{\FWIWithPDS}{
+\left \lbrack \ \
     \begin{aligned}
         & \widetilde{\velModel}^{(k+1)} = \velModel^{(k)} - \gamma_1( \nabla E(\velModel^{(k)}) + \bm{D}^T \vecy^{(k)} ) \\
         & \velModel^{(k+1)}             = \projBox{\widetilde{\velModel}^{(k+1)}} \\
         & \widetilde{\vecy}^{(k+1)}     = \vecy^{(k)} + \gamma_2 \bm{D} (2\velModel^{(k+1)} - \velModel^{(k)}) \\
         & \vecy^{(k+1)}                 = \widetilde{\vecy}^{(k+1)} - \gamma_2 \projLOneTwoBall{\frac 1 {\gamma_2} {\widetilde{\bm y}^{(k+1)}}}
     \end{aligned}
+\right.
 }
+
 
