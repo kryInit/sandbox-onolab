@@ -4,67 +4,66 @@ Throughout this paper, we denote vector and matrix by boldface lowercase letter 
 The operator $l_{X}$ norm of a vector and matrix is denoted by $\Norm{\cdot}__{X}$.
 
 For $\vecx \in \realNumber^{\intN}$, the mixed $l_{1,2}$ norm is defined as follows:
-\begin{equation} \label{eq:L12NormDefinitionEq} \LOneTwoNormDefinition \end{equation}
+\begin{equation} \label{eq:L12NormDefinitionEq} \LOneTwoNormDefinition, \end{equation}
 where $\mathfrak{G}$ is a set of disjoint index sets, and $\vecx_{\mathfrak{g}}$ is the subvector of $\vecx$ indexed by $\mathfrak{g}$.
 
 For $\vecx \in \realNumber^{\intN}$, the total variation (TV)~\cite{TV} is defined as follows:
-\begin{equation} \label{eq:TVDefinitionEq} \TotalVariationDefinition \end{equation}
+\begin{equation} \label{eq:TVDefinitionEq} \TotalVariationDefinition, \end{equation}
 where $d_{h,i}$ and $d_{v,i}$ are the horizontal and vertical differences of the $i$-th element of $\vecx$, respectively, when vector $\vecx$ is considered as a matrix.
 
 For proper lower-semicontinuous convex function $f \in \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the convex conjugate function is defined as follows:
-\begin{equation} \label{eq:ConjugateFunctionDefinitionEq} \conjugateFunctionDefinition \end{equation}
+\begin{equation} \label{eq:ConjugateFunctionDefinitionEq} \conjugateFunctionDefinition. \end{equation}
 
 For a set $C \subset \realNumber^N$ and $\vecx \in \realNumber^N$, the indicator function is defined as follows:
 \begin{equation} \label{eq:IndicatorFunctionDefinitionEq} \indicatorFunctionDefinition \end{equation}
 
 For $\gamma > 0$, $f \in \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the proximity operator is defined as follows:
-\begin{equation} \label{eq:ProximityOperatorDefinitionEq} \proximityOperatorDefinition \end{equation}
+\begin{equation} \label{eq:ProximityOperatorDefinitionEq} \proximityOperatorDefinition. \end{equation}
 
 Define the proximity operator for the indicator function as $P_C$ as follows.
 \begin{equation} \label{eq:ProximityOperatorDefinitionWithIndicatorFunctionEq}
-\proximityOperator{ \gamma \indicatorFunction{C}{\cdot} }{\vecx} = P_C(\vecx) \coloneq \argmin{\vecy \in C} \LTwoNorm{\vecy - \vecx}
+\proximityOperator{ \gamma \indicatorFunction{C}{\cdot} }{\vecx} = P_C(\vecx) \coloneq \argmin{\vecy \in C} \LTwoNorm{\vecy - \vecx}.
 \end{equation}
 
 The proximity operator for the specific function used in this paper is given below.
 %The proximity operator for the convex conjugate function is expressed as follows~\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function}:
-\begin{equation} \label{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq} \proximityOperatorDefinitionWithConvexConjugateFunction \end{equation}
+\begin{equation} \label{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq} \proximityOperatorDefinitionWithConvexConjugateFunction. \end{equation}
 
 %The proximity operator for the box constraint is expressed as follows.
-\begin{equation} \label{eq:ProximityOperatorForBoxConstraint} \projBoxSolution \end{equation}
+\begin{equation} \label{eq:ProximityOperatorForBoxConstraint} \projBoxSolution. \end{equation}
 
 %The proximity operator for the $l_1$ norm upper bound constraint is expressed as follows~\cite{L1-ball-projection}(faster algorithms are also proposed~\cite{fast-L1-ball-projection}):
-\begin{equation} \label{eq:ProximityOperatorForL1Ball}  \projLOneBallSolution \end{equation}
+\begin{equation} \label{eq:ProximityOperatorForL1Ball}  \projLOneBallSolution, \end{equation}
 where
-\begin{equation} \label{eq:ProximityOperatorForL1BallWhere} \projLOneBallSolutionWhere \notag \end{equation}
+\begin{equation} \label{eq:ProximityOperatorForL1BallWhere} \projLOneBallSolutionWhere. \notag \end{equation}
 
 %The proximity operator for the $l_{1,2}$ norm upper bound constraint is expressed as follows~\cite{L12-ball-projection}:
-\begin{equation} \label{eq:ProximityOperatorForL12Ball} \projLOneTwoBallSolution \end{equation}
+\begin{equation} \label{eq:ProximityOperatorForL12Ball} \projLOneTwoBallSolution, \end{equation}
 where
 \begin{equation} \label{eq:ProximityOperatorForL12BallWhere} \projLOneTwoBallSolutionWhere \notag \end{equation}
 
-The proof of equation \eqref{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq}, \eqref{eq:ProximityOperatorForL1Ball} and \eqref{eq:ProximityOperatorForL12Ball} can be found in~\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function},~\cite{L1-ball-projection},~\cite{L12-ball-projection} accordingly.
-There is a faster algorithm than \eqref{eq:ProximityOperatorForL1Ball}~\cite{fast-L1-ball-projection}.
+The proof of equation \eqref{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq}, \eqref{eq:ProximityOperatorForL1Ball} and~\eqref{eq:ProximityOperatorForL12Ball} can be found in~\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function},~\cite{L1-ball-projection},~\cite{L12-ball-projection} accordingly.
+It is developed a faster algorithm than~\eqref{eq:ProximityOperatorForL1Ball}~\cite{fast-L1-ball-projection}.
 
 \subsection{Primal-Dual Splitting Algorithm}\label{subsec:primal-dual-splitting-algorithm}
 The Primal-Dual Splitting (PDS) Algorithm~\cite{PDS0,PDS1,PDS2,PDS3} is applied to the following problem:
-\begin{equation} \label{eq:PDSPrimalEq} \PDSPrimal \end{equation}
+\begin{equation} \label{eq:PDSPrimalEq} \PDSPrimal, \end{equation}
 where $\bm{L} \in \realNumber^{\intM \times \intN}$, $f$ is differentiable convex function and $g,h$ are convex functions whose proximity operator can be computed efficiently.
 
 The PDS algorithm solve by iteratively updating the following:
-\begin{equation} \label{eq:PDSSubStepX} \PDSSubStepX \end{equation}
-\begin{equation} \label{eq:PDSSubStepY} \PDSSubStepY \end{equation}
+\begin{equation} \label{eq:PDSSubStep} \PDSSubStep \end{equation}
 where $\gamma_1, \gamma_2 \in \realNumber$ are step sizes.
 %for more details, please refer to~\cite{PDS2}.
 
 \subsection{Full Waveform Inversion}\label{subsec:full-waveform-inversion}
 An objective function of FWI is defined as follows\cite{FWI0}:
-\begin{equation} \label{eq:FWIObjective} \FWIObjectiveDefinition \end{equation}
+\begin{equation} \label{eq:FWIObjective} \FWIObjectiveDefinition, \end{equation}
 where $\velModel \in \realNumber^{N}$ is velocity model representing subsurface properties, $\seismicData_{\mathrm{obs}} \in \realNumber^{M}$ is the observed seismic data, and $\seismicData_{\mathrm{cal}(\velModel)}$ is the modeled seismic data with the velocity model.
 $N$ is the number of grid points, and $M$ is the number of observed signals.
 In general, velocity model is 2D or 3D grid data, but for simplicity we consider flattened 1D vector.
 
 The Normal FWI minimize the objective function and reconstruct the velocity model with following procedures:
-\begin{equation} \label{eq:FWIWithGradient} \FWIWithGradient \end{equation}
+\begin{equation} \label{eq:FWIWithGradient} \FWIWithGradient, \end{equation}
 where $\gamma$ is the step size.
 
 The gradient ${\nabla E}$ can be computed numerically using the adjoint-state method~\cite{FWI-gradient}.

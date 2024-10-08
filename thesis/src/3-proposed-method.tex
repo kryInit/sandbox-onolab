@@ -31,7 +31,7 @@
 \end{figure*}
 
 As shown in fig.\ref{fig:velocity-models}, velocity model can be piecewise smooth.
-Therefore, We introduce TV constraints to achieve more accurate reconstruction.
+Therefore, we introduce TV constraints to achieve more accurate reconstruction.
 Also, by introducing a box constraint, we can ensure that the velocity model does not take invalid values.
 
 We minimize the objective function of the TV and box constrained FWI, which is expressed by the following:
@@ -42,7 +42,7 @@ The constraints can be integrated into the objective function as indicator funct
 \begin{equation} \label{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveWithTVConstraintWithIndicatorFunction \end{equation}
 
 As mentioned in section~\ref{subsec:mathematical-tools}, $\iota_{\LOneTwoNorm{\cdot} \le \alpha}$ and $\iota_{[a,b]^N}$ can be computed efficiently\eqref{eq:ProximityOperatorForL1Ball}\eqref{eq:ProximityOperatorForL12Ball}.
-Therefore, These functions of $E$, $\iota_{[a,b]^N}$ and $\iota_{\LOneTwoNorm{\cdot} \le \alpha}$ correspond to $f$, $g$ and $h$ in \eqref{eq:PDSPrimalEq}, respectively, $\bm{L}$ is corresponds to $\diffOperator$, and the problem~\eqref{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction} can be solved using PDS.
+Therefore, these functions of $E$, $\iota_{[a,b]^N}$ and $\iota_{\LOneTwoNorm{\cdot} \le \alpha}$ correspond to $f$, $g$ and $h$ in \eqref{eq:PDSPrimalEq}, respectively, $\bm{L}$ is corresponds to $\diffOperator$, and the problem~\eqref{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction} can be solved using PDS.
 The iterative procedures are as follows:
 \begin{equation} \label{eq:FWIWithPDS} \FWIWithPDS \notag \end{equation}
 

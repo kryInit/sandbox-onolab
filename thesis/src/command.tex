@@ -22,7 +22,7 @@
 
 % indicator function
 \newcommand{\indicatorFunction}[2]{\iota_{#1}(#2)}
-\newcommand{\indicatorFunctionDefinition}{\indicatorFunction{C}{\vecx} \coloneq \begin{cases} 0 & \text{if } \vecx \in C \\ \infty & \text{otherwise} \end{cases} }
+\newcommand{\indicatorFunctionDefinition}{\indicatorFunction{C}{\vecx} \coloneq \begin{cases} 0 & \text{if } \vecx \in C, \\ \infty & \text{otherwise}. \end{cases} }
 
 % proximity operator
 \newcommand{\proximityOperator}[2]{\mathrm{prox}_{#1}(#2)}
@@ -35,20 +35,20 @@
 \newcommand{\projLOneTwoBallSolutionWhere}{
     \begin{aligned}
         & \bm p_i = \begin{cases}
-            0                                              & \text{if} \ \LTwoNorm{\vecx_i} = 0 \\
-            \bm \beta_i \frac {\vecx_i} {\LTwoNorm{\vecx}} & \text{otherwise}
+            0                                              & \text{if} \ \LTwoNorm{\vecx_i} = 0, \\
+            \bm \beta_i \frac {\vecx_i} {\LTwoNorm{\vecx}} & \text{otherwise},
         \end{cases} \\
-        & \bm \beta = P_{ \{ \bm a \mid \LOneNorm{ \bm a } \le \alpha \} }({[ \LTwoNorm{ \vecx_1^T }, \ldots, \LTwoNorm{ \vecx_N^T } ]}) \\
+        & \bm \beta = P_{ \{ \bm a \mid \LOneNorm{ \bm a } \le \alpha \} }({[ \LTwoNorm{ \vecx_1^T }, \ldots, \LTwoNorm{ \vecx_N^T } ]}). \\
     \end{aligned}
 }
 \newcommand{\projLOneBall}[1]{P_{ \{ \bm a \mid \LOneNorm{ \bm a } \le \alpha \} }(#1)}
 \newcommand{\projLOneBallSolution}{\projLOneBall{\vecx} = \text{SoftThrethold}(\vecx, \beta)}
 \newcommand{\projLOneBallSolutionWhere}{
     \begin{aligned}
-        & \bm x_{\text{abs}} = \text{abs}(\vecx) \\
-        & \bm y              = \text{sort}_{\text{desc}}(\vecx_{\text{abs}}) \\
-        & \beta'             = \text{max} \{ \frac 1 i ((\sum_{j=1}^i \bm y_j) - \alpha) \mid i = 1, \ldots, N \} \\
-        & \beta              = \text{max} \{ \beta', 0 \} \\
+        & \bm x_{\text{abs}} = \text{abs}(\vecx), \\
+        & \bm y              = \text{sort}_{\text{desc}}(\vecx_{\text{abs}}), \\
+        & \beta'             = \text{max} \{ \frac 1 i ((\sum_{j=1}^i \bm y_j) - \alpha) \mid i = 1, \ldots, N \}, \\
+        & \beta              = \text{max} \{ \beta', 0 \}. \\
     \end{aligned}
 }
 
@@ -56,8 +56,12 @@
 % Primal-Dual Splitting
 \newcommand{\PDSPrimal}{\minimize { \vecx \in \realNumber^N } \left\{ f(\vecx) + g(\vecx) + h(\bm{L} \vecx) \right\} }
 \newcommand{\PDSDual}{\minimize { \vecy \in \realNumber^M } \left\{ (f+g)^*(-\bm{L}^T \vecy) + h^*(\vecy) \right\} }
-\newcommand{\PDSSubStepX}{\vecx^{(k+1)} = \proximityOperator{\gamma_1 g}{\vecx^{(k)} - \gamma_1( \nabla f(\vecx^{(k)}) + \bm{L}^T \vecy^{(k)} )}}
-\newcommand{\PDSSubStepY}{\vecy^{(k+1)} = \proximityOperator{\gamma_2 h^*}{\vecy^{(k)} + \gamma_2 \bm{L} (2\vecx^{(k+1)} - \vecx^{(k)}) }}
+\newcommand{\PDSSubStep}{
+    \begin{aligned}
+        & \vecx^{(k+1)} = \proximityOperator{\gamma_1 g}{\vecx^{(k)} - \gamma_1( \nabla f(\vecx^{(k)}) + \bm{L}^T \vecy^{(k)} )}, \\
+        & \vecy^{(k+1)} = \proximityOperator{\gamma_2 h^*}{\vecy^{(k)} + \gamma_2 \bm{L} (2\vecx^{(k+1)} - \vecx^{(k)}) }, \\
+    \end{aligned}
+}
 
 % seismic + related proposed method
 \newcommand{\diffOperator}{\mathbf{D}}
