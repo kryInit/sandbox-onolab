@@ -1,6 +1,6 @@
-As shown in Fig.\ref{fig:salt-model}, the velocity model of the salt model is piecewise smooth.
+As shown in Fig.\ref{fig:salt-model}, the velocity model of the Salt is piecewise smooth.
 Therefore, we introduce the TV constraint to achieve more accurate reconstruction.
-Also, by introducing the box constraint, we can ensure that the velocity model does not take invalid values, and we show the flexibility of incorporating constraints thanks to PDS.
+Also, by introducing the box constraint, we can ensure that the velocity model does not take invalid values, and we show the flexibility of incorporating constraints using PDS.
 
 We minimize the objective function of the TV and box constrained FWI, which is expressed as follows:
 \begin{equation} \label{eq:FWIObjectiveWithTVConstraint} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveWithTVConstraint \end{equation}
