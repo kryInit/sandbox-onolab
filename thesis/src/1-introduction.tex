@@ -19,9 +19,12 @@ In conventional methods that apply the TV constraint to FWI~\cite{FWI-with-TV-co
 This often requires an additional optimization, resulting in an inner loop and increased computational cost.
 In addition, approximations are introduced to incorporate constraints, such as treating non-linear transformations as linear or imposing constraints outside the optimization method.
 
-In this paper, we develop an efficient algorithm based on a primal-dual splitting method to solve the TV-constrained FWI problem with neither an inner loop nor approximations.
-...嬉しさを詳細に書く.
-We also demonstrate the effectiveness of the proposed method through experiments using the SEG/EAGE Salt and Overthrust Models.
-
+In this paper, we develop an efficient algorithm to solve the optimization problem of the constrained FWI. Our contributions are as follows:
+\begin{enumerate}
+      \item We propose a novel algorithm based on the primal-dual splitting (PDS) method to solve the TV and box constrained FWI problem.
+            This method eliminates the need for an inner optimization loop and approximations, which are common in conventional approaches.
+      \item We demonstrate that our algorithm efficiently handles constraints while maintaining computational feasibility, with no significant increase in computation time, and that it achieves accurate reconstruction.
+      \item The PDS framework is flexible and allows for the integration of more complex constraints and regularizations, making it a valuable tool for further development in FWI.
+\end{enumerate}
 
 
