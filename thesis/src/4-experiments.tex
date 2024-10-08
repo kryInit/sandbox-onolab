@@ -18,20 +18,65 @@ The source waveform is a Ricker wavelet with a peek wavelet frequency of 10 Hz.
 The gradient of $E$ is computed numerically using the Devito framework\cite{devito}.
 In normal FWI, the step size $\gamma$ is set to $1.0 \times 10^{-4}$.
 In TV and box constrained FWI, the step size $\gamma_1$ and $\gamma_2$ are set to $1.0 \times 10^{-4}$ and $1.0 \times 10^2$, respectively, the upper bound of the $l_{1,2}$ norm $\alpha$ is set to 400 and the lower and upper bounds of the velocity model $a$, $b$ are set to 1.5[km/s] and 4.5[km/s], respectively.
+Number of iterations is set to 5000.
 
+
+\begin{figure*}[htbp]
+    \centering
+    \begin{tabular}{m{68mm} m{70mm} m{10mm}}
+        % First row: Image 1, 2, and vertically spanning Image 5
+        \begin{minipage}[b]{70mm}
+            \centering
+            \includegraphics[width=70mm]{public/true}
+            \caption*{\raisebox{5mm}{Background truth}}
+        \end{minipage} &
+        \begin{minipage}[b]{70mm}
+            \centering
+            \includegraphics[width=70mm]{public/gradient}
+            \caption*{\raisebox{5mm}{Reconstructed with normal FWI}}
+        \end{minipage} &
+        \multirow[t]{2}{*}{\raisebox{-50mm}{\includegraphics[height=68mm]{public/color-bar}}} \\
+        % Second row: Image 3 and 4
+        \begin{minipage}[b]{70mm}
+            \centering
+            \includegraphics[width=70mm]{public/initial}
+            \caption*{Initial model}
+        \end{minipage} &
+        \begin{minipage}[b]{70mm}
+            \centering
+            \includegraphics[width=70mm]{public/pds}
+            \caption*{Reconstructed with the constrained FWI}
+        \end{minipage} &
+    \end{tabular}
+    \caption{Velocity models and their corresponding reconstructions.}
+    \label{fig:velocity-models}
+\end{figure*}
 
 
 
 \subsection{Results and Discussion}\label{subsec:results-and-discussion}
-%Table 1 presents a summary of the restoration performance achieved by DnCNN-PnP-PDS and other methods. Across all tasks, we rec- ognize that our proposed DnCNN-PnP-PDS has achieved restoration performance comparable to that of DnCNN-PnP-FBS. We remark again that the proposed approach simplified parameter tuning when compared to DnCNN-PnP-FBS. Specifically, in this experiment, we √ rewrite the parameter ε in (9) by α ∈ R as follows: ε = ασ K. √ Note that σ sian noise with the variance σ. The value of α in DnCNN-PnP-PDS was set to 0.95 for all cases, whereas λ in (10) varied from task to task for DnCNN-PnP-FBS. Additionally, we experimentally found that in deblurring, the appropriate λ value was higher than in inpainting. Therefore, in deblurring with a low σ value of 0.005, DnCNN-PnP-PDS achieved a higher PSNR value by approximately 2.5 [dB] compared to
-%DnCNN-PnP-FBS. This result supports the versatility of the de- noiser discussed in Section 3.3. Furthermore, the methods with DnCNN consistently led to sta- ble restoration in all tasks, while the methods with BM3D resulted in instability and cases where restoration did not proceed properly, as seen in the inpainting scenarios. Two possible reasons for this result can be considered: 1) BM3D is generally not firmly nonexpansive, leading to a lack of theoretical guarantees. 2) BM3D assumes the presence of many similar structures within the image [11, 15]. How- ever, this assumption did not hold in images with numerous random missing regions, leading to a significant decrease in restoration per- formance. In Fig.1, we present cn and PSNR values for each iteration. We observe that cn converges to 0 in both cases of DnCNN-PnP- FBS and DnCNN-PnP-PDS. This stability was achieved due to the firm nonexpansiveness of the denoiser. The visual results in Fig.2 show that the clean output of DnCNN-PnP-PDS. In the TV case, color irregularities were observed around the yellow rope, and in the BM3D-PnP-FBS, BM3D-PnP-PDS, and DnCNN-PnP-FBS cases, the images became overly smoothed, resulting in the loss of fine de- tails in the floor pattern. In contrast, DnCNN-PnP-PDS successfully restored the features of the rope clearly, leading to sharp results.
 
+Table 1 presents a summary of the restoration performance achieved by DnCNN-PnP-PDS and other methods.
+Across all tasks, we rec- ognize that our proposed DnCNN-PnP-PDS has achieved restoration performance comparable to that of DnCNN-PnP-FBS.
+We remark again that the proposed approach simplified parameter tuning when compared to DnCNN-PnP-FBS.
+Specifically, in this experiment, we √ rewrite the parameter ε in (9) by α ∈ R as follows: ε = ασ K.
+√ Note that σ sian noise with the variance σ.
+The value of α in DnCNN-PnP-PDS was set to 0.
+5 for all cases, whereas λ in (10) varied from task to task for DnCNN-PnP-FBS.
+Additionally, we experimentally found that in deblurring, the appropriate λ value was higher than in inpainting.
 
 \begin{figure}[htbp]\label{fig:ssim}
-%\vspace{-\baselineskip}
+\vspace{-\baselineskip}
 \begin{center}
     \includegraphics[width=80mm]{public/ssim}
     \caption{ssim}
 \end{center}
-%\vspace{-\baselineskip}
+\vspace{-\baselineskip}
 \end{figure}
+
+
+
+
+
+
+

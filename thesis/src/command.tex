@@ -31,14 +31,14 @@
 \newcommand{\projBox}[1]{ P_{[a,b]^N}(#1) }
 \newcommand{\projBoxSolution}{ \projBox{\vecx} = \text{min}( \text{max} (\vecx, a), b) }
 \newcommand{\projLOneTwoBall}[1]{P_{ \{ \bm a \mid \LOneTwoNorm{ \bm a } \le \alpha \} }(#1)}
-\newcommand{\projLOneTwoBallSolution}{ \projLOneTwoBall{\vecx} = [ \bm p_1^T, \ldots, \bm p_N^T ]^T }
+\newcommand{\projLOneTwoBallSolution}{ (\projLOneTwoBall{\vecx})_{\mathfrak{g}_i} = \bm p_{\mathfrak{g}_i} }
 \newcommand{\projLOneTwoBallSolutionWhere}{
     \begin{aligned}
-        & \bm p_i = \begin{cases}
-            0                                              & \text{if} \ \LTwoNorm{\vecx_i} = 0, \\
-            \bm \beta_i \frac {\vecx_i} {\LTwoNorm{\vecx}} & \text{otherwise},
+        & \bm p_{\mathfrak{g}_i} = \begin{cases}
+            0                                              & \text{if} \ \LTwoNorm{\vecx_{\mathfrak{g}_i}} = 0, \\
+            \bm \beta_i \frac {\vecx_{\mathfrak{g}_i}} {\LTwoNorm{\vecx_{\mathfrak{g}_i}}} & \text{otherwise},
         \end{cases} \\
-        & \bm \beta = P_{ \{ \bm a \mid \LOneNorm{ \bm a } \le \alpha \} }({[ \LTwoNorm{ \vecx_1^T }, \ldots, \LTwoNorm{ \vecx_N^T } ]}). \\
+        & \bm \beta = P_{ \{ \bm a \mid \LOneNorm{ \bm a } \le \alpha \} }({[ \LTwoNorm{ \vecx_{\mathfrak{g}_i} }, \ldots, \LTwoNorm{ \vecx_{\mathfrak{g}_N} } ]^T}). \\
     \end{aligned}
 }
 \newcommand{\projLOneBall}[1]{P_{ \{ \bm a \mid \LOneNorm{ \bm a } \le \alpha \} }(#1)}
@@ -57,10 +57,12 @@
 \newcommand{\PDSPrimal}{\minimize { \vecx \in \realNumber^N } \left\{ f(\vecx) + g(\vecx) + h(\bm{L} \vecx) \right\} }
 \newcommand{\PDSDual}{\minimize { \vecy \in \realNumber^M } \left\{ (f+g)^*(-\bm{L}^T \vecy) + h^*(\vecy) \right\} }
 \newcommand{\PDSSubStep}{
+\left \lfloor \ \
     \begin{aligned}
         & \vecx^{(k+1)} = \proximityOperator{\gamma_1 g}{\vecx^{(k)} - \gamma_1( \nabla f(\vecx^{(k)}) + \bm{L}^T \vecy^{(k)} )}, \\
         & \vecy^{(k+1)} = \proximityOperator{\gamma_2 h^*}{\vecy^{(k)} + \gamma_2 \bm{L} (2\vecx^{(k+1)} - \vecx^{(k)}) }, \\
     \end{aligned}
+\right.
 }
 
 % seismic + related proposed method
@@ -74,7 +76,7 @@
 \newcommand{\FWIObjectiveWithTVConstraint}{ E(\velModel) \ \ \ \text{s.t.} \ \ \LOneTwoNorm{\diffOperator \velModel} \le \alpha \ , \ \velModel \in [a,b]^N }
 \newcommand{\FWIObjectiveWithTVConstraintWithIndicatorFunction}{ E(\velModel) + \indicatorFunction{\LOneTwoNorm{\cdot} \le \alpha}{\diffOperator \velModel} + \indicatorFunction{[a,b]^N}{\velModel} }
 \newcommand{\FWIWithPDS}{
-\left \lbrack \ \
+\left \lfloor \ \
     \begin{aligned}
         & \widetilde{\velModel}^{(k+1)} = \velModel^{(k)} - \gamma_1( \nabla E(\velModel^{(k)}) + \bm{D}^T \vecy^{(k)} ) \\
         & \velModel^{(k+1)}             = \projBox{\widetilde{\velModel}^{(k+1)}} \\

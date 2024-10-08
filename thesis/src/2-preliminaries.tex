@@ -35,7 +35,7 @@ The proximity operator for the specific function used in this paper is given bel
 %The proximity operator for the $l_1$ norm upper bound constraint is expressed as follows~\cite{L1-ball-projection}(faster algorithms are also proposed~\cite{fast-L1-ball-projection}):
 \begin{equation} \label{eq:ProximityOperatorForL1Ball}  \projLOneBallSolution, \end{equation}
 where
-\begin{equation} \label{eq:ProximityOperatorForL1BallWhere} \projLOneBallSolutionWhere. \notag \end{equation}
+\begin{equation} \label{eq:ProximityOperatorForL1BallWhere} \projLOneBallSolutionWhere \notag \end{equation}
 
 %The proximity operator for the $l_{1,2}$ norm upper bound constraint is expressed as follows~\cite{L12-ball-projection}:
 \begin{equation} \label{eq:ProximityOperatorForL12Ball} \projLOneTwoBallSolution, \end{equation}
@@ -55,6 +55,34 @@ The PDS algorithm solve by iteratively updating the following:
 where $\gamma_1, \gamma_2 \in \realNumber$ are step sizes.
 %for more details, please refer to~\cite{PDS2}.
 
+%\begin{figure*}[htbp]\label{fig:full-true-vm}
+%\vspace{-\baselineskip}
+%\begin{center}
+%    \includegraphics[width=160mm]{public/full_true_vm}
+%    \caption{salt model}
+%\end{center}
+%\vspace{-\baselineskip}
+%\end{figure*}
+
+\begin{figure*}[htbp]
+    \centering
+    \begin{tabular}{m{138mm} m{10mm} m{0mm}}
+        % First row: Image 1, 2, and vertically spanning Image 5
+        \begin{minipage}[b]{140mm}
+            \centering
+            \includegraphics[width=140mm]{public/full_true_vm}
+        \end{minipage} &
+        \begin{minipage}[b]{20mm}
+            \centering
+            \includegraphics[height=46mm]{public/color-bar}
+        \end{minipage} &
+    \end{tabular}
+    \caption{velocity model of salt model [km/s]}
+    \label{fig:salt-model}
+\end{figure*}
+
+
+
 \subsection{Full Waveform Inversion}\label{subsec:full-waveform-inversion}
 An objective function of FWI is defined as follows\cite{FWI0}:
 \begin{equation} \label{eq:FWIObjective} \FWIObjectiveDefinition, \end{equation}
@@ -62,7 +90,7 @@ where $\velModel \in \realNumber^{N}$ is velocity model representing subsurface 
 $N$ is the number of grid points, and $M$ is the number of observed signals.
 In general, velocity model is 2D or 3D grid data, but for simplicity we consider flattened 1D vector.
 
-The Normal FWI minimize the objective function and reconstruct the velocity model with following procedures:
+The normal FWI minimize the objective function and reconstruct the velocity model with following procedures:
 \begin{equation} \label{eq:FWIWithGradient} \FWIWithGradient, \end{equation}
 where $\gamma$ is the step size.
 
