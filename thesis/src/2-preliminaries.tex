@@ -1,6 +1,6 @@
 \subsection{Mathematical Tools}\label{subsec:mathematical-tools}
 
-Throughout this paper, we denote vector and matrix by boldface lowercase letter (e.g., $\vecx$) and boldface uppercase letter (e.g., $\bm{X}$), respectively.
+Throughout this paper, we denote vector and matrix by bold lowercase letters (e.g., $\vecx$) and bold uppercase letters (e.g., $\bm{X}$), respectively.
 The operator $l_{X}$ norm of a vector and matrix is denoted by $\Norm{\cdot}__{X}$.
 
 For $\vecx \in \realNumber^{\intN}$, the mixed $l_{1,2}$ norm is defined as follows:
@@ -9,7 +9,7 @@ where $\mathfrak{G}$ is a set of disjoint index sets, and $\vecx_{\mathfrak{g}}$
 
 For $\vecx \in \realNumber^{\intN}$, the total variation (TV)~\cite{TV} is defined as follows:
 \begin{equation} \label{eq:TVDefinitionEq} \TotalVariationDefinition, \end{equation}
-where $d_{h,i}$ and $d_{v,i}$ are the horizontal and vertical differences of the $i$-th element of $\vecx$, respectively, when vector $\vecx$ is considered as a matrix.
+where $d_{h,i}$ and $d_{v,i}$ are the horizontal and vertical differences of the $i$-th element of $\vecx$, respectively, when the vector $\vecx$ is considered as a matrix.
 
 For proper lower-semicontinuous convex function $f \in \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the convex conjugate function is defined as follows:
 \begin{equation} \label{eq:ConjugateFunctionDefinitionEq} \conjugateFunctionDefinition. \end{equation}
@@ -25,7 +25,7 @@ Define the proximity operator for the indicator function as $P_C$ as follows.
 \proximityOperator{ \gamma \indicatorFunction{C}{\cdot} }{\vecx} = P_C(\vecx) \coloneq \argmin{\vecy \in C} \LTwoNorm{\vecy - \vecx}.
 \end{equation}
 
-The proximity operator for the specific function used in this paper is given below.
+Below is the proximity operator for the specific function used in this paper.
 %The proximity operator for the convex conjugate function is expressed as follows~\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function}:
 \begin{equation} \label{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq} \proximityOperatorDefinitionWithConvexConjugateFunction. \end{equation}
 
@@ -42,55 +42,45 @@ where
 where
 \begin{equation} \label{eq:ProximityOperatorForL12BallWhere} \projLOneTwoBallSolutionWhere \notag \end{equation}
 
-The proof of equation \eqref{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq}, \eqref{eq:ProximityOperatorForL1Ball} and~\eqref{eq:ProximityOperatorForL12Ball} can be found in~\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function},~\cite{L1-ball-projection},~\cite{L12-ball-projection} accordingly.
-It is developed a faster algorithm than~\eqref{eq:ProximityOperatorForL1Ball}~\cite{fast-L1-ball-projection}.
+The proof of equations~\eqref{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq},~\eqref{eq:ProximityOperatorForL1Ball} and~\eqref{eq:ProximityOperatorForL12Ball} can be found in~\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function},~\cite{L1-ball-projection},~\cite{L12-ball-projection}, respectively.
+A faster algorithm than~\eqref{eq:ProximityOperatorForL1Ball} has been developed~\cite{fast-L1-ball-projection}..
 
 \subsection{Primal-Dual Splitting Algorithm}\label{subsec:primal-dual-splitting-algorithm}
 The Primal-Dual Splitting (PDS) Algorithm~\cite{PDS0,PDS1,PDS2,PDS3} is applied to the following problem:
 \begin{equation} \label{eq:PDSPrimalEq} \PDSPrimal, \end{equation}
 where $\bm{L} \in \realNumber^{\intM \times \intN}$, $f$ is differentiable convex function and $g,h$ are convex functions whose proximity operator can be computed efficiently.
 
-The PDS algorithm solve by iteratively updating the following:
+The PDS algorithm solves by iteratively updating the following:
 \begin{equation} \label{eq:PDSSubStep} \PDSSubStep \end{equation}
 where $\gamma_1, \gamma_2 \in \realNumber$ are step sizes.
-%for more details, please refer to~\cite{PDS2}.
 
-%\begin{figure*}[htbp]\label{fig:full-true-vm}
-%\vspace{-\baselineskip}
-%\begin{center}
-%    \includegraphics[width=160mm]{public/full_true_vm}
-%    \caption{salt model}
-%\end{center}
-%\vspace{-\baselineskip}
-%\end{figure*}
 
 \begin{figure*}[htbp]
     \centering
-    \begin{tabular}{m{138mm} m{10mm} m{0mm}}
-        % First row: Image 1, 2, and vertically spanning Image 5
-        \begin{minipage}[b]{140mm}
+    \begin{tabular}{m{134mm} m{10mm} m{0mm}}
+        \begin{minipage}[b]{136mm}
             \centering
-            \includegraphics[width=140mm]{public/full_true_vm}
+            \includegraphics[width=136mm]{public/full_true_vm}
         \end{minipage} &
         \begin{minipage}[b]{20mm}
             \centering
-            \includegraphics[height=46mm]{public/color-bar}
+            \includegraphics[height=44mm]{public/color-bar}
         \end{minipage} &
     \end{tabular}
-    \caption{velocity model of salt model [km/s]}
+    \caption{the velocity model of the salt model [km/s]}
     \label{fig:salt-model}
 \end{figure*}
 
 
 
 \subsection{Full Waveform Inversion}\label{subsec:full-waveform-inversion}
-An objective function of FWI is defined as follows\cite{FWI0}:
-\begin{equation} \label{eq:FWIObjective} \FWIObjectiveDefinition, \end{equation}
-where $\velModel \in \realNumber^{N}$ is velocity model representing subsurface properties, $\seismicData_{\mathrm{obs}} \in \realNumber^{M}$ is the observed seismic data, and $\seismicData_{\mathrm{cal}(\velModel)}$ is the modeled seismic data with the velocity model.
+Typically, FWI is treated as an optimization problem as follows\cite{FWI0}:
+\begin{equation} \label{eq:FWIObjective} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveDefinition, \end{equation}
+where $\velModel \in \realNumber^{N}$ is the velocity model representing subsurface properties, $\seismicData_{\mathrm{obs}} \in \realNumber^{M}$ is the observed seismic data, and $\seismicData_{\mathrm{cal}(\velModel)}$ is the modeled seismic data with the velocity model.
 $N$ is the number of grid points, and $M$ is the number of observed signals.
-In general, velocity model is 2D or 3D grid data, but for simplicity we consider flattened 1D vector.
+In general, the velocity model is 2D or 3D grid data, but for simplicity we consider flattened 1D vector.
 
-The standard FWI minimize the objective function and reconstruct the velocity model with following procedures:
+The standard FWI minimizes the objective function and reconstructs the velocity model using the following procedures:
 \begin{equation} \label{eq:FWIWithGradient} \FWIWithGradient, \end{equation}
 where $\gamma$ is the step size.
 
