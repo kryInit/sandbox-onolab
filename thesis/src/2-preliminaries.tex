@@ -59,6 +59,12 @@ where $\gamma_1, \gamma_2 \in \realNumber$ are step sizes.
 \subsection{Full Waveform Inversion}\label{subsec:full-waveform-inversion}
 An objective function of FWI is defined as follows\cite{FWI0}:
 \begin{equation} \label{eq:FWIObjective} \FWIObjectiveDefinition \end{equation}
-where $\velModel \in \realNumber^{N}$ is velocity model representing subsurface properties, $\seismicData_{\mathrm{obs}} \in \realNumber^{M}$ is the observed seismic data, and $\seismicData_{\mathrm{cal}(\velModel)}$ is the calculated seismic data with the velocity model.
+where $\velModel \in \realNumber^{N}$ is velocity model representing subsurface properties, $\seismicData_{\mathrm{obs}} \in \realNumber^{M}$ is the observed seismic data, and $\seismicData_{\mathrm{cal}(\velModel)}$ is the modeled seismic data with the velocity model.
 $N$ is the number of grid points, and $M$ is the number of observed signals.
 In general, velocity model is 2D or 3D grid data, but for simplicity we consider flattened 1D vector.
+
+The Normal FWI minimize the objective function and reconstruct the velocity model with following procedures:
+\begin{equation} \label{eq:FWIWithGradient} \FWIWithGradient \end{equation}
+where $\gamma$ is the step size.
+
+The gradient ${\nabla E}$ can be computed numerically using the adjoint-state method~\cite{FWI-gradient}.
