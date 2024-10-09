@@ -10,8 +10,8 @@ Typically, FWI is treated as an optimization problem, where the objective is to 
 To enhance stability and accuracy, regularization terms are often added to the objective function, such as Tikhonov regularization~\cite{tikhonov}, Total Variation (TV)~\cite{TV}, and Total Generalized Variation (TGV)~\cite{TGV}.
 For example, studies have used regularization of Tikhonov~\cite{FWI-with-tikhonov-regularization}, TV~\cite{FWI-with-TV-regularization}, directional TV~\cite{FWI-with-directional-TV-regularization}, high-order TV~\cite{FWI-with-high-order-TV-regularization}, and TGV~\cite{FWI-with-TGV-regularization}.
 
-The value of the objective function of FWI depends on the observation method, such as a type of input signal and the number of observation equipment, because it contains the squared error between the observed data and the modeled data.
-Consequently, the regularization parameters must be adapted not only to the subsurface properties but also to the observation method.
+The value of the objective function of FWI depends on the observation method, such as a type of input signal and the number of observation devices, because it contains the squared error between the observed data and the modeled data.
+Consequently, the regularization parameters need to be adapted not only to the subsurface properties but also to the observation method.
 On the other hand, adding constraints to the objective function is advantageous because its parameters can only be derived from prior knowledge of the subsurface properties~\cite{constraints-vs-penalties-in-FWI}.
 Therefore, it has been proposed to add the TV constraint to the objective function~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3}.
 

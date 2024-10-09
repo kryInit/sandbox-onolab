@@ -31,15 +31,15 @@
 \newcommand{\projBox}[1]{ P_{[a,b]^N}(#1) }
 \newcommand{\projBoxSolution}{ \projBox{\vecx} = \text{min}( \text{max} (\vecx, a), b) }
 \newcommand{\projLOneTwoBall}[1]{P_{ \{ \bm a \mid \LOneTwoNorm{ \bm a } \le \alpha \} }(#1)}
-\newcommand{\projLOneTwoBallSolution}{ (\projLOneTwoBall{\vecx})_{\mathfrak{g}_i} = \bm p_{\mathfrak{g}_i} }
-\newcommand{\projLOneTwoBallSolutionWhere}{
-    \begin{aligned}
-        & \bm p_{\mathfrak{g}_i} = \begin{cases}
-            0                                              & \text{if} \ \LTwoNorm{\vecx_{\mathfrak{g}_i}} = 0, \\
+\newcommand{\projLOneTwoBallSolution}{
+    (\projLOneTwoBall{\vecx})_{\mathfrak{g}_i} =
+        \begin{cases}
+            0 & \text{if} \ \LTwoNorm{\vecx_{\mathfrak{g}_i}} = 0, \\
             \bm \beta_i \frac {\vecx_{\mathfrak{g}_i}} {\LTwoNorm{\vecx_{\mathfrak{g}_i}}} & \text{otherwise},
         \end{cases} \\
-        & \bm \beta = P_{ \{ \bm a \mid \LOneNorm{ \bm a } \le \alpha \} }({[ \LTwoNorm{ \vecx_{\mathfrak{g}_i} }, \ldots, \LTwoNorm{ \vecx_{\mathfrak{g}_N} } ]^T}). \\
-    \end{aligned}
+}
+\newcommand{\projLOneTwoBallSolutionWhere}{
+    \bm \beta = P_{ \{ \bm a \mid \LOneNorm{ \bm a } \le \alpha \} }({[ \LTwoNorm{ \vecx_{\mathfrak{g}_1} }, \ldots, \LTwoNorm{ \vecx_{\mathfrak{g}_N} } ]^T}). \\
 }
 \newcommand{\projLOneBall}[1]{P_{ \{ \bm a \mid \LOneNorm{ \bm a } \le \alpha \} }(#1)}
 \newcommand{\projLOneBallSolution}{\projLOneBall{\vecx} = \text{SoftThrethold}(\vecx, \beta)}

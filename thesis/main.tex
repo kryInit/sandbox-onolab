@@ -17,6 +17,10 @@
 \usepackage{multirow}
 \usepackage{multicol}
 
+\renewcommand{\figurename}{Fig.}
+\renewcommand{\tablename}{Table}
+\renewcommand{\refname}{References}
+
 \input{src/command}
 
 % もし本文が英文ならば，日本語のタイトルと著者は不要です．
@@ -35,7 +39,7 @@
 }
 
 \eauthor{
-  Yudai INADA, Shingo TAKEMOTO and Shunsuke ONO
+  Yudai INADA, Shingo TAKEMOTO, and Shunsuke ONO
 }
 
 \jaddress{
@@ -73,7 +77,6 @@
 
 %\clearpage
 
-\renewcommand{\refname}{References}
 \begin{spacing}{0.80}
     \bibliographystyle{IEEEtran}
     \small

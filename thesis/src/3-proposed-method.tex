@@ -14,3 +14,20 @@ Therefore, these functions of $E$, $\iota_{[a,b]^N}$ and $\iota_{\LOneTwoNorm{\c
 The iterative procedures are as follows:
 \begin{equation} \label{eq:FWIWithPDS} \FWIWithPDS \notag \end{equation}
 
+
+Below is the proximity operator for the specific function used in this paper.
+\begin{equation} \label{eq:ProximityOperatorForBoxConstraint} \projBoxSolution. \end{equation}
+
+%The proximity operator for the $l_{1,2}$ norm upper bound constraint is expressed as follows~\cite{L12-ball-projection}:
+\begin{equation} \label{eq:ProximityOperatorForL12Ball} \projLOneTwoBallSolution, \end{equation}
+where
+\begin{equation} \label{eq:ProximityOperatorForL12BallWhere} \projLOneTwoBallSolutionWhere \notag \end{equation}
+
+%The proximity operator for the $l_1$ norm upper bound constraint is expressed as follows~\cite{L1-ball-projection}(faster algorithms are also proposed~\cite{fast-L1-ball-projection}):
+\begin{equation} \label{eq:ProximityOperatorForL1Ball}  \projLOneBallSolution, \end{equation}
+where
+\begin{equation} \label{eq:ProximityOperatorForL1BallWhere} \projLOneBallSolutionWhere \notag \end{equation}
+
+The proof of equations~\eqref{eq:ProximityOperatorForL1Ball} and~\eqref{eq:ProximityOperatorForL12Ball} can be found in~\cite{L1-ball-projection}, and~\cite{L12-ball-projection}, respectively.
+A faster algorithm than~\eqref{eq:ProximityOperatorForL1Ball} has been developed~\cite{fast-L1-ball-projection}.
+
