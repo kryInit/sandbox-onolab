@@ -3,27 +3,29 @@
 \begin{figure*}[htbp]
     \centering
     \begin{tabular}{m{68mm} m{70mm} m{10mm}}
-        % First row: Image 1, 2, and vertically spanning Image 5
         \begin{minipage}[b]{70mm}
             \centering
             \includegraphics[width=70mm]{public/true}
-            \caption*{\raisebox{5mm}{Background truth}}
+            \vspace{-7mm}
+            \caption*{\raisebox{2mm}{Background truth}}
         \end{minipage} &
         \begin{minipage}[b]{70mm}
             \centering
             \includegraphics[width=70mm]{public/gradient}
-            \caption*{\raisebox{5mm}{Reconstructed with standard FWI}}
+            \vspace{-7mm}
+            \caption*{\raisebox{2mm}{Reconstructed with standard FWI}}
         \end{minipage} &
         \multirow[t]{2}{*}{\raisebox{-50mm}{\includegraphics[height=68mm]{public/color-bar}}} \\
-        % Second row: Image 3 and 4
         \begin{minipage}[b]{70mm}
             \centering
             \includegraphics[width=70mm]{public/initial}
+            \vspace{-8mm}
             \caption*{Initial model}
         \end{minipage} &
         \begin{minipage}[b]{70mm}
             \centering
             \includegraphics[width=70mm]{public/pds}
+            \vspace{-8mm}
             \caption*{Reconstructed with the constrained FWI}
         \end{minipage} &
     \end{tabular}
@@ -61,11 +63,11 @@ While this experiment shows that good results can be achieved by appropriately s
 
 
 \begin{figure}[htbp]
-\vspace{-\baselineskip}
+%\vspace{-\baselineskip}
 \begin{center}
     \includegraphics[width=80mm]{public/ssim}
     \caption{SSIM against the number of iterations.}
     \label{fig:ssim}
 \end{center}
-\vspace{-\baselineskip}
+%\vspace{-\baselineskip}
 \end{figure}
