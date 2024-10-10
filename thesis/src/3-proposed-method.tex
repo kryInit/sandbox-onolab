@@ -1,8 +1,9 @@
-As shown in Fig.\ref{fig:salt-model}, the velocity model of the Salt is piecewise smooth.
-Therefore, we introduce the TV constraint to achieve more accurate reconstruction.
-Also, by introducing the box constraint, we can ensure that the velocity model does not take invalid values, and we show the flexibility of incorporating constraints using PDS.
+We introduce the TV and box constraint into the FWI problem to achieve more accurate reconstruction.
+As shown in Fig.\ref{fig:salt-model}, the velocity model of the Salt is piecewise smooth, thus introducing the TV constraint to achieve a more accurate reconstruction.
+Also, by introducing the box constraint, we can ensure that the velocity model does not take invalid values.
+As mentioned in the introduction, it is easier to determine parameters if the TV is treated as a constraint rather than a regularization.
 
-We minimize the objective function of the TV and box constrained FWI, which is expressed as follows:
+The optimization problem of the TV and box constrained FWI is formulated as follows:
 \begin{equation} \label{eq:FWIObjectiveWithTVConstraint} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveWithTVConstraint \end{equation}
 where $\alpha \in \realNumber$ is the upper bound of the $l_{1,2}$ norm, and $a, b \in \realNumber$ are the lower and upper bounds of the velocity model value, respectively.
 
@@ -23,7 +24,7 @@ The following are the proximity operators of indicator function of the box const
 where
 \begin{equation} \label{eq:ProximityOperatorForL12BallWhere} \projLOneTwoBallSolutionWhere \notag \end{equation}
 
-The proximity operator for the $l_1$ norm upper bound constraint is expressed as follows~\cite{L1-ball-projection}(faster algorithms are also proposed~\cite{fast-L1-ball-projection}):
+The proximity operator for the $l_1$ norm upper bound constraint is expressed as follows~\cite{L1-ball-projection}(faster but procedural algorithms are also proposed~\cite{fast-L1-ball-projection}):
 \begin{equation} \label{eq:ProximityOperatorForL1Ball}  \projLOneBallSolution, \end{equation}
 where
 \begin{equation} \label{eq:ProximityOperatorForL1BallWhere} \projLOneBallSolutionWhere \notag \end{equation}

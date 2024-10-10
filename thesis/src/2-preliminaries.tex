@@ -66,7 +66,7 @@ where $\velModel \in \realNumber^{N}$ is the velocity model representing subsurf
 $N$ is the number of grid points, and $M$ is the number of observed signals.
 In general, the velocity model is 2D or 3D grid data, but for simplicity we consider flattened 1D vector.
 
-The observation process is nonlinear and complex, making it difficult to obtain $\seismicData_{\mathrm{cal}(\cdot)}$ analytically.
+The observation process $\seismicData_{\mathrm{cal}}$ is nonlinear and complex, making it difficult to obtain $\seismicData_{\mathrm{cal}(\cdot)}$ analytically.
 However, the gradient $\nabla E$ can be computed numerically using the adjoint-state method~\cite{FWI-gradient}.
 
 Therefore, the standard FWI minimizes the objective function and reconstructs the velocity model using the following procedures:
