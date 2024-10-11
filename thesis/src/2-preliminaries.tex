@@ -1,7 +1,6 @@
 \subsection{Mathematical Tools}\label{subsec:mathematical-tools}
 
-Throughout this paper, we denote vector and matrix by bold lowercase letters (e.g., $\vecx$) and bold uppercase letters (e.g., $\bm{X}$), respectively.
-The operator $l_{X}$ norm of a vector and matrix is denoted by $\Norm{\cdot}__{X}$.
+Throughout this paper, we denote vectors and matrices by bold lowercase letters (e.g., $\vecx$) and bold uppercase letters (e.g., $\bm{X}$), respectively.
 
 For $\vecx \in \realNumber^{\intN}$, the mixed $l_{1,2}$ norm is defined as follows:
 \begin{equation} \label{eq:L12NormDefinitionEq} \LOneTwoNormDefinition, \end{equation}
@@ -11,32 +10,31 @@ For $\vecx \in \realNumber^{\intN}$, the total variation (TV)~\cite{TV} is defin
 \begin{equation} \label{eq:TVDefinitionEq} \TotalVariationDefinition, \end{equation}
 where $d_{h,i}$ and $d_{v,i}$ are the horizontal and vertical differences of the $i$-th element of $\vecx$, respectively, when the vector $\vecx$ is considered as a matrix.
 
+\subsection{Proximal Tools}\label{subsec:proximal-tools}
+For $\gamma > 0$, $f \in \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the proximity operator is defined as follows:
+\begin{equation} \label{eq:ProximityOperatorDefinitionEq} \proximityOperatorDefinition. \end{equation}
+
 For a proper lower-semicontinuous convex function $f \in \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the convex conjugate function is defined as follows:
 \begin{equation} \label{eq:ConjugateFunctionDefinitionEq} \conjugateFunctionDefinition. \end{equation}
+
+The proximity operator for the convex conjugate function is expressed as follows~\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function}:
+\begin{equation} \label{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq} \proximityOperatorDefinitionWithConvexConjugateFunction. \end{equation}
 
 For a set $C \subset \realNumber^N$ and $\vecx \in \realNumber^N$, the indicator function is defined as follows:
 \begin{equation} \label{eq:IndicatorFunctionDefinitionEq} \indicatorFunctionDefinition \end{equation}
 
-For $\gamma > 0$, $f \in \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the proximity operator is defined as follows:
-\begin{equation} \label{eq:ProximityOperatorDefinitionEq} \proximityOperatorDefinition. \end{equation}
-
 Define the proximity operator for the indicator function as $P_C$ as follows.
 \begin{equation} \label{eq:ProximityOperatorDefinitionWithIndicatorFunctionEq}
-\proximityOperator{ \gamma \indicatorFunction{C}{\cdot} }{\vecx} = P_C(\vecx) \coloneq \argmin{\vecy \in C} \LTwoNorm{\vecy - \vecx}.
+\proximityOperator{ \gamma \iota_{C} }{\vecx} = P_C(\vecx) \coloneq \argmin{\vecy \in C} \LTwoNorm{\vecy - \vecx}.
 \end{equation}
 
-%Below is the proximity operator for the specific function used in this paper.
-The proximity operator for the convex conjugate function is expressed as follows~\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function}:
-\begin{equation} \label{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq} \proximityOperatorDefinitionWithConvexConjugateFunction. \end{equation}
-
-%The proximity operator for the box constraint is expressed as follows.
 
 \subsection{Primal-Dual Splitting Algorithm}\label{subsec:primal-dual-splitting-algorithm}
 The Primal-Dual Splitting (PDS) algorithm~\cite{PDS0,PDS1,PDS2,PDS3} is applied to the following problem:
 \begin{equation} \label{eq:PDSPrimalEq} \PDSPrimal, \end{equation}
 where $\bm{L} \in \realNumber^{\intM \times \intN}$, $f$ is a differentiable convex function and $g,h$ are convex functions whose proximity operator can be computed efficiently.
 
-The PDS algorithm solves by iteratively updating the following:
+The PDS algorithm solves prob.~\eqref{eq:PDSPrimalEq} by iteratively updating the following:
 \begin{equation} \label{eq:PDSSubStep} \PDSSubStep \end{equation}
 where $\gamma_1, \gamma_2 \in \realNumber$ are step sizes.
 
@@ -66,7 +64,7 @@ where $\velModel \in \realNumber^{N}$ is the velocity model representing subsurf
 $N$ is the number of grid points, and $M$ is the number of observed signals.
 In general, the velocity model is 2D or 3D grid data, but for simplicity we consider flattened 1D vector.
 
-The observation process $\seismicData_{\mathrm{cal}}$ is nonlinear and complex, making it difficult to obtain $\seismicData_{\mathrm{cal}(\cdot)}$ analytically.
+The observation process $\seismicData_{\mathrm{cal}}$ is nonlinear and complex, making it difficult to express analytically.
 However, the gradient $\nabla E$ can be computed numerically using the adjoint-state method~\cite{FWI-gradient}.
 
 Therefore, the standard FWI minimizes the objective function and reconstructs the velocity model using the following procedures:

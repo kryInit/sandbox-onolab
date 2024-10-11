@@ -27,7 +27,7 @@
 % proximity operator
 \newcommand{\proximityOperator}[2]{\mathrm{prox}_{#1}(#2)}
 \newcommand{\proximityOperatorDefinition}{\proximityOperator{ \gamma f }{\vecx} := \argmin{\vecy \in \realNumber^N} \left\{ f(\vecy) + \frac{1}{2 \gamma} \LTwoNorm{\vecy - \vecx}^2 \right\}}
-\newcommand{\proximityOperatorDefinitionWithConvexConjugateFunction}{\proximityOperator{ \gamma f^* }{\vecx} = \vecx - \gamma \proximityOperator{ f / \gamma }{\vecx / \gamma} }
+\newcommand{\proximityOperatorDefinitionWithConvexConjugateFunction}{\proximityOperator{ \gamma f^* }{\vecx} = \vecx - \gamma \proximityOperator{ \frac 1 \gamma f }{\vecx / \gamma} }
 \newcommand{\projBox}[1]{ P_{[a,b]^N}(#1) }
 \newcommand{\projBoxSolution}{ \projBox{\vecx} = \text{min}( \text{max} (\vecx, a), b) }
 \newcommand{\projLOneTwoBall}[1]{P_{ \{ \LOneTwoNorm{ \cdot } \le \alpha \} }(#1)}
