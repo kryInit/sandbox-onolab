@@ -25,9 +25,9 @@
 \newcommand{\indicatorFunctionDefinition}{\indicatorFunction{C}{\vecx} \coloneq \begin{cases} 0 & \text{if } \vecx \in C, \\ \infty & \text{otherwise}. \end{cases} }
 
 % proximity operator
-\newcommand{\proximityOperator}[2]{\mathrm{prox}_{#1}(#2)}
+\newcommand{\proximityOperator}[2]{\mathrm{prox}_{#1}\left(#2\right)}
 \newcommand{\proximityOperatorDefinition}{\proximityOperator{ \gamma f }{\vecx} := \argmin{\vecy \in \realNumber^N} \left\{ f(\vecy) + \frac{1}{2 \gamma} \LTwoNorm{\vecy - \vecx}^2 \right\}}
-\newcommand{\proximityOperatorDefinitionWithConvexConjugateFunction}{\proximityOperator{ \gamma f^* }{\vecx} = \vecx - \gamma \proximityOperator{ \frac 1 \gamma f }{\vecx / \gamma} }
+\newcommand{\proximityOperatorDefinitionWithConvexConjugateFunction}{\proximityOperator{ \gamma f^* }{\vecx} = \vecx - \gamma \proximityOperator{ \frac 1 \gamma f }{\frac 1 \gamma \vecx} }
 \newcommand{\projBox}[1]{ P_{[a,b]^N}(#1) }
 \newcommand{\projBoxSolution}{ \projBox{\vecx} = \text{min}( \text{max} (\vecx, a), b) }
 \newcommand{\projLOneTwoBall}[1]{P_{ \{ \LOneTwoNorm{ \cdot } \le \alpha \} }(#1)}

@@ -29,3 +29,6 @@ The proximity operator for the $l_1$ norm upper bound constraint is expressed as
 where
 \begin{equation} \label{eq:ProximityOperatorForL1BallWhere} \projLOneBallSolutionWhere \notag \end{equation}
 
+The computation of $\nabla E$ requires the simulation of the wave propagation along the time axis for each grid point.
+In contrast, the computation of the other parts of the process does not involve time-axis simulations.
+Therefore, the computationally intensive part of the process is primarily the calculation of $\nabla E$, and the introduction of the constraints does not significantly increase the overall computational cost.
