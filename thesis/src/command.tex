@@ -71,7 +71,7 @@
 \newcommand{\seismicData}{\bm{u}}
 
 % FWI objective
-\newcommand{\FWIObjectiveDefinition}{ E(\velModel) = \frac {1} {2} \LTwoNorm { \seismicData_{\mathrm{obs}} - \seismicData_{\mathrm{cal}(\velModel)} }^2 }
+\newcommand{\FWIObjectiveDefinition}{ E(\velModel) = \frac {1} {2} \LTwoNorm { \seismicData_{\mathrm{obs}} - \seismicData_{\mathrm{cal}}(\velModel) }^2 }
 \newcommand{\FWIGradientDefinition}{ \nabla E(\velModel) = \seismicData_{\mathrm{obs}} - \nabla \seismicData_{\mathrm{cal}(\velModel)} }
 \newcommand{\FWIObjectiveWithTVConstraint}{ E(\velModel) \ \ \ \text{s.t.} \ \ \LOneTwoNorm{\diffOperator \velModel} \le \alpha \ , \ \velModel \in [a,b]^N }
 \newcommand{\FWIObjectiveWithTVConstraintWithIndicatorFunction}{ E(\velModel) + \indicatorFunction{\LOneTwoNorm{\cdot} \le \alpha}{\diffOperator \velModel} + \indicatorFunction{[a,b]^N}{\velModel} }

@@ -2,15 +2,15 @@ Full waveform inversion (FWI)~\cite{FWI0,FWI1} aims to reconstruct subsurface pr
 These subsurface properties are used for geological research and resource exploration, including deposits of gas, oil, mineral, and groundwater~\cite{FWI1,FWIApplicationGroundwater0,FWIApplicationGroundwater1}.
 In addition to resource exploration, FWI has also been successfully applied to non-destructive testing~\cite{FWIApplicationNonDestructiveTesting0,FWIApplicationNonDestructiveTesting1}.
 
-The observation process of seismic data by subsurface properties is nonlinear and complex~\cite{FWI1}, making it impossible to analytically invert subsurface properties from observed seismic data.
+The observation process of seismic data from subsurface properties is nonlinear and complex~\cite{FWI1}, making analytic inverse transformation impossible.
 To address this, an effective approach is to formulate FWI as an optimization problem~\cite{FWI0,CustomFWI0,CustomFWI1,CustomFWI2,CustomFWI3,CustomFWI4,CustomFWI5} such as minimizing the squared error between observed and modeled seismic data.
 Since FWI is an ill-posed inverse problem, regularization techniques are also effective.
 To capture the piecewise smoothness of subsurface properties, Tikhonov~\cite{tikhonov} and Total Variation (TV)-type~\cite{TV,TGV} regularizations have been introduced~\cite{FWI-with-tikhonov-regularization,FWI-with-TV-regularization,FWI-with-directional-TV-regularization,FWI-with-high-order-TV-regularization,FWI-with-TGV-regularization}.
 However, these regularizations often require careful tuning of balance parameters.
 
 Instead of regularizations, it has also been proposed to incorporate TV as a constraint into the FWI problem~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3}.
-In contrast to regularizations, constraints have the advantage that their parameters can be determined based only on prior knowledge of the subsurface properties~\cite{constraints-vs-penalties-in-FWI}.
-Therefore, formulating the FWI problem with constraints makes the formulation and solution more interpretable, which is beneficial for practical applications.
+In contrast to the TV regularization, the TV constraint has the advantage that its parameters can be determined based only on prior knowledge of the subsurface properties~\cite{constraints-vs-penalties-in-FWI}.
+This makes the parameters easier to interpret, as they provide direct control over the smoothness of the solution, which is particularly beneficial for practical applications.
 
 However, the TV-constrained FWI problem is difficult to solve not only because of the nonlinearity of the observation process, but also because of the non-smoothness of the TV constraint.
 To address this, conventional methods~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3} adjust the objective variable to satisfy the constraint at each step of an iterative optimization algorithm.
@@ -19,10 +19,7 @@ In addition, approximations are introduced, such as treating nonlinear transform
 If the TV-constrained FWI problem could be solved with neither an inner loop nor these approximations, more efficient and accurate reconstructions of subsurface properties would be possible.
 
 In this paper, we propose a novel algorithm to solve the TV-constrained FWI problem based on the primal-dual splitting (PDS) method.
-By using our algorithm, we contribute to an efficient and accurate reconstruction of subsurface properties with neither an inner loop nor approximations.
-We demonstrate that our algorithm efficiently handles constraints, while achieving accurate reconstruction.
-
-
-
-
+Our algorithm addresses the challenges posed by both the nonlinearity of the observation process and the non-smoothness of the TV constraint without approximations, resulting in a more accurate reconstruction.
+Furthermore, it can handle the constraint without an inner loop, which enhances computational efficiency.
+We demonstrate that our algorithm efficiently handles the constraint while achieving accurate reconstruction.
 
