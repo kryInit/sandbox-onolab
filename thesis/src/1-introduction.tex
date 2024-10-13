@@ -1,8 +1,8 @@
 Full waveform inversion (FWI)~\cite{FWI0,FWI1} aims to reconstruct subsurface properties from seismic data observed at multiple points.
 These subsurface properties are used for geological research and resource exploration, including deposits of gas, oil, mineral, and groundwater~\cite{FWI1,FWIApplicationGroundwater0,FWIApplicationGroundwater1}.
-In addition to resource exploration, FWI has also been successfully applied to non-destructive testing~\cite{FWIApplicationNonDestructiveTesting0,FWIApplicationNonDestructiveTesting1}.
+In addition to geological fields, FWI has also been successfully applied to non-destructive testing~\cite{FWIApplicationNonDestructiveTesting0,FWIApplicationNonDestructiveTesting1}.
 
-The observation process of seismic data from subsurface properties is nonlinear and complex~\cite{FWI1}, making analytic inverse transformation impossible.
+The observation process of seismic data from subsurface properties is nonlinear and complex~\cite{FWI1}, making an analytic inverse transformation infeasible.
 To address this, an effective approach is to formulate FWI as an optimization problem~\cite{FWI0,CustomFWI0,CustomFWI1,CustomFWI2,CustomFWI3,CustomFWI4,CustomFWI5} such as minimizing the squared error between observed and modeled seismic data.
 Since FWI is an ill-posed inverse problem, regularization techniques are also effective.
 To capture the piecewise smoothness of subsurface properties, Tikhonov~\cite{tikhonov} and Total Variation (TV)-type~\cite{TV,TGV} regularizations have been introduced~\cite{FWI-with-tikhonov-regularization,FWI-with-TV-regularization,FWI-with-directional-TV-regularization,FWI-with-high-order-TV-regularization,FWI-with-TGV-regularization}.

@@ -42,14 +42,14 @@ where $\gamma_1, \gamma_2 \in \realNumber$ are step sizes.
 \begin{figure*}[htbp]
 \vspace{-\baselineskip}
     \centering
-    \begin{tabular}{m{118mm} m{10mm} m{0mm}}
+    \begin{tabular}{m{110mm} m{5mm} m{0mm}}
         \begin{minipage}[b]{120mm}
             \centering
             \includegraphics[width=120mm]{public/full_true_vm}
         \end{minipage} &
         \begin{minipage}[b]{20mm}
             \centering
-            \includegraphics[height=36mm]{public/color-bar}
+            \includegraphics[height=38mm]{public/color-bar}
         \end{minipage} &
     \end{tabular}
     \vspace{-3mm}
@@ -69,7 +69,7 @@ $N$ is the number of grid points, and $M$ is the number of observed signals.
 In general, the velocity model is 2D or 3D grid data, but for simplicity we consider flattened 1D vector.
 
 The observation process $\seismicData_{\mathrm{cal}}$ is nonlinear and complex, making it difficult to express analytically.
-However, the gradient $\nabla E$ can be computed numerically using the adjoint-state method~\cite{FWI-gradient}.
+However, the gradient $\nabla E$ can be computed numerically by simulating the wave equation using the adjoint-state method~\cite{FWI-gradient}.
 
 Therefore, the standard FWI minimizes the objective function and reconstructs the velocity model using the following procedures:
 \begin{equation} \label{eq:FWIWithGradient} \FWIWithGradient, \end{equation}

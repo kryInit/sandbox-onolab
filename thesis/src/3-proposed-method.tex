@@ -24,11 +24,15 @@ The following are the proximity operators of indicator function of the box const
 where
 \begin{equation} \label{eq:ProximityOperatorForL12BallWhere} \projLOneTwoBallSolutionWhere \notag \end{equation}
 
-The proximity operator for the $l_1$ norm upper bound constraint is expressed as follows~\cite{L1-ball-projection}(faster but procedural algorithms are also proposed~\cite{fast-L1-ball-projection}):
+The proximity operator for the $l_1$ norm upper bound constraint is expressed as follows~\cite{L1-ball-projection}:
 \begin{equation} \label{eq:ProximityOperatorForL1Ball}  \projLOneBallSolution, \end{equation}
 where
 \begin{equation} \label{eq:ProximityOperatorForL1BallWhere} \projLOneBallSolutionWhere \notag \end{equation}
+This process has a computational complexity of $O(N\log{}N)$ for $\bm x \in \realNumber^N$, with the sorting operation being the primary bottleneck.
+However, a more efficient procedural method with a complexity of $O(N)$ has been proposed~\cite{fast-L1-ball-projection}.
 
-The computation of $\nabla E$ requires the simulation of the wave propagation along the time axis for each grid point.
-In contrast, the computation of the other parts of the process does not involve time-axis simulations.
+
+
+The computation of $\nabla E$ requires the simulation of the wave equation along the time axis for each grid point.
+In contrast, the computation of the other parts of the process can be done in linear time with respect to the number of grid points, without time axis simulations.
 Therefore, the computationally intensive part of the process is primarily the calculation of $\nabla E$, and the introduction of the constraints does not significantly increase the overall computational cost.
