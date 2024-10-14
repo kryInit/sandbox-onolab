@@ -14,14 +14,13 @@
 \usepackage{setspace}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{cite}
 \usepackage{array}
 \usepackage{multirow}
 \usepackage{multicol}
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-\renewcommand{\algorithmicrequire}{\textbf{Input:}}
-\renewcommand{\algorithmicensure}{\textbf{Output:}}
 
 
 \renewcommand{\floatpagefraction}{0.8}
@@ -35,6 +34,7 @@
 \renewcommand{\refname}{References}
 
 \input{src/command}
+
 
 % もし本文が英文ならば，日本語のタイトルと著者は不要です．
 % その場合，下記の \OnlyEnglishtrue を有効にしてください．
@@ -63,36 +63,37 @@
 }
 
 \begin{document}
-\maketitle
+    \input{src/control-bibtex}
 
-\input{src/0-summary}
+    \maketitle
 
-\section{Introduction}\label{sec:Introduction}
-\input{src/1-introduction}
+    \input{src/0-summary}
 
-\section{Preliminaries}\label{sec:Preliminaries}
-\input{src/2-preliminaries}
+    \section{Introduction}\label{sec:Introduction}
+    \input{src/1-introduction}
 
-\section{Proposed Method}\label{sec:ProposedMethod}
-\input{src/3-proposed-method}
+    \section{Preliminaries}\label{sec:Preliminaries}
+    \input{src/2-preliminaries}
+
+    \section{Proposed Method}\label{sec:ProposedMethod}
+    \input{src/3-proposed-method}
 
 
-\section{Experiments}\label{sec:Experiments}
-\input{src/4-experiments}
+    \section{Experiments}\label{sec:Experiments}
+    \input{src/4-experiments}
 
-\section{Conclusion}\label{sec:Conclusion}
-\input{src/5-conclusion}
+    \section{Conclusion}\label{sec:Conclusion}
+    \input{src/5-conclusion}
 
-%\clearpage
+    %\clearpage
 
-\section*{Acknowledgement}\label{sec:Acknowledgement}
-\input{src/6-acknowledgement}
+    \section*{Acknowledgement}\label{sec:Acknowledgement}
+    \input{src/6-acknowledgement}
 
-\begin{spacing}{1}
-    \bibliographystyle{IEEEtran}
-    \small
-%    \setlength{\itemsep}{0pt}
-    \bibliography{references}
-\end{spacing}
-
+    \begin{spacing}{1}
+        \small
+%        \setlength{\itemsep}{0pt}
+        \bibliographystyle{IEEEtran}
+        \bibliography{references}
+    \end{spacing}
 \end{document}
