@@ -18,6 +18,18 @@
 \usepackage{multirow}
 \usepackage{multicol}
 
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+
+\renewcommand{\floatpagefraction}{0.8}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.9}
+\renewcommand{\dblfloatpagefraction}{0.9}
+
 \renewcommand{\figurename}{Fig.}
 \renewcommand{\tablename}{Table}
 \renewcommand{\refname}{References}
@@ -58,8 +70,6 @@
 \section{Introduction}\label{sec:Introduction}
 \input{src/1-introduction}
 
-%\clearpage
-
 \section{Preliminaries}\label{sec:Preliminaries}
 \input{src/2-preliminaries}
 
@@ -73,15 +83,15 @@
 \section{Conclusion}\label{sec:Conclusion}
 \input{src/5-conclusion}
 
-\clearpage
+%\clearpage
 
 \section*{Acknowledgement}\label{sec:Acknowledgement}
 \input{src/6-acknowledgement}
 
-\begin{spacing}{0.82}
+\begin{spacing}{1}
     \bibliographystyle{IEEEtran}
     \small
-    \setlength{\itemsep}{0pt}
+%    \setlength{\itemsep}{0pt}
     \bibliography{references}
 \end{spacing}
 

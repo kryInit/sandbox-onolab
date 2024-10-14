@@ -1,19 +1,33 @@
 We introduce the TV and box constraint into the FWI problem to achieve more accurate reconstruction.
-As shown in Fig.\ref{fig:salt-model}, the velocity model of the Salt is piecewise smooth, thus introducing the TV constraint to achieve a more accurate reconstruction.
-Also, by introducing the box constraint, we can ensure that the velocity model does not take invalid values.
+As shown in Fig.~\ref{fig:salt-model}, the velocity model is piecewise smooth, thus introducing the TV constraint to achieve a more accurate reconstruction.
+Also, by introducing the box constraint, we prevent the velocity model values from being invalid.
 As mentioned in the introduction, it is easier to determine parameters if the TV is treated as a constraint rather than a regularization.
 
 The optimization problem of the TV and box constrained FWI is formulated as follows:
 \begin{equation} \label{eq:FWIObjectiveWithTVConstraint} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveWithTVConstraint \end{equation}
-where $\alpha \in \realNumber$ is the upper bound of the $l_{1,2}$ norm, and $a, b \in \realNumber$ are the lower and upper bounds of the velocity model value, respectively.
+where $\alpha \in \realNumber$ is the upper bound of the $l_{1,2}$ norm, and $a, b \in \realNumber$ are the lower and upper bounds of the velocity model values, respectively.
 
 The constraints can be incorporated into the objective function as indicator functions:
-\begin{equation} \label{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveWithTVConstraintWithIndicatorFunction \end{equation}
+\begin{equation} \label{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveWithTVConstraintWithIndicatorFunction. \end{equation}
 
 The proximity operator of $\iota_{\LOneTwoNorm{\cdot} \le \alpha}$ and $\iota_{[a,b]^N}$ can be computed efficiently.
 Therefore, these functions of $E$, $\iota_{[a,b]^N}$ and $\iota_{\LOneTwoNorm{\cdot} \le \alpha}$ correspond to $f$, $g$ and $h$ in \eqref{eq:PDSPrimalEq}, respectively, $\diffOperator$ is corresponds to $\bm{L}$, and the problem~\eqref{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction} can be solved using PDS.
-The iterative procedures are as follows:
-\begin{equation} \label{eq:FWIWithPDS} \FWIWithPDS \notag \end{equation}
+We show the detailed algorithm in Algorithm~\ref{alg:FWIWithPDS}.
+%\begin{equation} \label{eq:FWIWithPDS} \FWIWithPDS \notag \end{equation}
+\begin{algorithm}[t]
+    \caption{PDS for \eqref{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction}}\label{alg:FWIWithPDS}
+    \begin{algorithmic}[1]
+        \Statex \textbf{Input:} $ \velModel^{(0)}, \vecy^{(0)}, \gamma_0 > 0, \gamma_1 > 0 $
+        \While {A stopping criterion is not satisfied}
+            \State $\widetilde{\velModel} \leftarrow \FWIWithPDSStepMTmp $
+            \State $\velModel^{(k+1)}     \leftarrow \FWIWithPDSStepM $
+            \State $\widetilde{\vecy}     \leftarrow \FWIWithPDSStepYTmp $
+            \State $\vecy^{(k+1)}         \leftarrow \FWIWithPDSStepY $
+        \EndWhile
+        \Statex \textbf{Output:} $\velModel^{(k)}$
+    \end{algorithmic}
+\end{algorithm}
+
 
 
 The following are the proximity operators of indicator function of the box constraint and the $l_{1,2}$ norm upper bound constraint.

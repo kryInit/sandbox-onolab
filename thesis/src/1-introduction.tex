@@ -3,13 +3,13 @@ These subsurface properties are used for geological research and resource explor
 In addition to geological fields, FWI has also been successfully applied to non-destructive testing in the medical and industrial fields~\cite{FWIApplicationNonDestructiveTesting0,FWIApplicationNonDestructiveTesting1}.
 
 In FWI, the observation process of seismic data from subsurface properties is nonlinear and complex~\cite{FWI1}, making an analytic inverse transformation impossible.
-To address this, an effective approach is to formulate FWI as an optimization problem~\cite{FWI0,CustomFWI0,CustomFWI1,CustomFWI2,CustomFWI3,CustomFWI4,CustomFWI5} such as minimizing the squared error between observed and modeled seismic data.
+To address this, an effective approach is to formulate FWI as an optimization problem~\cite{FWI0,CustomFWI0,CustomFWI1,CustomFWI2,CustomFWI3,CustomFWI4,CustomFWI5}, such as minimizing the squared error between observed and modeled seismic data.
 Furthermore, since FWI is an ill-posed inverse problem, many methods have been proposed that incorporate Tikhonov~\cite{tikhonov} and Total Variation (TV)-type~\cite{TV,TGV} regularizations to capture the piecewise smoothness of subsurface properties~\cite{FWI-with-tikhonov-regularization,FWI-with-TV-regularization,FWI-with-directional-TV-regularization,FWI-with-high-order-TV-regularization,FWI-with-TGV-regularization}.
 However, these regularizations require careful tuning of balance parameters.
 
-Instead of the regularizations, some methods incorporate TV as a constraint into the FWI problem~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3}.
+Instead of the regularizations, we focus on incorporating TV as a constraint into the FWI problem~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3}.
 In contrast to the TV regularization, the TV constraint has the advantage that its parameters can be determined based only on prior knowledge of the subsurface properties~\cite{constraints-vs-penalties-in-FWI}.
-This makes the formulation and reconstructed subsurface properties easier to interpret, which is beneficial for practical applications.
+This makes the formulation and the reconstructed subsurface properties easier to interpret, which is beneficial for practical applications.
 
 However, the TV-constrained FWI problem is difficult to solve not only because of the nonlinearity of the observation process, but also because of the non-smoothness of the TV constraint.
 To address this, conventional methods~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3} adjust the objective variable to satisfy the constraint at each step of an iterative optimization algorithm.
@@ -21,4 +21,3 @@ In this paper, we propose a novel algorithm to solve the TV-constrained FWI prob
 Our algorithm addresses the challenges posed by both the nonlinearity of the observation process and the non-smoothness of the TV constraint without approximations, resulting in a more accurate reconstruction.
 Furthermore, it handles the constraint without inner loops to improve computational efficiency.
 We demonstrate that our algorithm efficiently handles the constraint while achieving accurate reconstruction.
-
