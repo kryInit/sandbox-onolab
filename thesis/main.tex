@@ -4,27 +4,25 @@
 
 \documentclass[10pt]{jarticle}
 \usepackage{sips}
-\usepackage{bm}
-\usepackage{latexsym}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{mathtools}
-%\usepackage[dvips]{graphicx}
+
 \usepackage[dvipdfmx]{graphicx}
-\usepackage{setspace}
-\usepackage{caption}
-\usepackage{subcaption}
+\usepackage{latexsym}
+\usepackage{bm}
 \usepackage{cite}
 \usepackage{array}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{multirow}
 \usepackage{multicol}
-
+\usepackage{setspace}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 
-
-\renewcommand{\floatpagefraction}{0.8}
-\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.9}
+\renewcommand{\textfraction}{0.1}
 \renewcommand{\topfraction}{0.9}
 \renewcommand{\bottomfraction}{0.9}
 \renewcommand{\dblfloatpagefraction}{0.9}
@@ -48,49 +46,35 @@
 
 \etitle{Efficient Full Waveform Inversion Subject To A Total Variation Constraint}
 
-\jauthor{
-}
+\jauthor{}
 
-\eauthor{
-  Yudai INADA, Shingo TAKEMOTO, and Shunsuke ONO
-}
+\eauthor{Yudai INADA, Shingo TAKEMOTO, and Shunsuke ONO}
 
-\jaddress{
-}
+\jaddress{}
 
-\eaddress{
-  Institute of Science Tokyo
-}
+\eaddress{Institute of Science Tokyo}
 
 \begin{document}
     \input{src/control-bibtex}
 
     \maketitle
 
-    \input{src/0-summary}
+    \begin{summary} \input{src/0-summary} \end{summary}
 
-    \section{Introduction}\label{sec:Introduction}
-    \input{src/1-introduction}
+    \section{Introduction}      \label{sec:Introduction}    \input{src/1-introduction}
 
-    \section{Preliminaries}\label{sec:Preliminaries}
-    \input{src/2-preliminaries}
+    \section{Preliminaries}     \label{sec:Preliminaries}   \input{src/2-preliminaries}
 
-    \section{Proposed Method}\label{sec:ProposedMethod}
-    \input{src/3-proposed-method}
+    \section{Proposed Method}   \label{sec:ProposedMethod}  \input{src/3-proposed-method}
 
+    \section{Experiments}       \label{sec:Experiments}     \input{src/4-experiments}
 
-    \section{Experiments}\label{sec:Experiments}
-    \input{src/4-experiments}
+    \section{Conclusion}        \label{sec:Conclusion}      \input{src/5-conclusion}
 
-    \section{Conclusion}\label{sec:Conclusion}
-    \input{src/5-conclusion}
+    \section*{Acknowledgement}  \input{src/6-acknowledgement}
 
-    %\clearpage
-
-    \section*{Acknowledgement}\label{sec:Acknowledgement}
-    \input{src/6-acknowledgement}
-
-    \begin{spacing}{0.99}
+    % References
+    \begin{spacing}{0.88}
         \small
         \setlength{\itemsep}{0pt}
         \bibliographystyle{IEEEtran}

@@ -1,4 +1,4 @@
-\subsection{Mathematical Tools}\label{subsec:mathematical-tools}
+\subsection{Mathematical Tools} \label{subsec:mathematical-tools}
 
 Throughout this paper, we denote vectors and matrices by bold lowercase letters (e.g., $\vecx$) and bold uppercase letters (e.g., $\bm{X}$), respectively.
 
@@ -12,7 +12,8 @@ where $d_{h,i}$ and $d_{v,i}$ are the horizontal and vertical differences of the
 
 
 
-\subsection{Proximal Tools}\label{subsec:proximal-tools}
+\subsection{Proximal Tools} \label{subsec:proximal-tools}
+
 For $\gamma > 0$, $f \in \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the proximity operator is defined as follows:
 \begin{equation} \label{eq:ProximityOperatorDefinitionEq} \proximityOperatorDefinition. \end{equation}
 
@@ -33,7 +34,8 @@ The proximity operator of $\iota_C$ is the projection onto $C$, given by
 
 
 
-\subsection{Primal-Dual Splitting Algorithm}\label{subsec:primal-dual-splitting-algorithm}
+\subsection{Primal-Dual Splitting Algorithm} \label{subsec:primal-dual-splitting-algorithm}
+
 The Primal-Dual Splitting algorithm (PDS)~\cite{PDS0,PDS1,PDS2,PDS3} is applied to the following problem:
 \begin{equation} \label{eq:PDSPrimalEq} \PDSPrimal, \end{equation}
 where $\bm{L} \in \realNumber^{\intM \times \intN}$, $f$ is a differentiable convex function and $g,h$ are convex functions whose proximity operator can be computed efficiently.
@@ -42,37 +44,17 @@ PDS solves Prob.~\eqref{eq:PDSPrimalEq} by iteratively updating the following:
 \begin{equation} \label{eq:PDSSubStep} \PDSSubStep \end{equation}
 where $\gamma_1, \gamma_2 \in \realNumber$ are step sizes.
 
-
-\begin{figure*}[htbp]
-    \centering
-    \begin{tabular}{m{148mm} m{10mm} m{0mm}}
-        \begin{minipage}[b]{150mm}
-            \centering
-            \includegraphics[width=150mm]{public/full_true_vm}
-        \end{minipage} &
-        \begin{minipage}[b]{10mm}
-            \centering
-            \vspace{-2mm}
-            \includegraphics[height=40mm]{public/color-bar}
-        \end{minipage} &
-    \end{tabular}
-    \caption{the velocity model of the Salt [km/s]}
-    \label{fig:salt-model}
-\end{figure*}
+% 位置調整のためにここに配置
+\input{src/img/salt-velocity-model}
 
 
 
-\subsection{Full Waveform Inversion}\label{subsec:full-waveform-inversion}
+\subsection{Full Waveform Inversion} \label{subsec:full-waveform-inversion}
+
 Typically, FWI is treated as an optimization problem as follows\cite{FWI0}:
 \begin{equation} \label{eq:FWIObjective} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveDefinition, \end{equation}
 where $\velModel \in \realNumber^{N}$ is the velocity model representing subsurface properties, $\seismicData_{\mathrm{obs}} \in \realNumber^{M}$ is the observed seismic data, $\seismicData_{\mathrm{cal}} \in \realNumber^{N} \rightarrow \realNumber^{M} $ is the observation process, and $\seismicData_{\mathrm{cal}}(\velModel)$ is the modeled seismic data with the velocity model.
 $N$ is the number of grid points, and $M$ is the number of observed signals.
-%In general, the velocity model is 2D or 3D grid data, but for simplicity we consider flattened 1D vector.
 
 The observation process $\seismicData_{\mathrm{cal}}$ is nonlinear and complex, making it difficult to express analytically.
 However, the gradient $\nabla E$ can be computed numerically by simulating the wave equation using the adjoint-state method~\cite{FWI-gradient}.
-
-%Therefore, the standard FWI minimizes the objective function and reconstructs the velocity model using the following procedures:
-%\begin{equation} \label{eq:FWIWithGradient} \FWIWithGradient, \end{equation}
-%where $\gamma$ is the step size.
-
