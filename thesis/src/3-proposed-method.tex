@@ -35,13 +35,14 @@ The proximity operators of $\iota_{[l,u]^N}$, $\iota_{\LOneTwoNorm{\cdot} \le \a
 %The proximity operator for the $l_{1,2}$ norm upper bound constraint is expressed as follows~\cite{L12-ball-projection}:
 \begin{equation} \label{eq:ProximityOperatorForL12Ball} \projLOneTwoBallSolution \end{equation}
 where
-\begin{equation} \label{eq:ProximityOperatorForL12BallWhere} \projLOneTwoBallSolutionWhere \notag \end{equation}
+\begin{equation} \label{eq:ProximityOperatorForL12BallWhere} \projLOneTwoBallSolutionWhere, \notag \end{equation}
+and in the proposed method, $\mathfrak{g}_i$ is an index set for $\diffOperator \velModel$ corresponding to the horizontal and vertical differences of the $i$-th element of $\velModel$ when the vector $\velModel$ is considered as a matrix.
 
 The proximity operator for the $l_1$ norm upper bound constraint is expressed as follows~\cite{L1-ball-projection}:
 \begin{equation} \label{eq:ProximityOperatorForL1Ball}  \projLOneBallSolution, \end{equation}
 where
 \begin{equation} \label{eq:ProximityOperatorForL1BallWhere} \projLOneBallSolutionWhere \notag \end{equation}
 
-The computation of $\nabla E$ requires the simulation of the wave equation along the time axis for each grid point.
-In contrast, the computation of the other parts of the process can be done without time axis simulations.
-Therefore, the computationally intensive part of the process is primarily the calculation of $\nabla E$, and the introduction of the constraints does not significantly increase the overall computational cost.
+Our algorithm handles the constraints completely, and it does not require any approximations to incorporate constraints.
+Furthermore, it can handle constraints without strictly enforcing all of them at each step, so it can be executed efficiently without an inner loop.
+In fact, the incorporation of the constraints does not significantly increase the overall computational cost, since it is fast enough compared to the $\nabla E$ computation, which requires simulation of the wave equation along the time axis.

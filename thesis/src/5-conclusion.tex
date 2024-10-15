@@ -1,7 +1,5 @@
-In this paper, we developed an efficient algorithm to solve the TV and box constrained FWI problem% with neither inner loops nor approximations based on PDS. -> 後で書く
-We demonstrated that the constrained problem can be fully handled within PDS.
-We also demonstrated that the piecewise smoothness by the TV constraint is well represented, and that efficient and accurate reconstruction is possible.
-%Furthermore, framework of PDS allows for the incorporation of more complex constraints and regularizations, making it a valuable tool for future research.
-
-
-%inner loopとapproximationに触れる,
+In this paper, we developed an efficient algorithm to solve the TV and box constrained FWI problem based on PDS.
+Our algorithm handles the constraints completely without approximations, resulting in more accurate reconstructions.
+Furthermore, by handling the constraints without inner loops, the algorithm significantly enhances computational efficiency.
+Experimental results demonstrate that our method successfully eliminates wave-like artifacts and noise present in the standard FWI method, resulting in a more accurate velocity model and a higher SSIM value.
+The predictable effect of the TV constraint parameter allows for easy adjustment to achieve accurate reconstruction, facilitating interpretation of the results and formulation.

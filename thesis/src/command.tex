@@ -39,7 +39,7 @@
         \end{cases} \\
 }
 \newcommand{\projLOneTwoBallSolutionWhere}{
-    \bm \beta = P_{ \{ \LOneNorm{ \cdot } \le \alpha \} }\left( \left[ \LTwoNorm{ \vecx_{\mathfrak{g}_1} }, \ldots, \LTwoNorm{ \vecx_{\mathfrak{g}_N} } \right]^T \right). \\
+    \bm \beta = P_{ \{ \LOneNorm{ \cdot } \le \alpha \} }\left( \left[ \LTwoNorm{ \vecx_{\mathfrak{g}_1} }, \ldots, \LTwoNorm{ \vecx_{\mathfrak{g}_N} } \right]^T \right) \\
 }
 \newcommand{\projLOneBall}[1]{P_{ \{ \LOneNorm{ \cdot } \le \alpha \} }(#1)}
 \newcommand{\projLOneBallSolution}{\projLOneBall{\vecx} = \text{SoftThrethold}(\vecx, \beta)}
@@ -47,7 +47,7 @@
     \begin{aligned}
         & \bm x_{\text{abs}} = \text{abs}(\vecx), \\
         & \bm y              = \text{sort}_{\text{desc}}(\vecx_{\text{abs}}), \\
-        & \beta'             = \text{max} \left\{ \frac 1 i \left(\left(\sum_{j=1}^i \bm y_j\right) - \alpha\right) \middle| \ i = 1, \ldots, N \right\}, \\
+        & \beta'             = \text{max} \left\{ \frac 1 i \left(\left(\sum_{j=1}^i \bm y_j\right) - \alpha\right) \middle| \ i \in \mathbb{N}, 1 \le i \le N \right\}, \\
         & \beta              = \text{max} \left\{ \beta', 0 \right\}. \\
     \end{aligned}
 }
