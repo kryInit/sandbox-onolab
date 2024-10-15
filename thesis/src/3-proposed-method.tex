@@ -6,7 +6,7 @@ The optimization problem of the TV and box constrained FWI is formulated as foll
 \begin{equation} \label{eq:FWIObjectiveWithTVConstraint} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveWithTVConstraint \end{equation}
 where $\alpha \in \realNumber$ is the upper bound of the $l_{1,2}$ norm, and $l, u \in \realNumber$ are the lower and upper bounds of the velocity model values, respectively.
 By incorporating TV as a constraint, the parameter $\alpha$ can be determined independently of other terms or constraints, which has been highlighted as an advantage in prior works~\cite{constraint0,constraint1,constraint2,constraint3,constraint4,constraints-vs-penalties-in-FWI}.
-This separation simplifies the formulation and allows $\alpha$ to directly control the smoothness, providing a clearer interpretation of the reconstructed subsurface properties.
+This separation makes it possible to directly control smoothness according to $\alpha$, providing a clearer interpretation of the reconstructed subsurface properties.
 
 The constraints can be incorporated into the objective function as indicator functions:
 \begin{equation} \label{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveWithTVConstraintWithIndicatorFunction. \end{equation}
