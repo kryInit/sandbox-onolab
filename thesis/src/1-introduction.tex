@@ -14,7 +14,7 @@ This makes the formulation and the reconstructed subsurface properties easier to
 However, the TV-constrained FWI problem is difficult to solve not only because of the nonlinearity of the observation process, but also because of the non-smoothness of the TV constraint.
 To address this, conventional methods~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3,FWI-with-TV-constraint4} adjust the objective variable to satisfy the constraint at each step of an iterative optimization algorithm.
 This requires an inner loop, which results in high computational cost.
-In addition, the methods rely on approximations, such as treating nonlinear transformations as linear and satisfying constraints outside the optimization method.
+In addition, the methods rely on approximations, such as treating non-convex functions as convex and satisfying constraints outside the optimization method.
 If the TV-constrained FWI problem could be solved with neither inner loops nor approximations, more efficient and accurate reconstructions of subsurface properties would be possible.
 
 In this paper, we propose a novel algorithm to solve the TV-constrained FWI problem based on the primal-dual splitting (PDS) method.
