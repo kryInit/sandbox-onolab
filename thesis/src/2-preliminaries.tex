@@ -14,10 +14,10 @@ where $d_{h,i}$ and $d_{v,i}$ are the horizontal and vertical differences of the
 
 \subsection{Proximal Tools} \label{subsec:proximal-tools}
 
-For $\gamma > 0$, $f \in \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the proximity operator is defined as follows:
+For $\gamma > 0$, $f : \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the proximity operator is defined as follows:
 \begin{equation} \label{eq:ProximityOperatorDefinitionEq} \proximityOperatorDefinition. \end{equation}
 
-For a proper lower-semicontinuous convex function $f \in \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the convex conjugate function $f^*$ is defined as follows:
+For a proper lower-semicontinuous convex function $f : \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the convex conjugate function $f^*$ is defined as follows:
 \begin{equation} \label{eq:ConjugateFunctionDefinitionEq} \conjugateFunctionDefinition. \end{equation}
 
 The proximity operator for the convex conjugate function is expressed as follows~\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function}:
@@ -53,8 +53,8 @@ where $\gamma_1, \gamma_2 \in \realNumber$ are step sizes.
 
 Typically, FWI is treated as an optimization problem as follows\cite{FWI0}:
 \begin{equation} \label{eq:FWIObjective} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveDefinition, \end{equation}
-where $\velModel \in \realNumber^{N}$ is the velocity model representing subsurface properties, $\seismicData_{\mathrm{obs}} \in \realNumber^{M}$ is the observed seismic data, $\seismicData_{\mathrm{cal}} \in \realNumber^{N} \rightarrow \realNumber^{M} $ is the observation process, and $\seismicData_{\mathrm{cal}}(\velModel)$ is the modeled seismic data with the velocity model.
-$N$ is the number of grid points, and $M$ is the number of observed signals.
+where $\velModel \in \realNumber^{N}$ is the velocity model representing subsurface properties, $\seismicData_{\mathrm{obs}} \in \realNumber^{M}$ is the observed seismic data, $\seismicData_{\mathrm{cal}} : \realNumber^{N} \rightarrow \realNumber^{M}$ is the observation process, and $\seismicData_{\mathrm{cal}}(\velModel)$ is the modeled seismic data with the velocity model.
+The number of grid points is $N$, and the number of observed signals is $M$.
 
 The observation process $\seismicData_{\mathrm{cal}}$ is nonlinear and complex, making it difficult to express analytically.
 However, the gradient $\nabla E$ can be computed numerically by simulating the wave equation using the adjoint-state method~\cite{FWI-gradient}.

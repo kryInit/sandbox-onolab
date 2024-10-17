@@ -15,6 +15,8 @@
 \newcommand{\realNumber}{\mathbb{R}}
 \newcommand{\intN}{\mathrm{N}}
 \newcommand{\intM}{\mathrm{M}}
+\newcommand{\BoxBall}{B_{\mathrm{box}}}
+\newcommand{\LOneTwoBall}{B_{l_{1,2}}}
 
 \newcommand{\LOneTwoNormDefinition}{\LOneTwoNorm{\vecx} \coloneq  \sum_{\mathfrak{g} \in \mathfrak{G}} \LTwoNorm{\vecx_\mathfrak{g}}}
 \newcommand{\TotalVariationDefinition}{\TV{\vecx} \coloneq \LOneTwoNorm{\diffOperator \vecx} = \sum_{i=1}^{\intN} \sqrt{d_{h,i}^2 + d_{v,i}^2}}
@@ -24,13 +26,16 @@
 \newcommand{\indicatorFunction}[2]{\iota_{#1}(#2)}
 \newcommand{\indicatorFunctionDefinition}{\indicatorFunction{C}{\vecx} \coloneq \begin{cases} 0 & \text{if } \vecx \in C, \\ \infty & \text{otherwise}. \end{cases} }
 
+% set
+\newcommand{\LOneTwoBallSetDefinition}{\left\{ \LOneTwoNorm{\cdot} \le \alpha \right\}}
+
 % proximity operator
 \newcommand{\proximityOperator}[2]{\mathrm{prox}_{#1}\left(#2\right)}
 \newcommand{\proximityOperatorDefinition}{\proximityOperator{ \gamma f }{\vecx} := \argmin{\vecy \in \realNumber^N} \left\{ f(\vecy) + \frac{1}{2 \gamma} \LTwoNorm{\vecy - \vecx}^2 \right\}}
 \newcommand{\proximityOperatorDefinitionWithConvexConjugateFunction}{\proximityOperator{ \gamma f^* }{\vecx} = \vecx - \gamma \proximityOperator{ \frac 1 \gamma f }{\frac 1 \gamma \vecx} }
-\newcommand{\projBox}[1]{ P_{[l,u]^N} \left( #1 \right) }
+\newcommand{\projBox}[1]{ P_{\BoxBall} \left( #1 \right) }
 \newcommand{\projBoxSolution}{ \projBox{\vecx} = \text{min}( \text{max} (\vecx, l), u) }
-\newcommand{\projLOneTwoBall}[1]{P_{ \{ \LOneTwoNorm{ \cdot } \le \alpha \} }\left(#1\right)}
+\newcommand{\projLOneTwoBall}[1]{P_{\LOneTwoBall}\left(#1\right)}
 \newcommand{\projLOneTwoBallSolution}{
     (\projLOneTwoBall{\vecx})_{\mathfrak{g}_i} =
         \begin{cases}
@@ -74,7 +79,7 @@
 \newcommand{\FWIObjectiveDefinition}{ E(\velModel) = \frac {1} {2} \LTwoNorm { \seismicData_{\mathrm{obs}} - \seismicData_{\mathrm{cal}}(\velModel) }^2 }
 \newcommand{\FWIGradientDefinition}{ \nabla E(\velModel) = \seismicData_{\mathrm{obs}} - \nabla \seismicData_{\mathrm{cal}(\velModel)} }
 \newcommand{\FWIObjectiveWithTVConstraint}{ E(\velModel) \ \ \ \text{s.t.} \ \  \begin{cases} \LOneTwoNorm{\diffOperator \velModel} \le \alpha, \\ \velModel \in [l,u]^N, \end{cases}}
-\newcommand{\FWIObjectiveWithTVConstraintWithIndicatorFunction}{ E(\velModel) + \indicatorFunction{\LOneTwoNorm{\cdot} \le \alpha}{\diffOperator \velModel} + \indicatorFunction{[l,u]^N}{\velModel} }
+\newcommand{\FWIObjectiveWithTVConstraintWithIndicatorFunction}{ E(\velModel) + \indicatorFunction{\BoxBall}{\velModel} + \indicatorFunction{\LOneTwoBall}{\diffOperator \velModel} }
 
 \newcommand{\FWIWithPDS}{
 \left \lfloor \ \

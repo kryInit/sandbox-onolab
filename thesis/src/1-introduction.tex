@@ -11,13 +11,13 @@ In contrast to the TV regularizations, the TV constraint has the advantage that 
 Specifically, the parameter of TV constraint can be determined based only on prior knowledge of the subsurface properties~\cite{constraints-vs-penalties-in-FWI}.
 This makes the formulation and the reconstructed subsurface properties easier to interpret, which is beneficial for practical applications.
 
-However, the TV-constrained FWI problem is difficult to solve not only because of the nonlinearity of the observation process, but also because of the non-smoothness of the TV constraint.
+However, the TV constrained FWI problem is difficult to solve not only because of the nonlinearity of the observation process, but also because of the non-smoothness of the TV constraint.
 To address this, conventional methods~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3,FWI-with-TV-constraint4} adjust the objective variable to satisfy the constraint at each step of an iterative optimization algorithm.
 This requires an inner loop, which results in high computational cost.
-In addition, the methods rely on approximations, such as treating non-convex functions as convex and satisfying constraints outside the optimization method.
-If the TV-constrained FWI problem could be solved with neither inner loops nor approximations, more efficient and accurate reconstructions of subsurface properties would be possible.
+In addition, the methods rely on approximations, such as linear or quadratic approximation and satisfying constraints outside the optimization method.
+If the TV constrained FWI problem could be solved with neither inner loops nor approximations, more efficient and accurate reconstructions of subsurface properties would be possible.
 
-In this paper, we propose a novel algorithm to solve the TV-constrained FWI problem based on the primal-dual splitting (PDS) method.
+In this paper, we propose a novel algorithm to solve the TV constrained FWI problem based on the primal-dual splitting (PDS) method.
 Our algorithm addresses the challenges posed by both the nonlinearity of the observation process and the non-smoothness of the TV constraint without approximations, resulting in a more accurate reconstruction.
 Furthermore, by handling the constraint without inner loops, our algorithm is significantly more efficient compared to existing methods.
 We demonstrate that our algorithm efficiently handles the constraint while achieving accurate reconstruction.

@@ -9,10 +9,13 @@ By incorporating TV as a constraint, the parameter $\alpha$ can be determined in
 This separation makes it possible to directly control smoothness according to $\alpha$, providing a clearer interpretation of the reconstructed subsurface properties.
 
 The constraints can be incorporated into the objective function as indicator functions:
-\begin{equation} \label{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveWithTVConstraintWithIndicatorFunction. \end{equation}
+\begin{equation} \label{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveWithTVConstraintWithIndicatorFunction, \end{equation}
+where
+\begin{equation} \label{eq:LOneTwoBallDefinition} \begin{aligned} \BoxBall & \coloneqq [l,u]^N, \\ \LOneTwoBall & \coloneqq \LOneTwoBallSetDefinition. \end{aligned} \end{equation}
 
-The proximity operator of $\iota_{\LOneTwoNorm{\cdot} \le \alpha}$ and $\iota_{[l,u]^N}$ can be computed efficiently.
-Therefore, these functions of $E$, $\iota_{[l,u]^N}$ and $\iota_{\LOneTwoNorm{\cdot} \le \alpha}$ correspond to $f$, $g$ and $h$ in \eqref{eq:PDSPrimalEq}, respectively, $\diffOperator$ is corresponds to $\bm{L}$, so the problem~\eqref{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction} can be solved using PDS.
+
+The proximity operator of $\iota_{\BoxBall}$ and $\iota_{\LOneTwoBall}$ can be computed efficiently.
+Therefore, these functions of $E$, $\iota_{\BoxBall}$ and $\iota_{\LOneTwoBall}$ correspond to $f$, $g$ and $h$ in \eqref{eq:PDSPrimalEq}, respectively, $\diffOperator$ is corresponds to $\bm{L}$, so the problem~\eqref{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction} can be solved using PDS.
 We show the detailed algorithm in Algorithm~\ref{alg:FWIWithPDS}.
 %\begin{equation} \label{eq:FWIWithPDS} \FWIWithPDS \notag \end{equation}
 \begin{algorithm}[t]
@@ -30,7 +33,7 @@ We show the detailed algorithm in Algorithm~\ref{alg:FWIWithPDS}.
 \end{algorithm}
 
 
-The proximity operators of $\iota_{[l,u]^N}$, $\iota_{\LOneTwoNorm{\cdot} \le \alpha}$, that is, the projection onto $[l,u]^N$ and ${\LOneTwoNorm{\cdot} \le \alpha}$ are calculated by
+The proximity operators of $\iota_{\BoxBall}$, $\iota_{\LOneTwoBall}$, that is, the projection onto $\BoxBall$ and ${\LOneTwoBall}$ are calculated by
 \begin{equation} \label{eq:ProximityOperatorForBoxConstraint} \projBoxSolution, \end{equation}
 
 \begin{equation} \label{eq:ProximityOperatorForL12Ball} \projLOneTwoBallSolution \end{equation}
@@ -43,6 +46,6 @@ The proximity operator for the $l_1$ norm upper bound constraint is expressed as
 where
 \begin{equation} \label{eq:ProximityOperatorForL1BallWhere} \projLOneBallSolutionWhere \notag \end{equation}
 
-Our algorithm handles the constraints completely, and it does not require any approximations to incorporate constraints.
-Furthermore, since our algorithm can solve the TV- and box-constrained FWI problem without inner loops, it can be executed efficiently.
+Our algorithm can incorporate the constraints without requiring any approximations.
+Furthermore, since our algorithm can solve the TV and box constrained FWI problem without inner loops, it can be executed efficiently.
 In fact, the incorporation of the constraints does not significantly increase the overall computational cost, because it is fast enough compared to the $\nabla E$ computation, which requires simulation of the wave equation along the time axis.
