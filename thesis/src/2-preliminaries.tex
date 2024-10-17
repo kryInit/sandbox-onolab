@@ -14,22 +14,24 @@ where $d_{h,i}$ and $d_{v,i}$ are the horizontal and vertical differences of the
 
 \subsection{Proximal Tools} \label{subsec:proximal-tools}
 
-For $\gamma > 0$, $f : \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the proximity operator is defined as follows:
+We denote by $\Gamma_0(\realNumber^N)$ the set of proper lower-semicontinuous convex functions $\realNumber^N \to (- \infty, \infty]$.
+
+For $\gamma > 0$ and $f \in \Gamma_0(\realNumber^N)$, the proximity operator is defined as follows:
 \begin{equation} \label{eq:ProximityOperatorDefinitionEq} \proximityOperatorDefinition. \end{equation}
 
-For a proper lower-semicontinuous convex function $f : \realNumber^N \to \realNumber$ and $\vecx \in \realNumber^N$, the convex conjugate function $f^*$ is defined as follows:
+For $f \in \Gamma_0(\realNumber^N)$, the convex conjugate function $f^*$ is defined as follows:
 \begin{equation} \label{eq:ConjugateFunctionDefinitionEq} \conjugateFunctionDefinition. \end{equation}
 
 The proximity operator for the convex conjugate function is expressed as follows~\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function}:
 \begin{equation} \label{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq} \proximityOperatorDefinitionWithConvexConjugateFunction. \end{equation}
 
-For a set $C \subset \realNumber^N$ and $\vecx \in \realNumber^N$, the indicator function $\iota_C$ is defined as follows:
+For a nonempty closed convex set $C \subset \realNumber^N$, the indicator function $\iota_C: \realNumber^N \to (- \infty, \infty] $ is defined as follows:
 \begin{equation} \label{eq:IndicatorFunctionDefinitionEq} \indicatorFunctionDefinition \end{equation}
 
 The proximity operator of $\iota_C$ is the projection onto $C$, given by
 %Define the proximity operator for the indicator function as $P_C$ as follows.
 \begin{equation} \label{eq:ProximityOperatorDefinitionWithIndicatorFunctionEq}
-\proximityOperator{ \gamma \iota_{C} }{\vecx} = P_C(\vecx) \coloneq \argmin{\vecy \in C} \LTwoNorm{\vecy - \vecx}.
+\proximityOperator{ \gamma \iota_{C} }{\vecx} = P_C(\vecx) \coloneq \argmin{\vecy \in C} \ \LTwoNorm{\vecy - \vecx}.
 \end{equation}
 
 

@@ -14,7 +14,7 @@ The source waveform is a Ricker wavelet with a peak wavelet frequency of 10 Hz.
 The number of waveform sources and receivers is 20 and 101, respectively, and they are placed on the surface at equal intervals.
 The gradient $\nabla E$ is computed numerically using the Devito framework\cite{devito}.
 The number of iterations is set to 5000.
-In our algorithm, the step size $\gamma_1$ and $\gamma_2$ are set to $1.0 \times 10^{-4}$ and $1.0 \times 10^2$, respectively.
+In our algorithm, the step sizes $\gamma_1$ and $\gamma_2$ are set to $1.0 \times 10^{-4}$ and $1.0 \times 10^2$, respectively.
 The lower and upper bounds of the velocity model $l$, $u$ are set to 1.5[km/s] and 4.5[km/s], respectively.
 The experiments are conducted using $\alpha$ values ranging from 100 to 700 in steps of 50, representing the upper bound of the $l_{1,2}$ norm.
 In the standard FWI method, the step size $\gamma$ is set to $1.0 \times 10^{-4}$.
@@ -28,7 +28,7 @@ In the standard FWI method, the step size $\gamma$ is set to $1.0 \times 10^{-4}
 Fig.~\ref{fig:velocity-models} shows the ground truth, the initial model, and the reconstructed velocity models using the standard FWI method and the proposed methods with $\alpha$ = 150, 350, and 550.
 The best parameter is $\alpha$ = 350, where $\alpha$ = 150 represents a stronger TV constraint and $\alpha$ = 550 represents a weaker one.
 The standard FWI method generates wave-like artifacts and noise around the source positions.
-In contrast, our proposed method with best parameter achieves the accurate velocity model reconstruction without these artifacts and noise.
+In contrast, our proposed method with the best parameter achieves the accurate velocity model reconstruction without these artifacts and noise.
 When the TV constraint is too strong, as with $\alpha$ = 150, over-smoothing occurs, reducing contrast in the reconstruction.
 On the other hand, when the TV constraint is too weak, as with $\alpha$ = 550, the constraint has little effect, leading to results similar to those of the standard FWI method.
 
