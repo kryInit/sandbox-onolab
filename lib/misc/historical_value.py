@@ -1,0 +1,45 @@
+from typing import Literal, Union, List
+from lib.misc.colored_text import ColoredText
+
+PreferValueType = Union[Literal['greater'], Literal['less'], None]
+
+
+class HistoricalValue[T]:
+    values: List[T]
+    prefer_value: PreferValueType
+    label: str
+
+    # 昇順・降順フラグを引数にとる
+    def __init__(self, label: str, prefer_value: PreferValueType, initial_values=None):
+        self.label = label
+        self.prefer_value = prefer_value
+        self.values = [] if initial_values is None else initial_values
+
+    def append(self, value: T) -> None:
+        self.values.append(value)
+
+    def is_prev_improved(self) -> bool:
+        if self.prefer_value is None:
+            return False
+
+        if len(self.values) < 2:
+            return True
+        elif self.prefer_value == "greater":
+            return self.values[-1] > self.values[-2]
+        else:
+            return self.values[-1] < self.values[-2]
+
+    def is_prev_improved_arrow_string(self) -> str:
+        is_prev_improved = self.is_prev_improved()
+        if self.prefer_value is None:
+            return ""
+        elif self.prefer_value == "greater":
+            return ColoredText.green_up() if is_prev_improved else ColoredText.red_down()
+        else:
+            return ColoredText.green_down() if is_prev_improved else ColoredText.red_up()
+
+    def prev_value_message(self, precision: int) -> str:
+        if self.prefer_value is None:
+            return f"{self.label}: {self.values[-1]:.{precision}f}"
+        else:
+            return f"{self.label}: {self.values[-1]:.{precision}f} {self.is_prev_improved_arrow_string()}"

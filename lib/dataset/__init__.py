@@ -1,1 +1,1 @@
-from .salt_and_overthrust_models import load_seismic_datasets__salt_and_overthrust_models
+from .load_salt_models import load_seismic_datasets__salt_model

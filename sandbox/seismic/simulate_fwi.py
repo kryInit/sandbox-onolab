@@ -11,7 +11,7 @@ from skimage.metrics import structural_similarity as ssim
 
 
 from lib.signal_processing.l_bfgs import LBFGS
-from lib.dataset import load_seismic_datasets__salt_and_overthrust_models
+from lib.dataset import load_seismic_datasets__salt_model
 from lib.misc import datasets_root_path, output_path
 from lib.model import Vec2D
 from lib.seismic import FastParallelVelocityModelGradientCalculator, FastParallelVelocityModelProps
@@ -78,7 +78,7 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
 
 
     seismic_data_path = datasets_root_path.joinpath("salt-and-overthrust-models/3-D_Salt_Model/VEL_GRIDS/Saltf@@")
-    seismic_data = load_seismic_datasets__salt_and_overthrust_models(seismic_data_path).transpose((1, 0, 2)).astype(np.float32) / 1000.0
+    seismic_data = load_seismic_datasets__salt_model(seismic_data_path).transpose((1, 0, 2)).astype(np.float32) / 1000.0
     assert 1.5 <= np.min(seismic_data) and np.max(seismic_data) <= 4.5
 
     raw_true_velocity_model = seismic_data[300]
@@ -269,7 +269,7 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
         current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         filename = f"{current_time},{algorithm},nshots={params.n_shots},gamma1={gamma1},gamma2={gamma2},niters={th+1},sigma={params.noise_sigma},alpha={alpha},.npz"
         save_path = output_path.joinpath(filename)
-        np.savez(save_path, v, y, np.array(velocity_model_diff_history), np.array(residual_norm_sum_history), np.array(psnr_value_history), np.array(ssim_value_history))
+        # np.savez(save_path, v, y, np.array(velocity_model_diff_history), np.array(residual_norm_sum_history), np.array(psnr_value_history), np.array(ssim_value_history))
 
         v_core = v[dsize:-dsize, dsize:-dsize]
         show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
@@ -284,20 +284,20 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
 
 if __name__ == "__main__":
     # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 2000)
-    simulate_fwi(5000, 20, 1, "gradient", 1e-4, 100, None, 550)
+    # simulate_fwi(5000, 20, 1, "gradient", 1e-4, 100, None, 550)
     simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 100)
-    simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 150)
-    simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 200)
-    simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 250)
-    simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 300)
-    simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 350)
-    simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 400)
-    simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 450)
-    simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 500)
-    simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 550)
-    simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 600)
-    simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 650)
-    simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 700)
+    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 150)
+    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 200)
+    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 250)
+    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 300)
+    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 350)
+    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 400)
+    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 450)
+    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 500)
+    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 550)
+    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 600)
+    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 650)
+    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 700)
     # simulate_fwi(1000, 20, 0, "L-BFGS", 1e-1, 100, None, 0)
     # simulate_fwi(5000, 20, 0, "gradient", 1e-4, 100, None, 0)
     # simulate_fwi(2000, 20, 0, "gradient", 1e-4, 100, None)

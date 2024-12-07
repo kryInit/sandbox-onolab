@@ -5,10 +5,10 @@ from numpy._typing import NDArray
 
 from lib.signal_processing.misc import zoom_and_crop, smoothing_with_gaussian_filter, calc_psnr
 from lib.misc import datasets_root_path, output_path
-from lib.dataset import load_seismic_datasets__salt_and_overthrust_models
+from lib.dataset import load_seismic_datasets__salt_model
 
 seismic_data_path = datasets_root_path.joinpath("salt-and-overthrust-models/3-D_Salt_Model/VEL_GRIDS/Saltf@@")
-seismic_data = load_seismic_datasets__salt_and_overthrust_models(seismic_data_path).transpose((1, 0, 2)).astype(np.float32) / 1000.0
+seismic_data = load_seismic_datasets__salt_model(seismic_data_path).transpose((1, 0, 2)).astype(np.float32) / 1000.0
 
 raw_true_velocity_model = seismic_data[300]
 true_velocity_model = zoom_and_crop(raw_true_velocity_model, (50, 100))

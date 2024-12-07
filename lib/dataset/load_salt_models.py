@@ -4,28 +4,30 @@ import numpy as np
 from numpy import typing as npt
 
 
-def load_seismic_datasets__salt_and_overthrust_models(data_path: Path) -> npt.NDArray[np.int32]:
+def load_seismic_datasets__salt_model(data_path: Path) -> npt.NDArray[np.int32]:
     """
     Parameters
     ----------
     data_path: Path
-        The path to the seismic dataset named Saltf@@
+        The path to the seismic dataset named "Saltf@@"
 
         data is described at https://wiki.seg.org/wiki/SEG/EAGE_Salt_and_Overthrust_Models
 
         data is available at https://s3.amazonaws.com/open.source.geoscience/open_data/seg_eage_models_cd/salt_and_overthrust_models.tar.gz
 
-        example: './3-D_Salt_Model/VEL_GRIDS/Saltf@@'
+        example: "./3-D_Salt_Model/VEL_GRIDS/Saltf@@"
 
     Returns
     -------
     NDArray:
-        seismic data of salt and overthrust models
+        seismic data of salt models
 
         seismic_data.dtype == np.int32
 
         seismic_data.shape == (nz, ny, nx) == (210, 676, 676)
     """
+
+    # ref: https://github.com/pyvista/show-room/blob/13a5ab7bc2315e7e36765868ca488a3b66ed1973/seg-eage-3d-salt-model.ipynb
 
     nz, ny, nx = 210, 676, 676
     with open(data_path, "r") as file:

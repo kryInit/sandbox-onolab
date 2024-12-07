@@ -26,17 +26,24 @@ class FastParallelVelocityModelProps(NamedTuple):
     noise_sigma: float
     n_jobs: int
 
-# FIXME
-time_length = 791
+
+def get_time_length(props: FastParallelVelocityModelProps):
+    true_model = SeismicModel(space_order=2, vp=props.true_velocity_model, origin=(0, 0), shape=props.shape, dtype=np.float32, spacing=props.spacing, nbl=props.damping_cell_thickness, bcs="damp", fs=False)
+    geometry = AcquisitionGeometry(true_model, props.receiver_locations, np.array([[0, 0]]), props.start_time, props.end_time, f0=props.source_frequency, src_type="Ricker")
+    return geometry.nt
+
 
 class FastParallelVelocityModelGradientCalculator:
     def __init__(self, props: FastParallelVelocityModelProps):
         self.n_shots = len(props.source_locations)
         self.n_jobs = props.n_jobs
 
+        a = get_time_length(props)
+
         n_receivers = len(props.receiver_locations)
         dsize = props.damping_cell_thickness
         vm_shape = (props.shape[0] + dsize * 2, props.shape[1] + dsize * 2)
+        time_length = get_time_length(props)
 
         self.velocity_model_shared_memory = SharedMemory(create=True, size=np.prod(vm_shape) * np.dtype(np.float32).itemsize)
         self.velocity_model = np.ndarray(vm_shape, dtype=np.float32, buffer=self.velocity_model_shared_memory.buf)
@@ -120,6 +127,7 @@ def calc_grad_worker(
     n_shots = len(props.source_locations)
     n_receivers = len(props.receiver_locations)
     vm_shape = (props.shape[0] + props.damping_cell_thickness * 2, props.shape[1] + props.damping_cell_thickness * 2)
+    time_length = get_time_length(props)
 
     velocity_model_shared_memory = SharedMemory(name=velocity_model_shared_memory_name)
     velocity_model = np.ndarray(vm_shape, dtype=np.float32, buffer=velocity_model_shared_memory.buf)
