@@ -1,5 +1,8 @@
 from typing import List, Literal, Union
 
+import numpy as np
+import numpy.typing as npt
+
 from lib.misc.colored_text import ColoredText
 
 PreferValueType = Union[Literal["greater"], Literal["less"], None]
@@ -44,3 +47,6 @@ class HistoricalValue[T]:
             return f"{self.label}: {self.values[-1]:.{precision}f}"
         else:
             return f"{self.label}: {self.values[-1]:.{precision}f} {self.is_prev_improved_arrow_string()}"
+
+    def values_as_np_array(self) -> npt.NDArray[T]:
+        return np.array(self.values)

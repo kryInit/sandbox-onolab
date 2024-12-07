@@ -1,6 +1,6 @@
 import signal
 import time
-from datetime import datetime
+from pathlib import Path
 from typing import Literal, NamedTuple, Union
 
 import numpy as np
@@ -11,7 +11,7 @@ from skimage.metrics import structural_similarity as ssim
 import lib.signal_processing.diff_operator as diff_op
 from lib.dataset import load_seismic_datasets__salt_model
 from lib.dataset.load_overthrust_model import load_seismic_datasets__overthrust_model
-from lib.misc import datasets_root_path, output_path
+from lib.misc import datasets_root_path
 from lib.misc.historical_value import HistoricalValue
 from lib.model import Vec2D
 from lib.seismic import FastParallelVelocityModelGradientCalculator, FastParallelVelocityModelProps
@@ -92,7 +92,18 @@ def remove_damping_cells(velocity_model: npt.NDArray, damping_cell_thickness: in
     return velocity_model[x:-x, x:-x]
 
 
-def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: Union[Literal["pds"], Literal["gradient"]], gamma1: float, gamma2: float, alpha: float):
+# 本来はalgorithmとgamma1, gamma2, alhpaなどのパラメータは紐づくはずだが、一旦これで
+def simulate_fwi(
+    max_n_iters: int,
+    n_shots: int,
+    noise_sigma: float,
+    algorithm: Union[Literal["pds"], Literal["gradient"]],
+    gamma1: float,
+    gamma2: float,
+    alpha: float,
+    visualize_interval: Union[int, None] = None,
+    np_log_path: Union[Path, None] = None,
+):
     if algorithm == "gradient":
         gamma2 = None
 
@@ -205,11 +216,10 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
                 f"{ssim_values.prev_value_message(4)}, "
                 f"{total_variation_values.prev_value_message(4)}, "
             )
-            # show_velocity_model(grad[dsize:-dsize, dsize:-dsize], title=f"Velocity model at iteration {th + 1}", cmap='coolwarm')
-            # show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
-            # if (th + 1) % 1000 == 0:
-            # show_velocity_model(v, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
-            # show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
+
+            if visualize_interval is not None and (th + 1) % visualize_interval == 0:
+                show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap="coolwarm")
+
             if th == max_n_iters - 1:
                 break
 
@@ -218,13 +228,19 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
         signal.signal(signal.SIGTERM, signal.SIG_IGN)
         signal.signal(signal.SIGINT, signal.SIG_IGN)
 
-        current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        filename = f"{current_time},{algorithm},nshots={params.n_shots},gamma1={gamma1},gamma2={gamma2},niters={th+1},sigma={params.noise_sigma},alpha={alpha},.npz"
-        save_path = output_path.joinpath(filename)
-        # np.savez(save_path, v, y, np.array(velocity_model_diff_history), np.array(residual_norm_sum_history), np.array(psnr_value_history), np.array(ssim_value_history))
+        if np_log_path is not None:
+            np.savez(
+                np_log_path,
+                v,
+                y,
+                velocity_model_square_error_values.values_as_np_array(),
+                residual_norm_sum_values.values_as_np_array(),
+                psnr_values.values_as_np_array(),
+                ssim_values.values_as_np_array(),
+            )
 
         v_core = remove_damping_cells(v, dsize)
-        show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap="coolwarm")
+        show_velocity_model(v_core, title=f"Velocity model at final iteration {th + 1}", vmax=vmax, vmin=vmin, cmap="coolwarm")
 
         print(f"elapsed: {time.time() - start_time}")
         # 子プロセスを解放
@@ -236,7 +252,7 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
 
 if __name__ == "__main__":
     # simulate_fwi(5000, 20, 0, "pds", 1e-4, 100, None, 2000)
-    # simulate_fwi(5000, 20, 1, "gradient", 1e-4, 100, None, 550)
+    simulate_fwi(100, 20, 1, "gradient", 1e-4, 0, 0)
     simulate_fwi(100, 20, 1, "pds", 1e-4, 100, 350)
     # simulate_fwi(5000, 20, 1, "pds", 1e-4, 100, None, 150)
     # simulate_fwi(5000, 20, 1, "pds", 1e-4, 100, None, 200)
