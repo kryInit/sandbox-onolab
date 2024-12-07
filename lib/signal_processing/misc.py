@@ -2,7 +2,7 @@ from typing import Tuple
 
 import numpy as np
 from numpy import typing as npt
-from scipy.ndimage import zoom, gaussian_filter
+from scipy.ndimage import gaussian_filter, zoom
 
 
 def zoom_and_crop(data: npt.NDArray, target_shape: Tuple[int, int]):

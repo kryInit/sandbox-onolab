@@ -13,7 +13,7 @@ from matplotlib.colors import Normalize, TwoSlopeNorm
 from numpy.typing import NDArray
 from tqdm import tqdm
 
-from lib.misc import output_path, datasets_root_path
+from lib.misc import datasets_root_path, output_path
 from lib.model import Vec2D
 
 # devitoのlogの抑制
@@ -103,9 +103,9 @@ def create_simple_velocity_model_devito_function(grid: Grid, field_cell_size_y: 
     dsize = damping_cell_thickness
     v.data[dsize:-dsize, dsize:-dsize] = np.load(datasets_root_path.joinpath("open-fwi/tmp/model1.npy"))[0][0] / 1000
     v.data[:dsize, :] = v.data[dsize, :]
-    v.data[-dsize:, :] = v.data[-dsize-1, :]
+    v.data[-dsize:, :] = v.data[-dsize - 1, :]
     v.data[:, :dsize] = v.data[:, dsize][:, None]
-    v.data[:, -dsize:] = v.data[:, -dsize-1][:, None]
+    v.data[:, -dsize:] = v.data[:, -dsize - 1][:, None]
 
     return v
 

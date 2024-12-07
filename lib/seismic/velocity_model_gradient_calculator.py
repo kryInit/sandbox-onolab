@@ -40,12 +40,15 @@ class VelocityModelGradientCalculator:
             rec, wavefields, summary = self.simulator.forward(vp=self.true_model.vp, save=True, rec=observed_waveform)
 
             from lib.misc import datasets_root_path
-            data_path = datasets_root_path.joinpath('open-fwi/tmp')
-            data = np.load(data_path.joinpath('data1.npy'))
+
+            data_path = datasets_root_path.joinpath("open-fwi/tmp")
+            data = np.load(data_path.joinpath("data1.npy"))
 
             import matplotlib.pyplot as plt
-            from lib.visualize import save_array3d_as_gif
+
             from lib.misc import output_path
+            from lib.visualize import save_array3d_as_gif
+
             # save_array3d_as_gif(wavefields.data, output_path.joinpath("wavefields.gif"), normalize='auto')
             print(rec.shape)
             # plt.imshow(rec.data, extent=(0, 1, 0, 1))
@@ -55,8 +58,9 @@ class VelocityModelGradientCalculator:
             true_observed_waveforms.append(observed_waveform.data[:].copy())
         target = np.array(true_observed_waveforms)
         print(target.shape)
-        np.save('true_observed_waveforms', target)
+        np.save("true_observed_waveforms", target)
         import sys
+
         sys.exit(-1)
         return true_observed_waveforms
 

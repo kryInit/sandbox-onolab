@@ -17,14 +17,16 @@
 # others to do so.
 
 import os
+
 import numpy as np
+import transforms as T
 from torch.utils.data import Dataset
 from torchvision.transforms import Compose
-import transforms as T
+
 
 class FWIDataset(Dataset):
-    ''' FWI dataset
-    For convenience, in this class, a batch refers to a npy file 
+    """FWI dataset
+    For convenience, in this class, a batch refers to a npy file
     instead of the batch used during training.
 
     Args:
@@ -33,21 +35,21 @@ class FWIDataset(Dataset):
         sample_ratio: downsample ratio for seismic data
         file_size: # of samples in each npy file
         transform_data|label: transformation applied to data or label
-    '''
-    def __init__(self, anno, preload=True, sample_ratio=1, file_size=500,
-                    transform_data=None, transform_label=None):
+    """
+
+    def __init__(self, anno, preload=True, sample_ratio=1, file_size=500, transform_data=None, transform_label=None):
         if not os.path.exists(anno):
-            print(f'Annotation file {anno} does not exists')
+            print(f"Annotation file {anno} does not exists")
         self.preload = preload
         self.sample_ratio = sample_ratio
         self.file_size = file_size
         self.transform_data = transform_data
         self.transform_label = transform_label
-        with open(anno, 'r') as f:
+        with open(anno, "r") as f:
             self.batches = f.readlines()
-        if preload: 
+        if preload:
             self.data_list, self.label_list = [], []
-            for batch in self.batches: 
+            for batch in self.batches:
                 data, label = self.load_every(batch)
                 self.data_list.append(data)
                 if label is not None:
@@ -55,19 +57,19 @@ class FWIDataset(Dataset):
 
     # Load from one line
     def load_every(self, batch):
-        batch = batch.split('\t')
+        batch = batch.split("\t")
         data_path = batch[0] if len(batch) > 1 else batch[0][:-1]
-        data = np.load(data_path)[:, :, ::self.sample_ratio, :]
-        data = data.astype('float32')
+        data = np.load(data_path)[:, :, :: self.sample_ratio, :]
+        data = data.astype("float32")
         if len(batch) > 1:
-            label_path = batch[1][:-1]    
+            label_path = batch[1][:-1]
             label = np.load(label_path)
-            label = label.astype('float32')
+            label = label.astype("float32")
         else:
             label = None
-        
+
         return data, label
-        
+
     def __getitem__(self, idx):
         batch_idx, sample_idx = idx // self.file_size, idx % self.file_size
         if self.preload:
@@ -82,20 +84,15 @@ class FWIDataset(Dataset):
         if self.transform_label and label is not None:
             label = self.transform_label(label)
         return data, label if label is not None else np.array([])
-        
+
     def __len__(self):
         return len(self.batches) * self.file_size
 
 
-if __name__ == '__main__':
-    transform_data = Compose([
-        T.LogTransform(k=1),
-        T.MinMaxNormalize(T.log_transform(-61, k=1), T.log_transform(120, k=1))
-    ])
-    transform_label = Compose([
-        T.MinMaxNormalize(2000, 6000)
-    ])
-    dataset = FWIDataset(f'relevant_files/temp.txt', transform_data=transform_data, transform_label=transform_label, file_size=1)
+if __name__ == "__main__":
+    transform_data = Compose([T.LogTransform(k=1), T.MinMaxNormalize(T.log_transform(-61, k=1), T.log_transform(120, k=1))])
+    transform_label = Compose([T.MinMaxNormalize(2000, 6000)])
+    dataset = FWIDataset(f"relevant_files/temp.txt", transform_data=transform_data, transform_label=transform_label, file_size=1)
     data, label = dataset[0]
     print(data.shape)
     print(label is None)

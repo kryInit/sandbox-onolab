@@ -4,7 +4,7 @@ from typing import List, NamedTuple, Tuple
 
 import numpy as np
 import numpy.typing as npt
-from devito import Eq, Function, Inc, Operator, TimeFunction, solve, norm
+from devito import Eq, Function, Inc, Operator, TimeFunction, norm, solve
 from numpy.typing import NDArray
 from scipy.ndimage import gaussian_filter
 
@@ -28,7 +28,9 @@ class FastParallelVelocityModelProps(NamedTuple):
 
 
 def get_time_length(props: FastParallelVelocityModelProps):
-    true_model = SeismicModel(space_order=2, vp=props.true_velocity_model, origin=(0, 0), shape=props.shape, dtype=np.float32, spacing=props.spacing, nbl=props.damping_cell_thickness, bcs="damp", fs=False)
+    true_model = SeismicModel(
+        space_order=2, vp=props.true_velocity_model, origin=(0, 0), shape=props.shape, dtype=np.float32, spacing=props.spacing, nbl=props.damping_cell_thickness, bcs="damp", fs=False
+    )
     geometry = AcquisitionGeometry(true_model, props.receiver_locations, np.array([[0, 0]]), props.start_time, props.end_time, f0=props.source_frequency, src_type="Ricker")
     return geometry.nt
 
@@ -62,7 +64,15 @@ class FastParallelVelocityModelGradientCalculator:
         self.processes = [
             Process(
                 target=calc_grad_worker,
-                args=(props, self.velocity_model_shared_memory.name, self.true_observed_waveforms_memory.name, self.vm_grad_shared_memory.name, self.residual_norm_shared_memory.name, self.input_queue, self.output_queue),
+                args=(
+                    props,
+                    self.velocity_model_shared_memory.name,
+                    self.true_observed_waveforms_memory.name,
+                    self.vm_grad_shared_memory.name,
+                    self.residual_norm_shared_memory.name,
+                    self.input_queue,
+                    self.output_queue,
+                ),
             )
             for _ in range(self.n_jobs)
         ]
@@ -74,7 +84,7 @@ class FastParallelVelocityModelGradientCalculator:
             self.output_queue.get()
 
         for i in range(self.n_shots):
-            self.input_queue.put(-i-1)
+            self.input_queue.put(-i - 1)
 
         for _ in range(self.n_shots):
             self.output_queue.get()
@@ -156,7 +166,7 @@ def calc_grad_worker(
             break
         if idx < 0:
             # true observed waveform計算
-            true_observed_waveforms[-idx-1] = grad_calculator.calc_true_observed_waveform(-idx-1)
+            true_observed_waveforms[-idx - 1] = grad_calculator.calc_true_observed_waveform(-idx - 1)
         else:
             # grad計算
             residual_norm[idx], vm_grad[idx] = grad_calculator.calc_grad(velocity_model, idx)

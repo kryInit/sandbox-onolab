@@ -1,23 +1,23 @@
 import signal
 import time
 from datetime import datetime
-from typing import NamedTuple, Literal, Union
+from typing import Literal, NamedTuple, Union
 
 import numpy as np
 import numpy.typing as npt
 from devito import set_log_level
 from skimage.metrics import structural_similarity as ssim
 
+import lib.signal_processing.diff_operator as diff_op
 from lib.dataset import load_seismic_datasets__salt_model
 from lib.dataset.load_overthrust_model import load_seismic_datasets__overthrust_model
 from lib.misc import datasets_root_path, output_path
 from lib.misc.historical_value import HistoricalValue
 from lib.model import Vec2D
 from lib.seismic import FastParallelVelocityModelGradientCalculator, FastParallelVelocityModelProps
-from lib.signal_processing.misc import zoom_and_crop, smoothing_with_gaussian_filter, calc_psnr
+from lib.signal_processing.misc import calc_psnr, smoothing_with_gaussian_filter, zoom_and_crop
 from lib.signal_processing.norm import L12_norm
-import lib.signal_processing.diff_operator as diff_op
-from lib.signal_processing.proximal_operator import prox_box_constraint, proj_L12_norm_ball
+from lib.signal_processing.proximal_operator import proj_L12_norm_ball, prox_box_constraint
 from lib.visualize import show_velocity_model
 
 # devitoのlogの抑制
@@ -52,6 +52,7 @@ class VelocityModelDataForOptimization(NamedTuple):
     """
     データだけでなく、最適化に関連するパラメータも保持する(パラメータはデータに依存して変更するのでこのように持たせている, 要素が多くなるならデータとパラメータを分離したいが一旦これで
     """
+
     true_data: npt.NDArray
     initial_data: npt.NDArray
     box_min_value: float
@@ -91,7 +92,7 @@ def remove_damping_cells(velocity_model: npt.NDArray, damping_cell_thickness: in
     return velocity_model[x:-x, x:-x]
 
 
-def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: Union[Literal['pds'], Literal['gradient']], gamma1: float, gamma2: float, alpha: float):
+def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: Union[Literal["pds"], Literal["gradient"]], gamma1: float, gamma2: float, alpha: float):
     if algorithm == "gradient":
         gamma2 = None
 
@@ -107,7 +108,7 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
         source_frequency=0.01,
         n_shots=n_shots,
         n_receivers=101,
-        noise_sigma=noise_sigma
+        noise_sigma=noise_sigma,
     )
 
     # alias
@@ -118,10 +119,11 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
 
     # simple visualize
     def simple_visualize():
-        show_velocity_model(true_velocity_model, vmax=vmax, vmin=vmin, title="true velocity model", cmap='coolwarm')
-        show_velocity_model(initial_velocity_model, vmax=vmax, vmin=vmin, title="initial velocity model", cmap='coolwarm')
+        show_velocity_model(true_velocity_model, vmax=vmax, vmin=vmin, title="true velocity model", cmap="coolwarm")
+        show_velocity_model(initial_velocity_model, vmax=vmax, vmin=vmin, title="initial velocity model", cmap="coolwarm")
         total_variation_of_true_velocity_model = L12_norm(diff_op.D(true_velocity_model))
         print(f"TV of true velocity model: {total_variation_of_true_velocity_model}, alpha: {alpha}, ratio: {alpha / total_variation_of_true_velocity_model}")
+
     simple_visualize()
 
     def create_grad_calculator():
@@ -143,9 +145,10 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
                 source_locations,
                 receiver_locations,
                 params.noise_sigma,
-                20
+                20,
             )
         )
+
     grad_calculator = create_grad_calculator()
 
     residual_norm_sum_values = HistoricalValue("objective", "less", [])
@@ -205,9 +208,9 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
             # show_velocity_model(grad[dsize:-dsize, dsize:-dsize], title=f"Velocity model at iteration {th + 1}", cmap='coolwarm')
             # show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
             # if (th + 1) % 1000 == 0:
-                # show_velocity_model(v, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
-                # show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
-            if th == max_n_iters-1:
+            # show_velocity_model(v, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
+            # show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
+            if th == max_n_iters - 1:
                 break
 
     finally:
@@ -221,7 +224,7 @@ def simulate_fwi(max_n_iters: int, n_shots: int, noise_sigma: float, algorithm: 
         # np.savez(save_path, v, y, np.array(velocity_model_diff_history), np.array(residual_norm_sum_history), np.array(psnr_value_history), np.array(ssim_value_history))
 
         v_core = remove_damping_cells(v, dsize)
-        show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
+        show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap="coolwarm")
 
         print(f"elapsed: {time.time() - start_time}")
         # 子プロセスを解放
@@ -250,7 +253,4 @@ if __name__ == "__main__":
     # simulate_fwi(5000, 20, 0, "gradient", 1e-4, 100, None, 0)
     # simulate_fwi(2000, 20, 0, "gradient", 1e-4, 100, None)
 
-
-
     # simulate_fwi(60000, 24, 1, "pds", 1e-5, 0.01, '2024-08-09_01-50-11,nshots=24,gamma1=1e-05,gamma2=0.01,niters=30000,sigma=1.npz')
-

@@ -36,10 +36,10 @@ def show_minimum_velocity_model(data: np.ndarray, vmin: Union[float, None] = Non
     y_max = data.shape[0] / 250
 
     ax.set_xticks(np.linspace(0, data.shape[1] - 1, 5))
-    ax.set_xticklabels([f'{x:.1f}' for x in np.linspace(0, x_max, 5)], fontsize=22)
+    ax.set_xticklabels([f"{x:.1f}" for x in np.linspace(0, x_max, 5)], fontsize=22)
 
     ax.set_yticks(np.linspace(0, data.shape[0] - 1, 3))
-    ax.set_yticklabels([f'{y:.1f}' for y in np.linspace(0, y_max, 3)], fontsize=22)
+    ax.set_yticklabels([f"{y:.1f}" for y in np.linspace(0, y_max, 3)], fontsize=22)
 
     plt.xlabel("X [km]", fontsize=22)
     plt.ylabel("Depth [km]", fontsize=22)
@@ -47,4 +47,3 @@ def show_minimum_velocity_model(data: np.ndarray, vmin: Union[float, None] = Non
     plt.axis("tight")
     fig.tight_layout()
     plt.show()
-

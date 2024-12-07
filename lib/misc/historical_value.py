@@ -1,7 +1,8 @@
-from typing import Literal, Union, List
+from typing import List, Literal, Union
+
 from lib.misc.colored_text import ColoredText
 
-PreferValueType = Union[Literal['greater'], Literal['less'], None]
+PreferValueType = Union[Literal["greater"], Literal["less"], None]
 
 
 class HistoricalValue[T]:

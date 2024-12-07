@@ -225,10 +225,10 @@ def main():
 
     # 軸、タイトル、枠線、背景色を削除
     ax.set_axis_off()
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['bottom'].set_visible(False)
-    ax.spines['left'].set_visible(False)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["bottom"].set_visible(False)
+    ax.spines["left"].set_visible(False)
     ax.patch.set_alpha(0)
     fig.patch.set_alpha(0)  # 図全体の背景を透過
 
@@ -239,8 +239,10 @@ def main():
     plt.savefig("transparent_plot.png", transparent=True, bbox_inches="tight", pad_inches=0)
     # plt.show()
     from pathlib import Path
+
     print(Path().resolve())
     import sys
+
     sys.exit(-1)
     damping_model = generate_damping_model_devito_function(grid, params.damping_cell_thickness, params.damping_coefficient)
     velocity_model = create_simple_velocity_model_devito_function(grid, params.field_cell_size.y, params.damping_cell_thickness)

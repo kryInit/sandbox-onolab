@@ -34,8 +34,8 @@ def sync_venv(c):
 @task
 def format(c):
     format_commands = [
-        f"isort ./lib ./sandbox",
-        f"black ./lib ./sandbox"
+        f"isort ./src ./lib ./sandbox",
+        f"black ./src ./lib ./sandbox"
     ]
 
     for cmd in format_commands:

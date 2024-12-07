@@ -16,19 +16,21 @@
 
 # others to do so.
 
-from collections import defaultdict, deque
 import datetime
-import time
-import torch
-import torch.distributed as dist
-import torch.autograd as autograd
-from torch.autograd import Variable
-import torch.nn as nn
 import errno
-import os
 import itertools
-from torchvision.models import vgg16
+import os
+import time
+from collections import defaultdict, deque
+
 import numpy as np
+import torch
+import torch.autograd as autograd
+import torch.distributed as dist
+import torch.nn as nn
+from torch.autograd import Variable
+from torchvision.models import vgg16
+
 
 class SmoothedValue(object):
     """Track a series of values and provide access to smoothed values over a
@@ -54,7 +56,7 @@ class SmoothedValue(object):
         """
         if not is_dist_avail_and_initialized():
             return
-        t = torch.tensor([self.count, self.total], dtype=torch.float64, device='cuda')
+        t = torch.tensor([self.count, self.total], dtype=torch.float64, device="cuda")
         dist.barrier()
         dist.all_reduce(t)
         t = t.tolist()
@@ -84,12 +86,7 @@ class SmoothedValue(object):
         return self.deque[-1]
 
     def __str__(self):
-        return self.fmt.format(
-            median=self.median,
-            avg=self.avg,
-            global_avg=self.global_avg,
-            max=self.max,
-            value=self.value)
+        return self.fmt.format(median=self.median, avg=self.avg, global_avg=self.global_avg, max=self.max, value=self.value)
 
 
 class MetricLogger(object):
@@ -109,15 +106,12 @@ class MetricLogger(object):
             return self.meters[attr]
         if attr in self.__dict__:
             return self.__dict__[attr]
-        raise AttributeError("'{}' object has no attribute '{}'".format(
-            type(self).__name__, attr))
+        raise AttributeError("'{}' object has no attribute '{}'".format(type(self).__name__, attr))
 
     def __str__(self):
         loss_str = []
         for name, meter in self.meters.items():
-            loss_str.append(
-                "{}: {}".format(name, str(meter))
-            )
+            loss_str.append("{}: {}".format(name, str(meter)))
         return self.delimiter.join(loss_str)
 
     def synchronize_between_processes(self):
@@ -136,64 +130,42 @@ class MetricLogger(object):
             length = len(iterable)
         i = 0
         if not header:
-            header = ''
+            header = ""
         start_time = time.time()
         end = time.time()
-        iter_time = SmoothedValue(fmt='{avg:.4f}')
-        data_time = SmoothedValue(fmt='{avg:.4f}')
-        space_fmt = ':' + str(len(str(length))) + 'd'
+        iter_time = SmoothedValue(fmt="{avg:.4f}")
+        data_time = SmoothedValue(fmt="{avg:.4f}")
+        space_fmt = ":" + str(len(str(length))) + "d"
         if torch.cuda.is_available():
-            log_msg = self.delimiter.join([
-                header,
-                '[{0' + space_fmt + '}/{1}]',
-                'eta: {eta}',
-                '{meters}',
-                'time: {time}',
-                'data: {data}',
-                'max mem: {memory:.0f}'
-            ])
+            log_msg = self.delimiter.join([header, "[{0" + space_fmt + "}/{1}]", "eta: {eta}", "{meters}", "time: {time}", "data: {data}", "max mem: {memory:.0f}"])
         else:
-            log_msg = self.delimiter.join([
-                header,
-                '[{0' + space_fmt + '}/{1}]',
-                'eta: {eta}',
-                '{meters}',
-                'time: {time}',
-                'data: {data}'
-            ])
+            log_msg = self.delimiter.join([header, "[{0" + space_fmt + "}/{1}]", "eta: {eta}", "{meters}", "time: {time}", "data: {data}"])
         MB = 1024.0 * 1024.0
         for obj in iterable:
             data_time.update(time.time() - end)
-            yield obj # <-- yield the batch in for loop
+            yield obj  # <-- yield the batch in for loop
             iter_time.update(time.time() - end)
             if i % print_freq == 0:
                 eta_seconds = iter_time.global_avg * (length - i)
                 eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
                 if torch.cuda.is_available():
-                    print(log_msg.format(
-                        i, length, eta=eta_string,
-                        meters=str(self),
-                        time=str(iter_time), data=str(data_time),
-                        memory=torch.cuda.max_memory_allocated() / MB))
+                    print(log_msg.format(i, length, eta=eta_string, meters=str(self), time=str(iter_time), data=str(data_time), memory=torch.cuda.max_memory_allocated() / MB))
                 else:
-                    print(log_msg.format(
-                        i, length, eta=eta_string,
-                        meters=str(self),
-                        time=str(iter_time), data=str(data_time)))
+                    print(log_msg.format(i, length, eta=eta_string, meters=str(self), time=str(iter_time), data=str(data_time)))
             i += 1
             end = time.time()
         total_time = time.time() - start_time
         total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-        print('{} Total time: {}'.format(header, total_time_str))
+        print("{} Total time: {}".format(header, total_time_str))
 
 
 # Legacy code
 class ContentLoss(nn.Module):
     def __init__(self, args):
         super(ContentLoss, self).__init__()
-        names = ['l1', 'l2']
-        self.loss_names = ['loss_' + n for n in names]
-        for key in ['lambda_' + n for n in names]:
+        names = ["l1", "l2"]
+        self.loss_names = ["loss_" + n for n in names]
+        for key in ["lambda_" + n for n in names]:
             setattr(self, key, getattr(args, key))
         self.l1loss = nn.L1Loss()
         self.l2loss = nn.MSELoss()
@@ -204,16 +176,16 @@ class ContentLoss(nn.Module):
         loss_l2 = self.l2loss(target, pred)
         loss = loss_l1 * self.lambda_l1 + loss_l2 * self.lambda_l2
         scope = locals()
-        return loss, { k: eval(k, scope) for k in self.loss_names }
+        return loss, {k: eval(k, scope) for k in self.loss_names}
 
 
 # Legacy code
 class IdenticalLoss(nn.Module):
     def __init__(self, args):
         super(IdenticalLoss, self).__init__()
-        names = ['id1s', 'id2s']
-        self.loss_names = ['loss_' + n for n in names]
-        for key in ['lambda_' + n for n in names]:
+        names = ["id1s", "id2s"]
+        self.loss_names = ["loss_" + n for n in names]
+        for key in ["lambda_" + n for n in names]:
             setattr(self, key, getattr(args, key))
         self.l1loss = nn.L1Loss()
         self.l2loss = nn.MSELoss()
@@ -225,13 +197,14 @@ class IdenticalLoss(nn.Module):
         loss_id1s, loss_id2s = cal_loss(input, pred)
         loss = loss_id1s * self.lambda_id1s + loss_id2s * self.lambda_id2s
         scope = locals()
-        return loss, { k: eval(k, scope) for k in self.loss_names }
+        return loss, {k: eval(k, scope) for k in self.loss_names}
+
 
 # Implemented according to H-PGNN, not useful
 class NMSELoss(nn.Module):
     def __init__(self):
         super(NMSELoss, self).__init__()
-    
+
     def forward(self, pred, gt):
         return torch.mean(((pred - gt) / (torch.amax(gt, (-2, -1), keepdim=True) + 1e-5)) ** 2)
 
@@ -239,66 +212,79 @@ class NMSELoss(nn.Module):
 class CycleLoss(nn.Module):
     def __init__(self, args):
         super(CycleLoss, self).__init__()
-        names = ['g1v', 'g2v', 'g1s', 'g2s', 'c1v', 'c2v', 'c1s', 'c2s']
-        self.loss_names = ['loss_' + n for n in names]
-        for key in ['lambda_' + n for n in names]:
+        names = ["g1v", "g2v", "g1s", "g2s", "c1v", "c2v", "c1s", "c2s"]
+        self.loss_names = ["loss_" + n for n in names]
+        for key in ["lambda_" + n for n in names]:
             setattr(self, key, getattr(args, key))
         self.l1loss = nn.L1Loss()
         self.l2loss = nn.MSELoss()
-    
+
     def forward(self, data, label, pred_s=None, pred_v=None, recon_s=None, recon_v=None):
         cal_loss = lambda x, y: (self.l1loss(x, y), self.l2loss(x, y))
         loss_g1v, loss_g2v, loss_g1s, loss_g2s = [0] * 4
         if pred_v is not None:
-            loss_g1v, loss_g2v = cal_loss(pred_v, label) 
+            loss_g1v, loss_g2v = cal_loss(pred_v, label)
         if pred_s is not None:
             loss_g1s, loss_g2s = cal_loss(pred_s, data)
 
-        loss_c1v, loss_c2v, loss_c1s , loss_c2s = [0] * 4
+        loss_c1v, loss_c2v, loss_c1s, loss_c2s = [0] * 4
         if recon_v is not None:
             loss_c1v, loss_c2v = cal_loss(recon_v, label)
         if recon_s is not None:
             loss_c1s, loss_c2s = cal_loss(recon_s, data)
 
-        loss = loss_g1v * self.lambda_g1v + loss_g2v * self.lambda_g2v + \
-            loss_g1s * self.lambda_g1s + loss_g2s * self.lambda_g2s + \
-            loss_c1v * self.lambda_c1v + loss_c2v * self.lambda_c2v + \
-            loss_c1s * self.lambda_c1s + loss_c2s * self.lambda_c2s
+        loss = (
+            loss_g1v * self.lambda_g1v
+            + loss_g2v * self.lambda_g2v
+            + loss_g1s * self.lambda_g1s
+            + loss_g2s * self.lambda_g2s
+            + loss_c1v * self.lambda_c1v
+            + loss_c2v * self.lambda_c2v
+            + loss_c1s * self.lambda_c1s
+            + loss_c2s * self.lambda_c2s
+        )
         scope = locals()
-        return loss, { k: eval(k, scope) for k in self.loss_names }
+        return loss, {k: eval(k, scope) for k in self.loss_names}
 
 
 # Legacy code
 class _CycleLoss(nn.Module):
     def __init__(self, args):
         super(_CycleLoss, self).__init__()
-        names = ['g1v', 'g2v', 'g1s', 'g2s', 'c1v', 'c2v', 'c1s', 'c2s']
-        self.loss_names = ['loss_' + n for n in names]
-        for key in ['lambda_' + n for n in names]:
+        names = ["g1v", "g2v", "g1s", "g2s", "c1v", "c2v", "c1s", "c2s"]
+        self.loss_names = ["loss_" + n for n in names]
+        for key in ["lambda_" + n for n in names]:
             setattr(self, key, getattr(args, key))
         self.l1loss = nn.L1Loss()
         self.l2loss = nn.MSELoss()
-    
+
     def forward(self, data, label, pred_s=None, pred_v=None, recon_s=None, recon_v=None):
         cal_loss = lambda x, y: (self.l1loss(x, y), self.l2loss(x, y))
         loss_g1v, loss_g2v, loss_g1s, loss_g2s = [0] * 4
         if pred_v is not None and (self.lambda_g1v != 0 or self.lambda_g2v != 0):
-            loss_g1v, loss_g2v = cal_loss(pred_v, label) 
+            loss_g1v, loss_g2v = cal_loss(pred_v, label)
         if pred_s is not None and (self.lambda_g1s != 0 or self.lambda_g2s != 0):
             loss_g1s, loss_g2s = cal_loss(pred_s, data)
 
-        loss_c1v, loss_c2v, loss_c1s , loss_c2s = [0] * 4
+        loss_c1v, loss_c2v, loss_c1s, loss_c2s = [0] * 4
         if recon_v is not None and (self.lambda_c1v != 0 or self.lambda_c2v != 0):
             loss_c1v, loss_c2v = cal_loss(recon_v, label)
         if recon_s is not None and (self.lambda_c1s != 0 or self.lambda_c2s != 0):
             loss_c1s, loss_c2s = cal_loss(recon_s, data)
 
-        loss = loss_g1v * self.lambda_g1v + loss_g2v * self.lambda_g2v + \
-            loss_g1s * self.lambda_g1s + loss_g2s * self.lambda_g2s + \
-            loss_c1v * self.lambda_c1v + loss_c2v * self.lambda_c2v + \
-            loss_c1s * self.lambda_c1s + loss_c2s * self.lambda_c2s
+        loss = (
+            loss_g1v * self.lambda_g1v
+            + loss_g2v * self.lambda_g2v
+            + loss_g1s * self.lambda_g1s
+            + loss_g2s * self.lambda_g2s
+            + loss_c1v * self.lambda_c1v
+            + loss_c2v * self.lambda_c2v
+            + loss_c1s * self.lambda_c1s
+            + loss_c2s * self.lambda_c2s
+        )
         scope = locals()
-        return loss, { k: eval(k, scope) for k in self.loss_names }
+        return loss, {k: eval(k, scope) for k in self.loss_names}
+
 
 def accuracy(output, target, topk=(1,)):
     """Computes the accuracy over the k top predictions for the specified values of k"""
@@ -330,10 +316,11 @@ def setup_for_distributed(is_master):
     This function disables printing when not in master process
     """
     import builtins as __builtin__
+
     builtin_print = __builtin__.print
 
     def print(*args, **kwargs):
-        force = kwargs.pop('force', False)
+        force = kwargs.pop("force", False)
         if is_master or force:
             builtin_print(*args, **kwargs)
 
@@ -370,31 +357,29 @@ def save_on_master(*args, **kwargs):
 
 
 def init_distributed_mode(args):
-    if 'RANK' in os.environ and 'WORLD_SIZE' in os.environ:
+    if "RANK" in os.environ and "WORLD_SIZE" in os.environ:
         args.rank = int(os.environ["RANK"])
-        args.world_size = int(os.environ['WORLD_SIZE'])
-        args.local_rank = int(os.environ['LOCAL_RANK'])
-    elif 'SLURM_PROCID' in os.environ and args.world_size > 1:
-        args.rank = int(os.environ['SLURM_PROCID'])
+        args.world_size = int(os.environ["WORLD_SIZE"])
+        args.local_rank = int(os.environ["LOCAL_RANK"])
+    elif "SLURM_PROCID" in os.environ and args.world_size > 1:
+        args.rank = int(os.environ["SLURM_PROCID"])
         args.local_rank = args.rank % torch.cuda.device_count()
     elif hasattr(args, "rank"):
         pass
     else:
-        print('Not using distributed mode')
+        print("Not using distributed mode")
         args.distributed = False
         return
 
     args.distributed = True
 
     torch.cuda.set_device(args.local_rank)
-    args.dist_backend = 'nccl'
-    print('| distributed init (rank {}): {}'.format(
-        args.rank, args.dist_url), flush=True)
-    torch.distributed.init_process_group(backend=args.dist_backend, init_method=args.dist_url,
-                                         world_size=args.world_size, rank=args.rank)
+    args.dist_backend = "nccl"
+    print("| distributed init (rank {}): {}".format(args.rank, args.dist_url), flush=True)
+    torch.distributed.init_process_group(backend=args.dist_backend, init_method=args.dist_url, world_size=args.world_size, rank=args.rank)
     setup_for_distributed(args.rank == 0)
-    
-    
+
+
 class Wasserstein_GP(nn.Module):
     def __init__(self, device, lambda_gp):
         super(Wasserstein_GP, self).__init__()
@@ -406,7 +391,7 @@ class Wasserstein_GP(nn.Module):
         loss_real = torch.mean(model(real))
         loss_fake = torch.mean(model(fake))
         loss = -loss_real + loss_fake + gradient_penalty * self.lambda_gp
-        return loss, loss_real-loss_fake, gradient_penalty
+        return loss, loss_real - loss_fake, gradient_penalty
 
     def compute_gradient_penalty(self, model, real_samples, fake_samples):
         alpha = torch.rand(real_samples.size(0), 1, 1, 1, device=self.device)
@@ -424,15 +409,16 @@ class Wasserstein_GP(nn.Module):
         gradient_penalty = ((gradients.norm(2, dim=1) - 1) ** 2).mean()
         return gradient_penalty
 
-# Modified from https://gist.github.com/alper111/8233cdb0414b4cb5853f2f730ab95a49     
+
+# Modified from https://gist.github.com/alper111/8233cdb0414b4cb5853f2f730ab95a49
 class VGGPerceptualLoss(nn.Module):
     def __init__(self, resize=True):
         super(VGGPerceptualLoss, self).__init__()
         blocks = []
-        blocks.append(vgg16(pretrained=True).features[:4].eval()) # relu1_2
-        blocks.append(vgg16(pretrained=True).features[4:9].eval()) # relu2_2
-        blocks.append(vgg16(pretrained=True).features[9:16].eval()) # relu3_3
-        blocks.append(vgg16(pretrained=True).features[16:23].eval()) # relu4_3
+        blocks.append(vgg16(pretrained=True).features[:4].eval())  # relu1_2
+        blocks.append(vgg16(pretrained=True).features[4:9].eval())  # relu2_2
+        blocks.append(vgg16(pretrained=True).features[9:16].eval())  # relu3_3
+        blocks.append(vgg16(pretrained=True).features[16:23].eval())  # relu4_3
         for bl in blocks:
             for p in bl:
                 p.requires_grad = False
@@ -447,14 +433,14 @@ class VGGPerceptualLoss(nn.Module):
     def forward(self, input, target, rescale=True, feature_layers=[1]):
         input = input.view(-1, 1, input.shape[-2], input.shape[-1]).repeat(1, 3, 1, 1)
         target = target.view(-1, 1, target.shape[-2], target.shape[-1]).repeat(1, 3, 1, 1)
-        if rescale: # from [-1, 1] to [0, 1]
+        if rescale:  # from [-1, 1] to [0, 1]
             input = input / 2 + 0.5
             target = target / 2 + 0.5
-        input = (input-self.mean) / self.std
-        target = (target-self.mean) / self.std
+        input = (input - self.mean) / self.std
+        target = (target - self.mean) / self.std
         if self.resize:
-            input = self.transform(input, mode='bilinear', size=(224, 224), align_corners=False)
-            target = self.transform(target, mode='bilinear', size=(224, 224), align_corners=False)
+            input = self.transform(input, mode="bilinear", size=(224, 224), align_corners=False)
+            target = self.transform(target, mode="bilinear", size=(224, 224), align_corners=False)
         loss_l1, loss_l2 = 0.0, 0.0
         x = input
         y = target
@@ -469,6 +455,6 @@ class VGGPerceptualLoss(nn.Module):
 
 def cal_psnr(gt, data, max_value):
     mse = np.mean((gt - data) ** 2)
-    if (mse == 0):
-       return 100
+    if mse == 0:
+        return 100
     return 20 * np.log10(max_value / np.sqrt(mse))

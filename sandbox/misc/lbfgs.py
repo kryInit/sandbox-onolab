@@ -1,6 +1,7 @@
 import numpy as np
 
-from lib.signal_processing.l_bfgs import LBFGS, lbfgs as lbfgs2
+from lib.signal_processing.l_bfgs import LBFGS
+from lib.signal_processing.l_bfgs import lbfgs as lbfgs2
 
 x = np.array([-2.5, 0.0])
 lbfgs = LBFGS(step_size=1, m=5)
@@ -13,11 +14,13 @@ def objective(x):
     return 5.0 * x[0] ** 2.0 - 6.0 * x[0] * x[1] + 5.0 * x[1] ** 2 - 10.0 * x[0] + 6.0 * x[1]
     # return x[0] ** 2 + x[1] ** 2
 
+
 def gradient(x):
     return np.array([10.0 * x[0] - 6.0 * x[1] - 10.0, 10.0 * x[1] - 6.0 * x[0] + 6.0])
     # return np.array([2 * x[0], 2 * x[1]])
 
-xx, out = lbfgs2(x, objective, gradient, stepsize=1.0, maxiterate=20, memorysize=5, epsilon=10.0**(-8))
+
+xx, out = lbfgs2(x, objective, gradient, stepsize=1.0, maxiterate=20, memorysize=5, epsilon=10.0 ** (-8))
 print(xx)
 
 f_val = objective(x)

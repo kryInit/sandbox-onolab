@@ -6,7 +6,8 @@ def searchdirection(s, y, g):
     num = len(s)
     a = np.zeros(num)
 
-    if num == 0: return q
+    if num == 0:
+        return q
     # print(s, y)
 
     for i in np.arange(num)[::-1]:
@@ -126,7 +127,6 @@ class LBFGS:
         return -z  # 更新方向は負の勾配方向
 
 
-
 def lbfgs(x, f, g, stepsize, maxiterate, memorysize, epsilon):
 
     outx = []
@@ -137,14 +137,14 @@ def lbfgs(x, f, g, stepsize, maxiterate, memorysize, epsilon):
     J1 = f(xold)
     mmax = memorysize
     sp = stepsize
-    print('f= ', J1)
+    print("f= ", J1)
 
     print(f"iter: {-1}, x: {xold}, f: {J1}, |g|: {np.linalg.norm(gold)}")
 
     outx.append(xold)
     for num in range(maxiterate):
         if np.linalg.norm(gold) < epsilon:
-            print('g=', np.linalg.norm(gold))
+            print("g=", np.linalg.norm(gold))
             break
 
         d = searchdirection(s, y, gold)

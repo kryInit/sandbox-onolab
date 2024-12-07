@@ -1,7 +1,8 @@
+import time
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import time
 
 
 # 大きめのニューラルネットワークの定義
@@ -58,11 +59,11 @@ def measure_time(device):
 
 
 # CPUとGPUで実行時間を比較
-cpu_time = measure_time(torch.device('cpu'))
+cpu_time = measure_time(torch.device("cpu"))
 print(f"CPU time: {cpu_time:.2f} seconds")
 
 if torch.cuda.is_available():
-    gpu_time = measure_time(torch.device('cuda'))
+    gpu_time = measure_time(torch.device("cuda"))
     print(f"GPU time: {gpu_time:.2f} seconds")
 else:
     print("GPU is not available.")

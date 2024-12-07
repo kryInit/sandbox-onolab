@@ -47,6 +47,7 @@ class Params(NamedTuple):
     n_shots: int
     n_receivers: int
 
+
 def psnr(signal0, signal1, max_value):
     mse = np.mean((signal0.astype(float) - signal1.astype(float)) ** 2)
     return 10 * np.log10((max_value**2) / mse)
