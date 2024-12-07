@@ -251,22 +251,5 @@ def simulate_fwi(
 
 
 if __name__ == "__main__":
-    # simulate_fwi(5000, 20, 0, "pds", 1e-4, 100, None, 2000)
     simulate_fwi(100, 20, 1, "gradient", 1e-4, 0, 0)
     simulate_fwi(100, 20, 1, "pds", 1e-4, 100, 350)
-    # simulate_fwi(5000, 20, 1, "pds", 1e-4, 100, None, 150)
-    # simulate_fwi(5000, 20, 1, "pds", 1e-4, 100, None, 200)
-    # simulate_fwi(5000, 20, 1, "pds", 1e-4, 100, None, 250)
-    # simulate_fwi(5000, 20, 1, "pds", 1e-4, 100, None, 300)
-    # simulate_fwi(5000, 20, 1, "pds", 1e-4, 100, None, 350)
-    # simulate_fwi(5000, 20, 1, "pds", 1e-4, 100, None, 400)
-    # simulate_fwi(5000, 20, 1, "pds", 1e-4, 100, None, 450)
-    # simulate_fwi(5000, 20, 1, "pds", 1e-4, 100, None, 500)
-    # simulate_fwi(5000, 20, 1, "pds", 1e-4, 100, None, 550)
-    # simulate_fwi(5000, 20, 1, "pds", 1e-4, 100, None, 600)
-    # simulate_fwi(5000, 20, 1, "pds", 1e-4, 100, None, 650)
-    # simulate_fwi(5000, 20, 1, "pds", 1e-4, 100, None, 700)
-    # simulate_fwi(5000, 20, 0, "gradient", 1e-4, 100, None, 0)
-    # simulate_fwi(2000, 20, 0, "gradient", 1e-4, 100, None)
-
-    # simulate_fwi(60000, 24, 1, "pds", 1e-5, 0.01, '2024-08-09_01-50-11,nshots=24,gamma1=1e-05,gamma2=0.01,niters=30000,sigma=1.npz')
