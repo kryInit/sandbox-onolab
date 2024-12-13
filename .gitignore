@@ -7,4 +7,7 @@ __pycache__
 /thesis/SIP/out/*
 !/thesis/SIP/out/main.pdf
 
+/thesis/IGARSS/out/*
+!/thesis/IGARSS/out/main.pdf
+
 .DS_Store
