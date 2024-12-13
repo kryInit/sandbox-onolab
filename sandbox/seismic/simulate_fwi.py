@@ -13,7 +13,7 @@ import lib.signal_processing.diff_operator as diff_op
 from lib.dataset import load_seismic_datasets__salt_model
 from lib.misc import datasets_root_path, output_path
 from lib.model import Vec2D
-from lib.seismic import FastParallelVelocityModelGradientCalculator, FastParallelVelocityModelProps
+from lib.seismic import FastParallelVelocityModelGradientCalculator, FastParallelVelocityModelGradientCalculatorProps
 from lib.signal_processing.l_bfgs import LBFGS
 from lib.signal_processing.misc import calc_psnr, smoothing_with_gaussian_filter, zoom_and_crop
 from lib.signal_processing.norm import L12_norm
@@ -120,7 +120,7 @@ def simulate_fwi(
     receiver_locations = np.array([[30, x] for x in np.linspace(0, width, num=params.n_receivers)])
 
     grad_calculator = FastParallelVelocityModelGradientCalculator(
-        FastParallelVelocityModelProps(
+        FastParallelVelocityModelGradientCalculatorProps(
             true_velocity_model,
             initial_velocity_model,
             shape,

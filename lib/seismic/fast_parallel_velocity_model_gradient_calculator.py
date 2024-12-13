@@ -12,7 +12,7 @@ from lib.seismic.devito_example import AcquisitionGeometry, Receiver, SeismicMod
 from lib.seismic.devito_example.acoustic import AcousticWaveSolver
 
 
-class FastParallelVelocityModelProps(NamedTuple):
+class FastParallelVelocityModelGradientCalculatorProps(NamedTuple):
     true_velocity_model: npt.NDArray
     initial_velocity_model: npt.NDArray
     shape: Tuple[int, int]
@@ -27,7 +27,7 @@ class FastParallelVelocityModelProps(NamedTuple):
     n_jobs: int
 
 
-def get_time_length(props: FastParallelVelocityModelProps):
+def get_time_length(props: FastParallelVelocityModelGradientCalculatorProps):
     true_model = SeismicModel(
         space_order=2, vp=props.true_velocity_model, origin=(0, 0), shape=props.shape, dtype=np.float32, spacing=props.spacing, nbl=props.damping_cell_thickness, bcs="damp", fs=False
     )
@@ -36,7 +36,7 @@ def get_time_length(props: FastParallelVelocityModelProps):
 
 
 class FastParallelVelocityModelGradientCalculator:
-    def __init__(self, props: FastParallelVelocityModelProps):
+    def __init__(self, props: FastParallelVelocityModelGradientCalculatorProps):
         self.n_shots = len(props.source_locations)
         self.n_jobs = props.n_jobs
 
@@ -126,7 +126,7 @@ class FastParallelVelocityModelGradientCalculator:
 
 
 def calc_grad_worker(
-    props: FastParallelVelocityModelProps,
+    props: FastParallelVelocityModelGradientCalculatorProps,
     velocity_model_shared_memory_name: str,
     true_observed_waveforms_shared_memory_name: str,
     vm_grad_shared_memory_name: str,
@@ -178,7 +178,7 @@ def calc_grad_worker(
 
 
 class FastParallelVelocityModelGradientCalculatorHelper:
-    def __init__(self, props: FastParallelVelocityModelProps, true_observed_waveforms: npt.NDArray):
+    def __init__(self, props: FastParallelVelocityModelGradientCalculatorProps, true_observed_waveforms: npt.NDArray):
         self.true_model = SeismicModel(
             space_order=2, vp=props.true_velocity_model, origin=(0, 0), shape=props.shape, dtype=np.float32, spacing=props.spacing, nbl=props.damping_cell_thickness, bcs="damp", fs=False
         )

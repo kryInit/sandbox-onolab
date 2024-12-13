@@ -12,9 +12,9 @@ import lib.signal_processing.diff_operator as diff_op
 from lib.dataset import load_seismic_datasets__salt_model
 from lib.dataset.load_overthrust_model import load_seismic_datasets__overthrust_model
 from lib.misc import datasets_root_path
-from lib.misc.historical_value import HistoricalValue
+from lib.misc.historical_value import ValueHistoryList
 from lib.model import Vec2D
-from lib.seismic import FastParallelVelocityModelGradientCalculator, FastParallelVelocityModelProps
+from lib.seismic import FastParallelVelocityModelGradientCalculator, FastParallelVelocityModelGradientCalculatorProps
 from lib.signal_processing.misc import calc_psnr, smoothing_with_gaussian_filter, zoom_and_crop
 from lib.signal_processing.norm import L12_norm
 from lib.signal_processing.proximal_operator import proj_L12_norm_ball, prox_box_constraint
@@ -24,7 +24,7 @@ from lib.visualize import show_velocity_model
 set_log_level("WARNING")
 
 
-class Params(NamedTuple):
+class FWIParams(NamedTuple):
     real_cell_size: Vec2D[int]
     cell_meter_size: Vec2D[float]
 
@@ -57,6 +57,47 @@ class VelocityModelDataForOptimization(NamedTuple):
     initial_data: npt.NDArray
     box_min_value: float
     box_max_value: float
+
+
+def salt_model_test00_configuration(n_shots: int, noise_sigma: float) -> FWIParams:
+    return FWIParams(
+        real_cell_size=Vec2D(100, 50),
+        cell_meter_size=Vec2D(10.0, 10.0),
+        damping_cell_thickness=40,
+        start_time=0,
+        unit_time=1,
+        simulation_times=1000,
+        source_peek_time=100,
+        source_frequency=0.01,
+        n_shots=n_shots,
+        n_receivers=101,
+        noise_sigma=noise_sigma,
+    )
+
+
+def fwi_params_to_fast_parallel_velocity_model_gradient_calculator_props(
+    params: FWIParams, true_velocity_model: npt.NDArray, initial_velocity_model: npt.NDArray
+) -> FastParallelVelocityModelGradientCalculatorProps:
+    shape = (params.real_cell_size.y, params.real_cell_size.x)
+    spacing = (params.cell_meter_size.y, params.cell_meter_size.x)
+    width = ((params.real_cell_size - Vec2D(1, 1)) * params.cell_meter_size).x
+    source_locations = np.array([[30, x] for x in np.linspace(0, width, num=params.n_shots)])
+    receiver_locations = np.array([[30, x] for x in np.linspace(0, width, num=params.n_receivers)])
+    props = FastParallelVelocityModelGradientCalculatorProps(
+        true_velocity_model,
+        initial_velocity_model,
+        shape,
+        spacing,
+        params.damping_cell_thickness,
+        params.start_time,
+        params.simulation_times,
+        params.source_frequency,
+        source_locations,
+        receiver_locations,
+        params.noise_sigma,
+        20,
+    )
+    return props
 
 
 def load_salt_model(real_cell_size: Vec2D[int], target_idx: int = 300):
@@ -99,34 +140,25 @@ def simulate_fwi(
     noise_sigma: float,
     algorithm: Union[Literal["pds"], Literal["gradient"]],
     gamma1: float,
-    gamma2: float,
+    gamma2: Union[float, None],
     alpha: float,
     visualize_interval: Union[int, None] = None,
     np_log_path: Union[Path, None] = None,
 ):
     if algorithm == "gradient":
         gamma2 = None
+    if algorithm == "pds" and gamma2 is None:
+        raise ValueError("gamma2 must be set when algorithm is pds")
 
     # configures
-    params = Params(
-        real_cell_size=Vec2D(100, 50),
-        cell_meter_size=Vec2D(10.0, 10.0),
-        damping_cell_thickness=40,
-        start_time=0,
-        unit_time=1,
-        simulation_times=1000,
-        source_peek_time=100,
-        source_frequency=0.01,
-        n_shots=n_shots,
-        n_receivers=101,
-        noise_sigma=noise_sigma,
-    )
+    params = salt_model_test00_configuration(n_shots, noise_sigma)
 
     # alias
     dsize = params.damping_cell_thickness
 
     # load data
     true_velocity_model, initial_velocity_model, vmin, vmax = load_salt_model(params.real_cell_size)
+    # true_velocity_model, initial_velocity_model, vmin, vmax = load_overthrust_model(params.real_cell_size)
 
     # simple visualize
     def simple_visualize():
@@ -138,35 +170,16 @@ def simulate_fwi(
     simple_visualize()
 
     def create_grad_calculator():
-        shape = (params.real_cell_size.y, params.real_cell_size.x)
-        spacing = (params.cell_meter_size.y, params.cell_meter_size.x)
-        width = ((params.real_cell_size - Vec2D(1, 1)) * params.cell_meter_size).x
-        source_locations = np.array([[30, x] for x in np.linspace(0, width, num=params.n_shots)])
-        receiver_locations = np.array([[30, x] for x in np.linspace(0, width, num=params.n_receivers)])
-        return FastParallelVelocityModelGradientCalculator(
-            FastParallelVelocityModelProps(
-                true_velocity_model,
-                initial_velocity_model,
-                shape,
-                spacing,
-                params.damping_cell_thickness,
-                params.start_time,
-                params.simulation_times,
-                params.source_frequency,
-                source_locations,
-                receiver_locations,
-                params.noise_sigma,
-                20,
-            )
-        )
+        props = fwi_params_to_fast_parallel_velocity_model_gradient_calculator_props(params, true_velocity_model, initial_velocity_model)
+        return FastParallelVelocityModelGradientCalculator(props)
 
     grad_calculator = create_grad_calculator()
 
-    residual_norm_sum_values = HistoricalValue("objective", "less", [])
-    velocity_model_square_error_values = HistoricalValue("velocity model square error", "less", [])
-    psnr_values = HistoricalValue("psnr", "greater", [])
-    ssim_values = HistoricalValue("ssim", "greater", [])
-    total_variation_values = HistoricalValue("TV", None, [])
+    residual_norm_sum_values = ValueHistoryList("objective", "less", [])
+    velocity_model_square_error_values = ValueHistoryList("velocity model square error", "less", [])
+    psnr_values = ValueHistoryList("psnr", "greater", [])
+    ssim_values = ValueHistoryList("ssim", "greater", [])
+    total_variation_values = ValueHistoryList("TV", None, [])
 
     v = grad_calculator.velocity_model.copy()
     y = diff_op.D(remove_damping_cells(v, dsize))
@@ -251,5 +264,5 @@ def simulate_fwi(
 
 
 if __name__ == "__main__":
-    simulate_fwi(100, 20, 1, "gradient", 1e-4, 0, 0)
+    simulate_fwi(100, 20, 1, "gradient", 1e-4, None, 0)
     simulate_fwi(100, 20, 1, "pds", 1e-4, 100, 350)

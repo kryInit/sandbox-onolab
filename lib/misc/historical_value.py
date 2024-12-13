@@ -8,7 +8,8 @@ from lib.misc.colored_text import ColoredText
 PreferValueType = Union[Literal["greater"], Literal["less"], None]
 
 
-class HistoricalValue[T]:
+# 命名が微妙, List + 解析 を行うが、そもそもこれをクラスとすること自体微妙かも
+class ValueHistoryList[T]:
     values: List[T]
     prefer_value: PreferValueType
     label: str
