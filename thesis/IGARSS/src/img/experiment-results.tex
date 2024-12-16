@@ -1,0 +1,55 @@
+\begin{figure*}[htbp]
+    \centering
+    \begin{tabular}{m{77mm} m{77mm} m{10mm}}
+        \begin{minipage}[b]{\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{public/true}
+            \vspace{-7mm}
+            \caption*{\raisebox{2mm}{Ground truth}}
+            \vspace{1mm}
+        \end{minipage} &
+        \begin{minipage}[b]{\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{public/initial}
+            \vspace{-7mm}
+            \caption*{\raisebox{2mm}{Initial model}}
+            \vspace{1mm}
+        \end{minipage} &
+        \multirow[t]{3}{*}{\raisebox{-104mm}{\includegraphics[height=70mm]{public/color-bar}}} \\
+
+        \begin{minipage}[b]{\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{public/gradient}
+            \vspace{-7mm}
+            \caption*{\raisebox{2mm}{The Standard FWI Method}}
+            \vspace{1mm}
+        \end{minipage} &
+        \begin{minipage}[b]{\linewidth}
+            \centering
+            \vspace{-2mm}
+            \includegraphics[width=\linewidth]{public/alpha_150}
+            \vspace{-9mm}
+            \caption*{Proposed Method, $\alpha = 150$}
+            \vspace{1mm}
+        \end{minipage} \\
+
+        \begin{minipage}[b]{\linewidth}
+            \centering
+            \vspace{-1mm}
+            \includegraphics[width=\linewidth]{public/alpha_350}
+            \vspace{-8mm}
+            \caption*{Proposed Method, $\alpha = 350$}
+            \vspace{1mm}
+        \end{minipage} &
+        \begin{minipage}[b]{\linewidth}
+            \centering
+            \vspace{-1mm}
+            \includegraphics[width=\linewidth]{public/alpha_550}
+            \vspace{-8mm}
+            \caption*{Proposed Method, $\alpha = 550$}
+            \vspace{1mm}
+        \end{minipage} &
+    \end{tabular}
+    \caption{Velocity models [km/s] and their corresponding reconstructions.}
+    \label{fig:velocity-models}
+\end{figure*}
