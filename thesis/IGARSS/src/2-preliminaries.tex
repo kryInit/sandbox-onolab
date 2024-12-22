@@ -46,10 +46,6 @@ PDS solves Prob.~\eqref{eq:PDSPrimalEq} by iteratively updating the following:
 \begin{equation} \label{eq:PDSSubStep} \PDSSubStep \end{equation}
 where $\gamma_1, \gamma_2 \in \realNumber$ are step sizes.
 
-% 位置調整のためにここに配置
-\input{src/img/salt-velocity-model}
-
-
 
 \subsection{Full Waveform Inversion} \label{subsec:full-waveform-inversion}
 
@@ -58,5 +54,5 @@ Typically, FWI is treated as an optimization problem as follows\cite{FWI0}:
 where $\velModel \in \realNumber^{N}$ is the velocity model representing subsurface properties, $\seismicData_{\mathrm{obs}} \in \realNumber^{M}$ is the observed seismic data, $\seismicData_{\mathrm{cal}} : \realNumber^{N} \rightarrow \realNumber^{M}$ is the observation process, and $\seismicData_{\mathrm{cal}}(\velModel)$ is the modeled seismic data with the velocity model.
 The number of grid points is $N$, and the number of observed signals is $M$.
 
-The observation process $\seismicData_{\mathrm{cal}}$ is nonlinear and complex, making it difficult to express analytically.
+The observation process $\seismicData_{\mathrm{cal}}$ is nonlinear and complex, making it difficult to analytically derive the optimal solution.
 However, the gradient $\nabla E$ can be computed numerically by simulating the wave equation using the adjoint-state method~\cite{FWI-gradient}.

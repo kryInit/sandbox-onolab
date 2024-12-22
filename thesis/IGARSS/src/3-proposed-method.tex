@@ -1,3 +1,5 @@
+\input{src/img/salt-velocity-model}
+
 We introduce the TV and box constraint into the FWI problem to achieve more accurate reconstruction.
 As shown in Fig.~\ref{fig:salt-model}, the velocity model is piecewise smooth, thus introducing the TV constraint to achieve a more accurate reconstruction.
 The box constraint ensures that the velocity model remains within valid ranges.
@@ -35,7 +37,6 @@ We show the detailed algorithm in Algorithm~\ref{alg:FWIWithPDS}.
 
 The proximity operators of $\iota_{\BoxBall}$, $\iota_{\LOneTwoBall}$, that is, the projection onto $\BoxBall$ and ${\LOneTwoBall}$ are calculated by
 \begin{equation} \label{eq:ProximityOperatorForBoxConstraint} \projBoxSolution, \end{equation}
-
 \begin{equation} \label{eq:ProximityOperatorForL12Ball} \projLOneTwoBallSolution \end{equation}
 where
 \begin{equation} \label{eq:ProximityOperatorForL12BallWhere} \projLOneTwoBallSolutionWhere, \notag \end{equation}

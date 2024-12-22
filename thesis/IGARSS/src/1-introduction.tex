@@ -12,7 +12,7 @@ Specifically, the parameter of the TV constraint can be determined based only on
 This makes the formulation and the reconstructed subsurface properties easier to interpret, which is beneficial for practical applications.
 
 However, the TV constrained FWI problem is difficult to solve not only because of the nonlinearity of the observation process, but also because of the non-smoothness of the TV constraint.
-To address this, conventional methods~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3,FWI-with-TV-constraint4} adjust the objective variable to satisfy the constraint at each step of an iterative optimization algorithm.
+To address this, conventional methods~\mbox{\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3,FWI-with-TV-constraint4}} adjust the objective variable to satisfy the constraint at each step of an iterative optimization algorithm.
 This requires an inner loop, which results in high computational cost.
 In addition, the methods rely on approximations, such as linear or quadratic approximation and satisfying constraints outside the optimization method.
 If the TV constrained FWI problem could be solved with neither inner loops nor approximations, more efficient and accurate reconstructions of subsurface properties would be possible.
