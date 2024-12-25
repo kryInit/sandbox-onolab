@@ -1,23 +1,27 @@
 \begin{figure}[t]
     \centering
-    \begin{tabular}{m{30mm} m{30mm} m{8mm}}
+    \begin{tabular}{m{3mm} m{30mm} m{30mm} m{10mm}}
+        % dummy
+        \begin{minipage}[b]{\linewidth}\end{minipage} &
+
         \begin{minipage}[b]{\linewidth}
             \centering
             \includegraphics[width=\linewidth]{public/seismic_data}
-            \vspace{-9mm}
-            \caption*{\raisebox{-2mm}{\footnotesize Ground truth}}
+            \vspace{-7mm}
+            \caption*{\raisebox{-2mm}{Seismic Data}}
             \vspace{1mm}
         \end{minipage} &
         \begin{minipage}[b]{\linewidth}
             \centering
             \includegraphics[width=\linewidth]{public/seismic_data_noisy}
-            \vspace{-9mm}
-            \caption*{\raisebox{-2mm}{\footnotesize Initial model}}
+            \vspace{-7mm}
+            \caption*{\raisebox{-2mm}{Noise Added Seismic Data}}
             \vspace{1mm}
         \end{minipage} &
-        \multirow[t]{3}{*}{\raisebox{-5mm}{\includegraphics[height=20mm]{public/seismic-data-color-bar}}} \\
+        \hspace{-3mm}
+        \multirow[t]{3}{*}{\raisebox{-11.5mm}{\includegraphics[height=31.5mm]{public/seismic-data-color-bar}}} \\
     \end{tabular}
-    \vspace{-3mm}
-    \caption{experiment-data}
-    \label{fig:experiment-data}
+    \vspace{-1mm}
+    \caption{sinthesized seismic data}
+    \label{fig:observed-seismic-data}
 \end{figure}
