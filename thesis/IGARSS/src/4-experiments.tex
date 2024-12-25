@@ -1,5 +1,3 @@
-\input{src/img/experiment-results}
-
 \subsection{Experimental Setup} \label{subsec:experimental-setup}
 
 To demonstrate the effectiveness of the TV and box constrained FWI, we conducted FWI experiments where we compared with the standard FWI method\footnote{
@@ -15,46 +13,48 @@ The source waveform is a Ricker wavelet with a peak wavelet frequency of 10 Hz.
 The number of waveform sources and receivers is 20 and 101, respectively, and they are placed on the surface at equal intervals.
 The gradient $\nabla E$ is computed numerically using the Devito framework\cite{devito}.
 The number of iterations is set to 5000.
+Experiments are conducted with and without noise in the observed data, as shown in Fig.~\ref{fig:experiment-data}.
+The noise is Gaussian noise with mean 0 and variance 1.
 In our algorithm, the step sizes $\gamma_1$ and $\gamma_2$ are set to $1.0 \times 10^{-4}$ and $1.0 \times 10^2$, respectively.
 The lower and upper bounds of the velocity model $l$, $u$ are set to 1.5[km/s] and 4.5[km/s], respectively.
 The experiments are conducted using $\alpha$ values ranging from 100 to 700 in steps of 50, representing the upper bound of the $l_{1,2}$ norm.
 In the standard FWI method, the step size $\gamma$ is set to $1.0 \times 10^{-4}$.
 
-The observed seismic data $\seismicData_{\mathrm{obs}}$ is generated using the ground truth velocity model and simulation with Devito.
-In practice, seismic data often contain noise due to measurement errors and environmental factors.
-To evaluate the robustness of the proposed method under realistic conditions, we also conducted experiments using noisy observed seismic data, introducing Gaussian noise with mean 0 and variance 1.
+\input{src/img/experiment-data}
+\input{src/img/observed-seismic-data}
 
+\input{src/img/experiment-results-pure}
+\input{src/img/experiment-results-noisy}
 \input{src/img/ssim-graph}
+
 
 
 
 \subsection{Results and Discussion} \label{subsec:results-and-discussion}
 First, we present the experimental results without noise in the observed seismic data.
-Fig.~\ref{fig:velocity-models} shows the ground truth, the initial model, and the reconstructed velocity models using the standard FWI method and the proposed methods with $\alpha$ = 150, 350, and 550.
-The best parameter is $\alpha$ = 350, where $\alpha$ = 150 represents a stronger TV constraint and $\alpha$ = 550 represents a weaker one.
-The standard FWI method generates wave-like artifacts and noise around the source positions.
-In contrast, our proposed method with the best parameter achieves the accurate velocity model reconstruction without these artifacts and noise.
-When the TV constraint is too strong, as with $\alpha$ = 150, over-smoothing occurs, reducing contrast in the reconstruction.
-On the other hand, when the TV constraint is too weak, as with $\alpha$ = 550, the constraint has little effect, leading to results similar to those of the standard FWI method.
+Fig.~\ref{fig:velocity-models-pure} shows the reconstructed velocity models using the standard FWI method and the proposed methods with $\alpha$ = 150, 350, and 550.
+The standard FWI method generates wave-like artifacts throughout.
+In contrast, our proposed method with the best parameter, which is $\alpha$ = 350, achieves the accurate velocity model reconstruction without these artifacts.
+The case of $\alpha$ = 150, 550 will be discussed later.
 
 For quantitative evaluation, we plot the Structural Similarity Index Measure (SSIM) against the number of iterations for our proposed method and the standard FWI method in Fig.~\ref{fig:iters-ssim}.
 The proposed method consistently achieves higher SSIM values than the standard FWI method at every iteration, indicating enhanced reconstruction accuracy.
 
-For a more detailed analysis of the TV constraint parameter $\alpha$, we plot the SSIM of our proposed method against the parameter $\alpha$ and the standard FWI method in Fig.~\ref{fig:alpha-ssim}.
-As mentioned earlier, at $\alpha$ = 350, the proposed method achieves the highest SSIM.
-As $\alpha$ is smaller, meaning the TV constraint becomes stronger, the SSIM worsens.
-On the other hand, when $\alpha$ becomes too large, the SSIM of our proposed method resemble that of standard FWI method.
-However, thanks to the box constraint, the proposed method still outperforms the standard FWI method.
-This demonstrates that the parameter $\alpha$ has a clear and predictable effect on the reconstructed velocity model, which can be easily adjusted to achieve accurate results.
-
-
 Second, we present the experimental results with the noisy observed seismic data.
-Fig.~\ref{fig:velocity-models} shows the ground truth, the initial model, and the reconstructed velocity models using the standard FWI method and the proposed methods with $\alpha$ = 300, which is the best parameter.
-In the FWI problem with the noisy observed seismic data, the standard FWI method generates stronger wave-like artifacts and noise around the source positions.
-In contrast, our proposed method with optimal parameters still achieves accurate velocity model reconstruction without these artifacts and noise, and show robustness to the noise of the observed data.
+Fig.~\ref{fig:velocity-models-noisy} shows the reconstructed velocity models using the standard FWI method and the proposed methods with $\alpha$ = 150, 350 and 550.
+In the FWI problem with the noisy observed seismic data, the standard FWI method generates stronger wave-like artifacts throughout.
+In contrast, our proposed method with appropriate parameters still achieves accurate velocity model reconstruction without these artifacts and achieves almost the same level of performance as in the no-noise case.
+This demonstrates the robustness of the reconstruction accuracy to noise in the observed seismic data.
 
 We also plot the SSIM against the number of iterations for our proposed method and the standard FWI method in Fig.~\ref{fig:iters-ssim-noisy}.
-The standard FWI method degrades the reconstruction accuracy after a certain number of iterations.
-On the other hand, the proposed method maintains a consistently high value without degrading the reconstruction accuracy even after a large number of iterations, indicating enhanced reconstruction accuracy.
+The standard FWI method degrades the SSIM after a certain number of iterations.
+On the other hand, the proposed method maintains a consistently high value without degrading the SSIM even after a large number of iterations, indicating enhanced reconstruction accuracy.
 
-The properties of $\alpha$ are the same as when there is no noise in the observed seismic data.
+For a more detailed analysis of the TV constraint parameter $\alpha$, we plot the SSIM of our proposed method against the parameter $\alpha$ and the standard FWI method in Fig.~\ref{fig:alpha-ssim} and Fig.~\ref{fig:alpha-ssim-noisy}.
+When $\alpha$ = 350 or so, the proposed method achieves the best SSIM.
+As $\alpha$ is smaller, meaning the TV constraint becomes stronger, the SSIM worsens.
+On the other hand, when $\alpha$ becomes too large, the SSIM of our proposed method is similar to that of the standard FWI method.
+However, thanks to the box constraint, the proposed method still outperforms the standard FWI method.
+This demonstrates that the parameter $\alpha$ has a clear and predictable effect on the reconstructed velocity model, which can be easily adjusted to achieve accurate results.
+Specifically, it can be observed in Fig.~\ref{fig:velocity-models-pure}, Fig.~\ref{fig:velocity-models-noisy} that for $\alpha$ = 150, the TV constraint is too strong, resulting in excessive smoothing, and for $\alpha$ = 550, the constraint has little effect, yielding results similar to those of the standard FWI method.
+
