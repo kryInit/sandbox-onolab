@@ -1,44 +1,21 @@
-%Full waveform inversion (FWI)~\cite{FWI0,FWI1} aims to reconstruct subsurface properties from seismic data observed at multiple points.
-%These subsurface properties are used for geological research and resource exploration, including deposits of gas, oil, mineral, and groundwater~\cite{FWI1,FWIApplicationGroundwater0,FWIApplicationGroundwater1}.
-%In addition to geological fields, FWI has also been successfully applied to non-destructive testing in the medical and industrial fields~\cite{FWIApplicationNonDestructiveTesting0,FWIApplicationNonDestructiveTesting1}.
-%
-%In FWI, the observation process of seismic data from subsurface properties is nonlinear and complex~\cite{FWI1}, making an analytic inverse transformation impossible.
-%An effective approach to address this is to formulate FWI as an optimization problem~\cite{FWI0,CustomFWI0,CustomFWI1,CustomFWI2,CustomFWI3,CustomFWI4,CustomFWI5}, such as minimizing the squared error between observed and modeled seismic data.
-%Since FWI is an ill-posed inverse problem, many methods have been proposed that incorporate Tikhonov~\cite{tikhonov} and Total Variation (TV)-type~\cite{TV,TGV} regularizations to capture the piecewise smoothness of subsurface properties~\cite{FWI-with-tikhonov-regularization,FWI-with-TV-regularization,FWI-with-directional-TV-regularization,FWI-with-high-order-TV-regularization,FWI-with-TGV-regularization}.
-%However, these regularizations require careful tuning of balance parameters between FWI objective value and these regularization values.
-%Instead of the regularizations, we focus on incorporating TV as a constraint into the FWI problem~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3,FWI-with-TV-constraint4}.
-%In contrast to the TV regularizations, the TV constraint has the advantage that its parameter can be determined independently of the objective function value like~\cite{constraint0,constraint1,constraint2,constraint3,constraint4}.
-%Specifically, the parameter of the TV constraint can be determined based only on prior knowledge of the subsurface properties~\cite{constraints-vs-penalties-in-FWI}.
-%This makes the formulation and the reconstructed subsurface properties easier to interpret, which is beneficial for practical applications.
-%
-%However, the TV constrained FWI problem is difficult to solve not only because of the nonlinearity of the observation process, but also because of the non-smoothness of the TV constraint.
-%To address this, conventional methods~\mbox{\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3,FWI-with-TV-constraint4}} adjust the objective variable to satisfy the constraint at each step of an iterative optimization algorithm.
-%This requires an inner loop, which results in high computational cost.
-%In addition, the methods rely on approximations, such as linear or quadratic approximation and satisfying constraints outside the optimization method.
-%If the TV constrained FWI problem could be solved with neither inner loops nor approximations, more efficient and accurate reconstructions of subsurface properties would be possible.
-%
-%In this paper, we propose a novel algorithm to solve the TV constrained FWI problem based on the primal-dual splitting (PDS) method.
-%Our algorithm addresses the challenges posed by both the nonlinearity of the observation process and the non-smoothness of the TV constraint without approximations, resulting in a more accurate reconstruction.
-%Furthermore, by handling the constraint without inner loops, our algorithm is significantly more efficient compared to existing methods.
-%We demonstrate that our algorithm efficiently handles the constraint while achieving accurate reconstruction.
-
-Full waveform inversion (FWI)~\cite{FWI0,FWI1} is a technique used to reconstruct subsurface properties from seismic data recorded at multiple observation points.
+Full Waveform Inversion (FWI)~\cite{FWI0,FWI1} is a technique used to reconstruct subsurface properties from seismic data measured at multiple observation points.
 These subsurface properties play a crucial role in geological research and resource exploration, including investigations into gas, oil, mineral, and groundwater~\cite{FWI1,FWIApplicationGroundwater0,FWIApplicationGroundwater1}.
 Beyond geological applications, FWI has also been successfully applied to non-destructive testing in medical and industrial fields~\cite{FWIApplicationNonDestructiveTesting0,FWIApplicationNonDestructiveTesting1}.
 
-A major challenge in FWI arises from the nonlinear and complex nature of the observation process~\cite{FWI1}, which makes a direct analytical inverse solution impossible.
-Consequently, FWI is typically formulated as an optimization problem~\cite{FWI0,CustomFWI0,CustomFWI1,CustomFWI2,CustomFWI3,CustomFWI4,CustomFWI5}, such as minimizing the squared error between observed and simulated seismic data.
-However, since FWI is ill-posed, researchers often incorporate Tikhonov~\cite{tikhonov} or total variation (TV)-type~\cite{TV,TGV} regularizations to promote piecewise smoothness in the reconstructed subsurface properties~\cite{FWI-with-tikhonov-regularization,FWI-with-TV-regularization,FWI-with-directional-TV-regularization,FWI-with-high-order-TV-regularization,FWI-with-TGV-regularization}.
-While these approaches are effective, they require careful tuning of a balance parameter that weights the data fidelity term against the regularization term.
-An alternative strategy is to incorporate the TV prior as a constraint, rather than using it as a regularization term~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3,FWI-with-TV-constraint4}.
-This formulation has the advantage of allowing the parameter for the TV constraint to be determined independently of the objective function value, relying instead on prior knowledge of subsurface properties~\cite{constraint0,constraint1,constraint2,constraint3,constraint4,constraints-vs-penalties-in-FWI}.
-This approach facilitates a more straightforward interpretation of both the formulation and the reconstructed subsurface properties.
+In FWI, it is impossible to directly obtain subsurface properties from seismic data due to the nonlinear and complex nature of the observation process~\cite{FWI1}.
+To address this, FWI is formulated as an optimization problem~\cite{FWI0,CustomFWI0,CustomFWI1,CustomFWI2,CustomFWI3,CustomFWI4,CustomFWI5}, such as minimizing the squared error between observed and simulated seismic data.
+Since FWI is ill-posed, Tikhonov~\cite{tikhonov} and Total Variation (TV)-type~\cite{TV,TGV} regularizations have been widely applied in optimization problems to promote piecewise smoothness in the reconstructed subsurface properties~\cite{FWI-with-tikhonov-regularization,FWI-with-TV-regularization,FWI-with-directional-TV-regularization,FWI-with-high-order-TV-regularization,FWI-with-TGV-regularization}.
+However, they require careful tuning of a balance parameter that weights the FWI objective value against the regularization term.
+An alternative approach is to incorporate the TV prior as a constraint rather than a regularization term~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3,FWI-with-TV-constraint4}.
+This formulation allows the parameter for the TV constraint to be determined independently of the FWI objective value, relying instead on prior knowledge of subsurface properties~\mbox{\cite{constraint0,constraint1,constraint2,constraint3,constraint4,constraints-vs-penalties-in-FWI}}.
+This approach improves the interpretability of both the formulation and the reconstructed subsurface properties.
 
-Despite these advantages, solving the TV-constrained FWI problem remains challenging due to the combination of nonlinear forward modeling and the non-smoothness of the TV term.
-Conventional methods~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3,FWI-with-TV-constraint4} typically include an inner loop to enforce the constraint at each optimization step, which significantly increases the computational cost.
-Moreover, they often rely on approximations, such as linear or quadratic approximation and enforce the constraint outside the main optimization method, potentially degrading the reconstruction accuracy.
+However, solving the TV-constrained FWI problem is challenging due to the combination of the nonlinearity of the observation process and the non-smoothness of the TV term.
+To address this, conventional methods~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3,FWI-with-TV-constraint4} rely on inner loops to enforce the constraint at each optimization step and/or approximations, such as linear or quadratic approximations.
+The inner loops significantly increase the computational cost, while the approximations degrade the reconstruction accuracy.
 
-In this paper, we propose a novel algorithm to solve the TV constrained FWI problem based on the primal-dual splitting (PDS) method.
+Now a natural question arises: \textit{Can we develop an algorithm that solves the TV-constrained FWI problem with neither inner loops nor approximations?}
+In this paper, we propose a novel algorithm to solve the TV-constrained FWI problem based on the primal-dual splitting (PDS) method.
 Our algorithm addresses the challenges posed by both the nonlinearity of the observation process and the non-smoothness of the TV constraint without approximations, resulting in a more accurate reconstruction.
 Moreover, by handling the constraint without inner loops, our algorithm is significantly more efficient compared to existing methods.
-Through numerical experiments on the SEG/EAGE Salt and Overthrust Models, we demonstrate that our method outperforms existing approaches in terms of both efficiency and accuracy.
+Through numerical experiments on the SEG/EAGE Salt and Overthrust Models, we demonstrate that our algorithm efficiently handles the constraint while achieving accurate reconstruction.

@@ -1,30 +1,7 @@
-%Full waveform inversion (FWI) aims to reconstruct subsurface properties from observed seismic data.
-%Since FWI is an ill-posed inverse problem, appropriate regularizations or constraints are effective approaches to achieve accurate reconstruction.
-%The total variation (TV) -type regularization or constraint is widely known as a powerful prior that models the piecewise smoothness of subsurface properties.
-%However, the optimization problem of the TV-type regularized or constrained FWI is difficult to solve due to the nonlinearity of the observation process and the non-smoothness of the TV-type regularization or constraint.
-%Conventional approaches to solve the FWI problem rely on inner loops and/or approximations, resulting in high computational cost and/or inappropriate solutions.
-%In this paper, we develop an efficient algorithm with neither inner loops nor approximations to solve the FWI problem based on a primal-dual splitting method.
-%We also demonstrate the effectiveness of the proposed method through experiments using the SEG/EAGE Salt and Overthrust Models.
-%
-%Full waveform inversion (FWI) is a powerful technique for reconstructing subsurface properties from observed seismic data.
-%However, FWI is an ill-posed inverse problem, and it is effective to incorporate suitable regularizations or constraints to achieve stable and accurate reconstruction.
-%The total variation (TV)-type regularization or constraint is widely known as a powerful prior that models the piecewise smoothness of subsurface properties.
-%Despite its advantages, the integration of TV priors introduces significant computational challenges due to the nonlinearity of the observation process and the non-smoothness of the TV-type regularization or constraint.
-%Conventional approaches often rely on inner loops and/or approximations, leading to high computational cost and/or potentially inappropriate solutions.
-%In this paper, we develop an efficient algorithm for solving the TV-constrained FWI problem using a primal-dual splitting method.
-%The proposed approach eliminates the reliance on the need for inner loops and approximations, enhancing computational efficiency and reconstruction accuracy.
-%Numerical experiments on the SEG/EAGE Salt and Overthrust Models validate the performance of the proposed method and demonstrate its effectiveness in terms of both efficiency and accuracy.
-%
-This paper proposes an efficient algorithm for solving the total variation (TV)-constrained full waveform inversion (FWI) problem, a powerful technique for reconstructing subsurface properties from observed seismic data.
-Since FWI is an ill-posed inverse problem, appropriate regularizations or constraints are effective approaches to achieve accurate reconstruction.
-In particular, the TV-type constraint is widely known as a powerful prior that models the piecewise smoothness of subsurface properties.
-However, the optimization problem of the TV-type constrained FWI is difficult to solve due to the nonlinearity of the observation process and the non-smoothness of the TV-type constraint.
-Conventional approaches to solve the FWI problem rely on inner loops and/or approximations, leading to high computational cost and/or inappropriate solutions.
-To address these challenges, we develop an efficient algorithm with neither inner loops nor approximations to solve the FWI problem based on a primal-dual splitting method.
+This paper proposes a computationally efficient algorithm for addressing the Full Waveform Inversion (FWI) problem with a Total Variation (TV) constraint, designed to reconstruct subsurface properties from seismic data.
+FWI, as an ill-posed inverse problem, requires effective regularizations or constraints to ensure accurate and stable solutions.
+Among these, the TV constraint is widely known as a powerful prior for modeling the piecewise smooth structure of subsurface properties.
+However, solving the optimization problem is challenging due to the combination of the nonlinearity of the observation process and the non-smoothness of the TV constraint.
+Conventional methods rely on inner loops and/or approximations, which lead to high computational cost and/or inappropriate solutions.
+We develop an efficient algorithm with neither inner loops nor approximations to solve the FWI problem based on a primal-dual splitting method.
 We also demonstrate the effectiveness of the proposed method through experiments using the SEG/EAGE Salt and Overthrust Models.
-
-
-
-
-
-
