@@ -13,7 +13,13 @@ This separation makes it possible to directly control smoothness according to $\
 The constraints can be incorporated into the objective function as indicator functions:
 \begin{equation} \label{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveWithTVConstraintWithIndicatorFunction, \end{equation}
 where
-\begin{equation} \label{eq:LOneTwoBallDefinition} \begin{aligned} \BoxBall & \coloneqq [l,u]^N, \\ \LOneTwoBall & \coloneqq \LOneTwoBallSetDefinition. \end{aligned} \end{equation}
+\begin{equation}
+    \label{eq:LOneTwoBallDefinition}
+    \begin{aligned}[b]
+        \BoxBall & \coloneqq [l,u]^N, \\
+        \LOneTwoBall & \coloneqq \LOneTwoBallSetDefinition.
+    \end{aligned}
+\end{equation}
 
 
 The proximity operator of $\iota_{\BoxBall}$ and $\iota_{\LOneTwoBall}$ can be computed efficiently.
@@ -45,7 +51,15 @@ and $\mathfrak{g}_i$ is an index set corresponding to the horizontal and vertica
 The proximity operator for the $l_1$ norm upper bound constraint is expressed as follows~\cite{L1-ball-projection}:
 \begin{equation} \label{eq:ProximityOperatorForL1Ball}  \projLOneBallSolution, \end{equation}
 where
-\begin{equation} \label{eq:ProximityOperatorForL1BallWhere} \projLOneBallSolutionWhere \end{equation}
+\begin{equation}
+    \label{eq:ProximityOperatorForL1BallWhere}
+    \begin{aligned}[b]
+        & \bm x_{\text{abs}} = \text{abs}(\vecx), \\
+        & \bm y              = \text{sort}_{\text{desc}}(\vecx_{\text{abs}}), \\
+        & \beta'             = \text{max} \left\{ \frac 1 i \left(\left(\sum_{j=1}^i \bm y_j\right) - \alpha\right) \middle| \ i = 1, \ldots, N \right\}, \\
+        & \beta              = \text{max} \left\{ \beta', 0 \right\}. \\
+    \end{aligned}
+\end{equation}
 
 Our algorithm can incorporate the constraints without requiring any approximations.
 Furthermore, since our algorithm can solve the TV and box constrained FWI problem without inner loops, it can be executed efficiently.
