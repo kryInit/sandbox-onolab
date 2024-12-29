@@ -4,14 +4,14 @@ Beyond geological applications, FWI has also been successfully applied to non-de
 
 In FWI, it is impossible to directly obtain subsurface properties from seismic data due to the nonlinear and complex nature of the observation process~\cite{FWI1}.
 To address this, FWI is formulated as an optimization problem~\cite{FWI0,CustomFWI0,CustomFWI1,CustomFWI2,CustomFWI3,CustomFWI4,CustomFWI5}, such as minimizing the squared error between observed and simulated seismic data.
-Since FWI is ill-posed, Tikhonov~\cite{tikhonov} and Total Variation (TV)-type~\cite{TV,TGV} regularizations have been widely applied in optimization problems to promote piecewise smoothness in the reconstructed subsurface properties~\cite{FWI-with-tikhonov-regularization,FWI-with-TV-regularization,FWI-with-directional-TV-regularization,FWI-with-high-order-TV-regularization,FWI-with-TGV-regularization}.
+Since FWI is ill-posed, Tikhonov~\cite{tikhonov} and Total Variation (TV)-type~\cite{TV,TGV} regularizations have been applied in many methods to solve the FWI problem to promote piecewise smoothness in the reconstructed subsurface properties~\cite{FWI-with-tikhonov-regularization,FWI-with-TV-regularization,FWI-with-directional-TV-regularization,FWI-with-high-order-TV-regularization,FWI-with-TGV-regularization}.
 However, they require careful tuning of a balance parameter that weights the FWI objective value against the regularization term.
 An alternative approach is to incorporate the TV prior as a constraint rather than a regularization term~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3,FWI-with-TV-constraint4}.
 This formulation allows the parameter for the TV constraint to be determined independently of the FWI objective value, relying instead on prior knowledge of subsurface properties~\mbox{\cite{constraint0,constraint1,constraint2,constraint3,constraint4,constraints-vs-penalties-in-FWI}}.
 This approach improves the interpretability of both the formulation and the reconstructed subsurface properties.
 
 However, solving the TV-constrained FWI problem is challenging due to the combination of the nonlinearity of the observation process and the non-smoothness of the TV term.
-To address this, conventional methods~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3,FWI-with-TV-constraint4} rely on inner loops to enforce the constraint at each optimization step and/or approximations, such as linear or quadratic approximations.
+To address this, conventional methods~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3,FWI-with-TV-constraint4} rely on inner loops to enforce the constraint at each optimization step and/or approximations such as linear or quadratic approximations.
 The inner loops significantly increase the computational cost, while the approximations degrade the reconstruction accuracy.
 Now a natural question arises: \textit{Can we develop an algorithm that solves the TV-constrained FWI problem with neither inner loops nor approximations?}
 
