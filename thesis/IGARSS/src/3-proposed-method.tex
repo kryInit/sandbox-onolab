@@ -1,12 +1,12 @@
-\input{src/img/salt-velocity-model}
+%\input{src/img/salt-velocity-model}
 
 We introduce the TV and box constraint into the FWI problem to achieve more accurate reconstruction.
-As shown in Fig.~\ref{fig:salt-model}, the velocity model is piecewise smooth, thus introducing the TV constraint to achieve a more accurate reconstruction.
+As shown in Fig.~\ref{fig:experiment-data}, the velocity model is piecewise smooth, thus introducing the TV constraint to achieve a more accurate reconstruction.
 The box constraint ensures that the velocity model remains within valid ranges.
 
 The optimization problem of the TV and box constrained FWI is formulated as follows:
 \begin{equation} \label{eq:FWIObjectiveWithTVConstraint} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveWithTVConstraint \end{equation}
-where $\alpha \in \realNumber$ is the upper bound of the $l_{1,2}$ norm, and $l, u \in \realNumber$ are the lower and upper bounds of the velocity model values, respectively.
+where $\alpha \ge 0$ is the upper bound of the $\ell_{1,2}$ norm, and $u \ge l > 0$ are the upper and lower bounds of the velocity model values, respectively.
 By incorporating TV as a constraint, the parameter $\alpha$ can be determined independently of other terms or constraints, which has been highlighted as an advantage in prior works~\cite{constraint0,constraint1,constraint2,constraint3,constraint4,constraints-vs-penalties-in-FWI}.
 This separation makes it possible to directly control smoothness according to $\alpha$, providing a clearer interpretation of the reconstructed subsurface properties.
 
@@ -48,19 +48,32 @@ where
 \begin{equation} \label{eq:ProximityOperatorForL12BallWhere} \projLOneTwoBallSolutionWhere, \end{equation}
 and $\mathfrak{g}_i$ is an index set corresponding to the horizontal and vertical differences of the $i$-th element of $\velModel$.
 
-The proximity operator for the $l_1$ norm upper bound constraint is expressed as follows~\cite{L1-ball-projection}:
-\begin{equation} \label{eq:ProximityOperatorForL1Ball}  \projLOneBallSolution, \end{equation}
-where
-\begin{equation}
-    \label{eq:ProximityOperatorForL1BallWhere}
-    \begin{aligned}[b]
-        & \bm x_{\text{abs}} = \text{abs}(\vecx), \\
-        & \bm y              = \text{sort}_{\text{desc}}(\vecx_{\text{abs}}), \\
-        & \beta'             = \text{max} \left\{ \frac 1 i \left(\left(\sum_{j=1}^i \bm y_j\right) - \alpha\right) \middle| \ i = 1, \ldots, N \right\}, \\
-        & \beta              = \text{max} \left\{ \beta', 0 \right\}. \\
-    \end{aligned}
-\end{equation}
+The proximity operator for the $\ell_1$ norm upper bound constraint is provided in~\cite{L1-ball-projection}:
+%The proximity operator for the $l_1$ norm upper bound constraint is expressed as follows~\cite{L1-ball-projection}:
+%\begin{equation} \label{eq:ProximityOperatorForL1Ball}  \projLOneBallSolution, \end{equation}
+%where
+%\begin{equation}
+%    \label{eq:ProximityOperatorForL1BallWhere}
+%    \begin{aligned}[b]
+%        & \bm x_{\text{abs}} = \text{abs}(\vecx), \\
+%        & \bm y              = \text{sort}_{\text{desc}}(\vecx_{\text{abs}}), \\
+%        & \beta'             = \text{max} \left\{ \frac 1 i \left(\left(\sum_{j=1}^i \bm y_j\right) - \alpha\right) \middle| \ i = 1, \ldots, N \right\}, \\
+%        & \beta              = \text{max} \left\{ \beta', 0 \right\}. \\
+%    \end{aligned}
+%\end{equation}
 
-Our algorithm can incorporate the constraints without requiring any approximations.
-Furthermore, since our algorithm can solve the TV and box constrained FWI problem without inner loops, it can be executed efficiently.
-In fact, the incorporation of the constraints does not significantly increase the overall computational cost, because it is fast enough compared to the $\nabla E$ computation, which requires simulation of the wave equation along the time axis.
+%\subsection{Computational Cost of Our Algorithm} \label{subsec:computational-cost-of-out-algorithm}
+\vspace{4mm}
+\noindent \textit{Remark} (Computational Cost of Our Algorithm).
+\vspace{2mm}
+
+%Our algorithm can incorporate the constraints without requiring any approximations.
+%Furthermore, since our algorithm can solve the TV and box constrained FWI problem without inner loops, it can be executed efficiently.
+%In fact, the incorporation of the constraints does not significantly increase the overall computational cost, because it is fast enough compared to the $\nabla E$ computation, which requires simulation of the wave equation along the time axis.
+
+Our algorithm efficiently incorporates constraints without relying on approximations or inner loops, enabling fast execution.
+The most computationally intensive part of the algorithm is the computation of the gradient, $\nabla E$, which involves simulating the wave equation along the time axis.
+Specifically, its time complexity is $O(S\, TN)$, where $S$ is the number of waveform sources, $T$ is the number of time samples, and $N$ is the number of grid points in the velocity model.
+In contrast, the computational cost of enforcing the constraints is significantly lower, because its time complexity is $O(N \log N)$.
+This ensures that the overhead introduced by the constraints is negligible compared to the dominant $\nabla E$ computation, making the overall algorithm highly efficient.
+

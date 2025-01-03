@@ -2,7 +2,7 @@
 
 Throughout this paper, we denote vectors and matrices by bold lowercase letters (e.g., $\vecx$) and bold uppercase letters (e.g., $\bm{X}$), respectively.
 
-For $\vecx \in \realNumber^{\intN}$, the mixed $l_{1,2}$ norm is defined as follows:
+For $\vecx \in \realNumber^{\intN}$, the mixed $\ell_{1,2}$ norm is defined as follows:
 \begin{equation} \label{eq:L12NormDefinitionEq} \LOneTwoNormDefinition, \end{equation}
 where $\mathfrak{G}$ is a set of disjoint index sets, and $\vecx_{\mathfrak{g}}$ is the subvector of $\vecx$ indexed by $\mathfrak{g}$.
 
@@ -38,16 +38,16 @@ The proximity operator of $\iota_C$ is the projection onto $C$, given by
 
 \subsection{Primal-Dual Splitting Algorithm} \label{subsec:primal-dual-splitting-algorithm}
 
-The Primal-Dual Splitting algorithm (PDS)~\cite{PDS0,PDS1,PDS2,PDS3} is applied to the following problem:
+The Primal-Dual Splitting algorithm (PDS)~\cite{PDS2} is applied to the following problem:
 \begin{equation} \label{eq:PDSPrimalEq} \PDSPrimal, \end{equation}
 where $\bm{L} \in \realNumber^{\intM \times \intN}$, $f$ is a differentiable convex function and $g,h$ are convex functions whose proximity operator can be computed efficiently.
 
 PDS solves Prob.~\eqref{eq:PDSPrimalEq} by iteratively updating the following:
 \begin{equation} \label{eq:PDSSubStep} \PDSSubStep \end{equation}
-where $\gamma_1, \gamma_2 \in \realNumber$ are step sizes.
+where $\gamma_1, \gamma_2 > 0$ are step sizes.
 
 
-\subsection{Full Waveform Inversion} \label{subsec:full-waveform-inversion}
+\subsection{Full-Waveform Inversion} \label{subsec:full-waveform-inversion}
 
 Typically, FWI is treated as an optimization problem as follows\cite{FWI0}:
 \begin{equation} \label{eq:FWIObjective} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveDefinition, \end{equation}

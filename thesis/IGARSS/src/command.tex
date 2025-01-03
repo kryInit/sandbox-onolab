@@ -16,11 +16,11 @@
 \newcommand{\intN}{\mathrm{N}}
 \newcommand{\intM}{\mathrm{M}}
 \newcommand{\BoxBall}{B_{\mathrm{box}}}
-\newcommand{\LOneTwoBall}{B_{l_{1,2}}}
+\newcommand{\LOneTwoBall}{B_{\ell_{1,2}}}
 
 \newcommand{\LOneTwoNormDefinition}{\LOneTwoNorm{\vecx} \coloneq  \sum_{\mathfrak{g} \in \mathfrak{G}} \LTwoNorm{\vecx_\mathfrak{g}}}
 \newcommand{\TotalVariationDefinition}{\TV{\vecx} \coloneq \LOneTwoNorm{\diffOperator \vecx} = \sum_{i=1}^{\intN} \sqrt{d_{h,i}^2 + d_{v,i}^2}}
-\newcommand{\conjugateFunctionDefinition}{f^*(\vecx) \coloneq \sup_{\vecy \in \realNumber^N} \left\{ \vecy^T \vecx - f(\vecy) \right\}}
+\newcommand{\conjugateFunctionDefinition}{f^*(\vecx) \coloneq \sup_{\vecy \in \realNumber^N} \vecy^T \vecx - f(\vecy) }
 
 % indicator function
 \newcommand{\indicatorFunction}[2]{\iota_{#1}(#2)}
@@ -31,7 +31,7 @@
 
 % proximity operator
 \newcommand{\proximityOperator}[2]{\mathrm{prox}_{#1}\left(#2\right)}
-\newcommand{\proximityOperatorDefinition}{\proximityOperator{ \gamma f }{\vecx} := \argmin{\vecy \in \realNumber^N} \left\{ f(\vecy) + \frac{1}{2 \gamma} \LTwoNorm{\vecy - \vecx}^2 \right\}}
+\newcommand{\proximityOperatorDefinition}{\proximityOperator{ \gamma f }{\vecx} := \argmin{\vecy \in \realNumber^N} \ f(\vecy) + \frac{1}{2 \gamma} \LTwoNorm{\vecy - \vecx}^2 }
 \newcommand{\proximityOperatorDefinitionWithConvexConjugateFunction}{\proximityOperator{ \gamma f^* }{\vecx} = \vecx - \gamma \proximityOperator{ \frac 1 \gamma f }{\frac 1 \gamma \vecx} }
 \newcommand{\projBox}[1]{ P_{\BoxBall} \left( #1 \right) }
 \newcommand{\projBoxSolution}{ \projBox{\vecx} = \text{min}( \text{max} (\vecx, l), u) }
