@@ -27,7 +27,7 @@ Therefore, these functions of $E$, $\iota_{\BoxBall}$ and $\iota_{\LOneTwoBall}$
 We show the detailed algorithm in Algorithm~\ref{alg:FWIWithPDS}.
 %\begin{equation} \label{eq:FWIWithPDS} \FWIWithPDS \notag \end{equation}
 \begin{algorithm}[t]
-    \caption{PDS for \eqref{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction}}\label{alg:FWIWithPDS}
+    \caption{PDS based solver for~\eqref{eq:FWIObjectiveWithTVConstraintWithIndicatorFunction}}\label{alg:FWIWithPDS}
     \begin{algorithmic}[1]
         \Statex \textbf{Input:} $ \velModel^{(0)}, \vecy^{(0)}, \gamma_0 > 0, \gamma_1 > 0 $
         \While {A stopping criterion is not satisfied}
@@ -64,16 +64,15 @@ The proximity operator for the $\ell_1$ norm upper bound constraint is provided 
 
 %\subsection{Computational Cost of Our Algorithm} \label{subsec:computational-cost-of-out-algorithm}
 \vspace{4mm}
-\noindent \textit{Remark} (Computational Cost of Our Algorithm).
+\noindent \textit{Remark}: Computational Cost of Our Algorithm
 \vspace{2mm}
 
-%Our algorithm can incorporate the constraints without requiring any approximations.
-%Furthermore, since our algorithm can solve the TV and box constrained FWI problem without inner loops, it can be executed efficiently.
-%In fact, the incorporation of the constraints does not significantly increase the overall computational cost, because it is fast enough compared to the $\nabla E$ computation, which requires simulation of the wave equation along the time axis.
+%Our algorithm efficiently incorporates constraints without relying on approximations or inner loops, enabling fast execution.
+%The most computationally dominant part of the algorithm is the computation of the gradient $\nabla E$, which involves simulating the wave equation along the time axis.
+%Specifically, its computational complexity is $O(S\, TN)$, where $S$ is the number of waveform sources, $T$ is the number of time samples, and $N$ is the number of grid points in the velocity model.
+%In contrast, the computational cost of enforcing the constraints is significantly lower, because its computational complexity is $O(N \log N)$.
+%This ensures that the overhead introduced by the constraints is negligible compared to the dominant $\nabla E$ computation, making the overall algorithm highly efficient.
 
-Our algorithm efficiently incorporates constraints without relying on approximations or inner loops, enabling fast execution.
-The most computationally intensive part of the algorithm is the computation of the gradient, $\nabla E$, which involves simulating the wave equation along the time axis.
-Specifically, its time complexity is $O(S\, TN)$, where $S$ is the number of waveform sources, $T$ is the number of time samples, and $N$ is the number of grid points in the velocity model.
-In contrast, the computational cost of enforcing the constraints is significantly lower, because its time complexity is $O(N \log N)$.
-This ensures that the overhead introduced by the constraints is negligible compared to the dominant $\nabla E$ computation, making the overall algorithm highly efficient.
-
+In our algorithm, the additional cost to enforce the TV and box constraints at each iteration is dominated by the computation of $\LOneTwoBall$, which has a computational complexity of $O(N \log N)$, where $N$ is the number of grid points in the velocity model.
+In contrast, existing methods rely on inner loops to enforce the same constraints, with a computational complexity of $O(XY)$, where $X$ is the number of iterations in the inner loop and $Y$ is the computational cost per iteration.
+Because $Y$ scales larger than $N \log N$, our approach achieves significantly faster performance than existing methods.
