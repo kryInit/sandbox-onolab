@@ -39,7 +39,7 @@ Fig.~\ref{fig:velocity-models-pure} shows the reconstructed velocity models usin
 The best parameter is $\alpha$ = 350, where $\alpha$ = 150 represents a stronger TV constraint and $\alpha$ = 550 represents a weaker one.
 The standard FWI method generates wave-like artifacts throughout.
 In contrast, our proposed method with the best parameter, which is $\alpha$ = 350, achieves the accurate velocity model reconstruction without these artifacts.
-As shown in Fig.~\ref{fig:alpha-rmse} and Fig.~\ref{fig:alpha-ssim} the proposed method archive accurate reconstruction performance, as evidenced by quantitative evaluations using the Root Mean Squared Error (RMSE) and the Structural Similarity Index Measure (SSIM).
+As shown in Fig.~\ref{fig:alpha-rmse} and Fig.~\ref{fig:alpha-ssim}, the proposed method archive accurate reconstruction performance, as evidenced by quantitative evaluations using the Root Mean Squared Error (RMSE) and the Structural Similarity Index Measure (SSIM).
 The case of $\alpha$ = 150, 550 will be discussed later.
 
 %For quantitative evaluation, Fig.~\ref{fig:iters-ssim} shows the Structural Similarity Index Measure (SSIM) against the number of iterations for our proposed method and the standard FWI method.
@@ -51,8 +51,8 @@ In the FWI problem with the noisy observed seismic data, the standard FWI method
 In contrast, our proposed method with $\alpha = 350$ as the appropriate parameter still achieves accurate velocity model reconstruction without these artifacts and achieves almost the same level of performance as in the noiseless case.
 This demonstrates the robustness of the reconstruction accuracy to noise in the observed seismic data.
 
-Fig.~\ref{fig:iters-ssim-noisy} shows the SSIM against the number of iterations for our proposed method and the standard FWI method with the noisy observed seismic data.
-The standard FWI method degrades the SSIM after a certain number of iterations.
+Fig.~\ref{fig:iters-ssim-noisy} shows the SSIM against the number of iterations for our proposed method and the standard FWI method.
+The standard FWI method with the noisy observed seismic data degrades the SSIM after a certain number of iterations.
 On the other hand, the proposed method maintains a consistently high value without degrading the SSIM even after a large number of iterations.
 This shows that the proposed method effectively reduces the risk of overfitting to noisy data, providing stable and accurate performance even as the number of iterations increases.
 
