@@ -67,18 +67,14 @@ The proximity operator for the $\ell_1$ norm upper bound constraint is provided 
 \noindent \textit{Remark}: Computational Cost of Our Algorithm
 \vspace{1.5mm}
 
-%Our algorithm efficiently incorporates constraints without relying on approximations or inner loops, enabling fast execution.
-%The most computationally dominant part of the algorithm is the computation of the gradient $\nabla E$, which involves simulating the wave equation along the time axis.
-%Specifically, its computational complexity is $O(S\, TN)$, where $S$ is the number of waveform sources, $T$ is the number of time samples, and $N$ is the number of grid points in the velocity model.
-%In contrast, the computational cost of enforcing the constraints is significantly lower, because its computational complexity is $O(N \log N)$.
-%This ensures that the overhead introduced by the constraints is negligible compared to the dominant $\nabla E$ computation, making the overall algorithm highly efficient.
-
-%In our algorithm, the additional cost to enforce the TV and box constraints at each iteration is dominated by the computation of $\LOneTwoBall$, which has a computational complexity of $O(N \log N)$, where $N$ is the number of grid points in the velocity model.
-%In contrast, existing methods rely on inner loops to enforce the same constraints, with a computational complexity of $O(XY)$, where $X$ is the number of iterations in the inner loop and $Y$ is the computational cost per iteration.
-%Because $Y$ scales larger than $N \log N$, our approach achieves significantly faster performance than existing methods.
-
-Our algorithm efficiently solves the optimization problem with the Total Variation (TV) constraint without relying on inner loops.
-The additional computational cost to enforce the TV and box constraints at each iteration of our algorithm is equal to or less than the cost at each inner-loop iteration of existing methods.
+Our algorithm efficiently solves the optimization problem of the TV and box constrained FWI without relying on inner loops.
 Thus, the iteration-dependent factor in the computational cost is eliminated, and the computational complexity to enforce the TV constraint is reduced to $O(N \log N)$, where $N$ is the number of grid points in the velocity model.
-Consequently, the computational complexity of our algorithm at each iteration is dominated by the gradient computation $\nabla E$, which involves simulating the wave equation along the time axis.
-This step has a complexity of $O(S\, TN)$, where $S$ is the number of waveform sources, $T$ is the number of time samples.
+Furthermore, existing methods require a computational cost of $O(N \log N)$ or more at each inner-loop iteration, clearly demonstrating the efficiency of our approach.
+Due to the reduced cost of incorporating TV constraints, the computational cost at each iteration in our algorithm is dominated by the gradient computation, $\nabla E$, which involves simulating the wave equation along the time axis.
+This step has a computational complexity of $O(S\, TN)$, where $S$ is the number of waveform sources and $T$ is the number of time samples.
+
+
+
+
+
+

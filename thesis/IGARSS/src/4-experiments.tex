@@ -58,7 +58,7 @@ This shows that the proposed method effectively reduces the risk of overfitting 
 
 For a more detailed analysis of the TV constraint parameter $\alpha$, we plot the RMSE and SSIM of our proposed method against the parameter $\alpha$ and the standard FWI method in Fig.~\ref{fig:alpha-rmse} and Fig.~\ref{fig:alpha-ssim}.
 When around $\alpha$ = 350, the proposed method achieves the best RMSE and SSIM.
-When $\alpha$ is smaller, the TV constraint becomes stronger, RMSE and SSIM worsens, and over-smoothing occurs, as in Fig.~\ref{fig:velocity-models-pure} and Fig.~\ref{fig:velocity-models-noisy} for $\alpha$ = 150.
+When $\alpha$ is smaller, the TV constraint becomes stronger, the RMSE and SSIM worsens, and over-smoothing occurs, as in Fig.~\ref{fig:velocity-models-pure} and Fig.~\ref{fig:velocity-models-noisy} for $\alpha$ = 150.
 On the other hand, when $\alpha$ is larger, the TV constraint becomes weaker and the result is similar to the standard FWI method, as in Fig.~\ref{fig:velocity-models-pure} and Fig.~\ref{fig:velocity-models-noisy} for $\alpha$ = 550.
 However, thanks to the box constraint, the proposed method still outperforms the standard FWI method.
 This demonstrates that the parameter $\alpha$ has a clear and predictable effect on the reconstructed velocity model, which can be easily adjusted to achieve accurate results.
