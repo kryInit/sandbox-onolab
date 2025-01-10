@@ -1,0 +1,22 @@
+Full-Waveform Inversion (FWI)~\cite{FWI0,FWI1} is a technique used to reconstruct subsurface properties from seismic data measured at multiple observation points.
+The subsurface properties obtained through FWI are essential in geological research and resource exploration, such as locating gas and oil reservoirs, characterizing mineral deposits, and assessing groundwater flow patterns~\cite{FWI1,FWIApplicationGroundwater0,FWIApplicationGroundwater1}.
+FWI extends beyond geological applications to non-destructive testing in medical imaging, such as brain tissue analysis, and industrial inspections, including material defect detection~\cite{FWIApplicationNonDestructiveTesting0,FWIApplicationNonDestructiveTesting1}.
+
+FWI faces significant challenges in directly recovering subsurface properties from seismic data because of the nonlinear wave propagation and the inherent complexity of the observation process~\cite{FWI1}.
+To address this issue, FWI is typically formulated as an optimization problem that minimizes the squared error between observed and simulated seismic data~\mbox{\cite{FWI0,CustomFWI0,CustomFWI1,CustomFWI2,CustomFWI3,CustomFWI4,CustomFWI5}}, which serves as the standard approach.
+Nevertheless, the inherent ill-posedness of FWI necessitates the incorporation of regularization techniques.
+Among these, Tikhonov regularization~\cite{tikhonov} and Total Variation (TV)-based methods~\cite{TV,TGV} are widely used to promote piecewise smoothness in the reconstructed subsurface properties, improving stability and accuracy~\cite{FWI-with-tikhonov-regularization,FWI-with-TV-regularization,FWI-with-directional-TV-regularization,FWI-with-high-order-TV-regularization,FWI-with-TGV-regularization}.
+While these regularization techniques are effective, they often involve the careful tuning of a balance parameter that determines the trade-off between the FWI objective function and the regularization term.
+To overcome this limitation, an alternative approach has been proposed: incorporating the TV prior as a constraint rather than as a regularization term~\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3,FWI-with-TV-constraint4}.
+This formulation decouples the parameter for the TV constraint from the FWI objective, allowing it to be determined independently based on prior knowledge of subsurface properties~\cite{constraint0,constraint1,constraint2,constraint3,constraint4,constraints-vs-penalties-in-FWI}.
+By doing so, this approach not only simplifies parameter selection but also enhances the interpretability of both the mathematical formulation and the reconstructed subsurface models.
+
+Despite its advantages, solving the TV-constrained FWI problem presents considerable difficulties due to the interplay between the nonlinear observation process and the non-smoothness of the TV term.
+Conventional methods~\mbox{\cite{FWI-with-TV-constraint,FWI-with-TV-constraint2,FWI-with-TV-constraint3,FWI-with-TV-constraint4}} attempt to address these issues by incorporating inner loops to enforce the constraint at each optimization step or by employing linear or quadratic approximations.
+However, these approaches come with notable drawbacks: inner loops substantially increase computational cost, and approximations compromise reconstruction accuracy.
+This raises a crucial question: \textit{Can we develop an algorithm that effectively solves the TV-constrained FWI problem without relying on inner loops or approximations?}
+
+In this paper, we introduce a novel algorithm for solving the TV-constrained FWI problem using a primal-dual splitting method~\cite{PDS2}.
+The proposed algorithm effectively addresses the intertwined issues of the nonlinear observation process and the non-smoothness of the TV constraint, achieving accurate reconstructions without relying on approximations.
+Additionally, by eliminating the need for inner loops, our approach is markedly more computationally efficient than existing methods.
+We validate the performance of our algorithm through numerical experiments on the SEG/EAGE Salt and Overthrust Models, demonstrating its capability to efficiently enforce the constraints while delivering high-quality reconstructions.

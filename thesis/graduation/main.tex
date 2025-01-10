@@ -10,89 +10,78 @@
     pdfauthor={Author Name}%
     ]{hyperref}
 
+\usepackage[cmex10]{amsmath}
+\usepackage{amssymb,amsfonts}
+\interdisplaylinepenalty=2500
+\usepackage{dblfloatfix}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage[numbers,compress]{natbib}
+\usepackage{texnames}
+\usepackage{bm,bbm}
+\usepackage{orcidlink}
+\usepackage{latexsym}
+\usepackage{array}
+\usepackage{mathtools}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{setspace}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
 \renewcommand{\bibname}{References}
 \pagestyle{plain}
 
 \thesistype{Independent Research Project Report:\\Bachelor's Thesis}
-\title{A Study on\\Thesis Formats}
-\author{Taro Tokodai}
-\studentid{19B00000}
+\title{Efficient and Accurate Full-Waveform Inversion with Total Variation Constraint}
+\author{Yudai INADA, Shingo TAKEMOTO, and Shunsuke ONO}
+\studentid{21B39015}
 \affiliation{%
   Department of Computer Science\\
   School of Computing\\
   Institute of Science Tokyo}
-\date{January, 2023}
+\date{January, 2025}
 
 \supervisorname{Supervisor:}
-\supervisor{Ichiro Joho}
+\supervisor{Shunsuke ONO}
 %\dsupervisorname{Deputy Supervisor:}
 %\dsupervisor{Jiro Kogaku}
 
+\input{src/command}
+
 \begin{document}
+    \input{src/control-bibtex}
 
-\frontmatter
-\maketitle
+    \frontmatter
+    \maketitle
 
-\chapter{Abstract}
-Single column, unlimited number of pages.
+    \chapter{Abstract} \label{ch:abstract}  \input{src/0-abstract}
 
-\tableofcontents
-\listoffigures
-\listoftables
+    \tableofcontents
+    \listoffigures
+    \listoftables
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\mainmatter
-\chapter{Introduction}
-I introduce a sample of how to write a thesis\cite{tokodai-xyz2015}.
+    \mainmatter
 
-\section{Sample}
-The followings are samples.
-I assume an $n$-dimensional hypersphere shown in Eq.~(\ref{eq:hs}).
-In case of $n = 3$, the shape is like in Figure~\ref{fig:hs}.
-\begin{equation}
-  r^2 = \sum_{k=1}^{n} x_k^2 \label{eq:hs}
-\end{equation}
-\begin{figure}[htb]
-  \centering
-  \includegraphics[scale=0.5]{fig/sample}
-  \caption{A sphere where $n=3$.}\label{fig:hs}
-\end{figure}
+    \chapter{Introduction}    \label{ch:introduction}   \input{src/1-introduction}
+    \chapter{Preliminaries}   \label{ch:preliminaries}  \input{src/2-preliminaries}
+    \chapter{Proposed Method} \label{ch:proposedmethod} \input{src/3-proposed-method}
+    \chapter{Experiments}     \label{ch:experiments}    \input{src/4-experiments}
+    \chapter{Conclusion}      \label{ch:conclusion}     \input{src/5-conclusion}
 
-According to Table~\ref{tab:sample}, it has four elements $(a, b, c, d)$.
-\begin{table}[htb]
-  \centering
-  \caption{Elements}\label{tab:sample}
-  \begin{tabular}{|c|r|}
-    \hline
-    $a$ & $b$ \\ \hline
-    $c$ & $d$ \\ \hline
-  \end{tabular}
-\end{table}
+    \backmatter
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \chapter{Acknowledgment}  \label{ch:acknowledgment} \input{src/acknowledgement}
 
-\chapter{Conclusion}
-The conclusion should be concise and comprehensive.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\appendix
-\chapter{Proof of Theorem 1}
-Appendices can be added.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\backmatter
-\chapter{Acknowledgment}
-Thank you.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\bibliographystyle{plain}
-\bibliography{references-e}
-%\begin{thebibliography}{99}
-%  \bibitem{tokodai-xyz2015} Taro Tokodai. How to write a good thesis. \textit{Journal of XYZ}, 3(4):15--34, 2015.
-%\end{thebibliography}
-
+    \begin{spacing}{0.84}
+%		\small
+        \bibliographystyle{plain}
+        \bibliography{references}
+    \end{spacing}
 \end{document}
