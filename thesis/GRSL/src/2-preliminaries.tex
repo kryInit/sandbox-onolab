@@ -1,0 +1,59 @@
+\subsection{Mathematical Tools} \label{subsec:mathematical-tools}
+
+Throughout this paper, we denote vectors and matrices by bold lowercase letters (e.g., $\vecx$) and bold uppercase letters (e.g., $\bm{X}$), respectively.
+
+For $\vecx \in \realNumber^{\intN}$, the mixed $\ell_{1,2}$ norm is defined as follows:
+\begin{equation} \label{eq:L12NormDefinitionEq} \LOneTwoNormDefinition, \end{equation}
+where $\mathfrak{G}$ is a set of disjoint index sets, and $\vecx_{\mathfrak{g}}$ is the subvector of $\vecx$ corresponding to the indices in $\mathfrak{g}$.
+
+For $\vecx \in \realNumber^{\intN}$, the total variation (TV)~\cite{TV} is defined as follows:
+\begin{equation} \label{eq:TVDefinitionEq} \TotalVariationDefinition, \end{equation}
+where $d_{h,i}$ and $d_{v,i}$ are the horizontal and vertical differences of the $i$-th element of $\vecx$, respectively, when the vector $\vecx$ is considered as a matrix.
+
+
+
+\subsection{Proximal Tools} \label{subsec:proximal-tools}
+
+We denote the set of proper lower-semicontinuous convex functions $\realNumber^N \to (- \infty, \infty]$ by $\Gamma_0(\realNumber^N)$.
+
+For $\gamma > 0$ and $f \in \Gamma_0(\realNumber^N)$, the proximity operator is defined as follows:
+\begin{equation} \label{eq:ProximityOperatorDefinitionEq} \proximityOperatorDefinition. \end{equation}
+
+For $f \in \Gamma_0(\realNumber^N)$, the convex conjugate function $f^*$ is defined as follows:
+\begin{equation} \label{eq:ConjugateFunctionDefinitionEq} \conjugateFunctionDefinition. \end{equation}
+
+The proximity operator of the convex conjugate function is expressed as follows~\cite[Theorem 3.1 (ii)]{prox-convex-conjugate-function}:
+\begin{equation} \label{eq:ProximityOperatorDefinitionWithConvexConjugateFunctionEq} \proximityOperatorDefinitionWithConvexConjugateFunction. \end{equation}
+
+For a nonempty closed convex set $C \subset \realNumber^N$, the indicator function $\iota_C: \realNumber^N \to (- \infty, \infty] $ is defined as follows:
+\begin{equation} \label{eq:IndicatorFunctionDefinitionEq} \indicatorFunctionDefinition \end{equation}
+
+%The proximity operator of $\iota_C$ is the projection onto $C$, given by
+The proximity operator of $\iota_C$ is equivalent to the projection onto $C$, given by
+\vspace{-1.4mm}
+\begin{equation} \label{eq:ProximityOperatorDefinitionWithIndicatorFunctionEq}
+\proximityOperator{ \gamma \iota_{C} }{\vecx} = P_C(\vecx) \coloneq \argmin{\vecy \in C} \ \LTwoNorm{\vecy - \vecx}.
+\end{equation}
+
+
+
+\subsection{Primal-Dual Splitting Algorithm} \label{subsec:primal-dual-splitting-algorithm}
+
+The Primal-Dual Splitting algorithm (PDS)~\cite{PDS2} is applied to the following problem:
+\begin{equation} \label{eq:PDSPrimalEq} \PDSPrimal, \end{equation}
+where $\bm{L} \in \realNumber^{\intM \times \intN}$ is a linear operator, $f$ is a differentiable convex function and $g,h$ are convex functions whose proximity operator can be computed efficiently.
+
+PDS solves Prob.~\eqref{eq:PDSPrimalEq} by iteratively updating the following:
+\begin{equation} \label{eq:PDSSubStep} \PDSSubStep \end{equation}
+where $\gamma_1, \gamma_2 > 0$ are step sizes.
+
+
+\subsection{Full-Waveform Inversion (FWI)} \label{subsec:full-waveform-inversion}
+
+Typically, FWI is treated as the following optimization problem~\cite{FWI0}:
+\begin{equation} \label{eq:FWIObjective} \argmin{\velModel \in \realNumber^N} \ \ \FWIObjectiveDefinition, \end{equation}
+where $\velModel \in \realNumber^{N}$ is the velocity model representing subsurface properties, $\seismicData_{\mathrm{obs}} \in \realNumber^{M}$ is the observed seismic data, $\seismicData_{\mathrm{cal}} : \realNumber^{N} \rightarrow \realNumber^{M}$ is the observation process, and $\seismicData_{\mathrm{cal}}(\velModel)$ is the modeled seismic data with the velocity model.
+$N$ is the number of grid points, and $M$ is the total data size of the observed seismic data, defined as the total product of the number of waveform sources, time samples, and receivers.
+
+The observation process $\seismicData_{\mathrm{cal}}$ is nonlinear and complex, making it difficult to analytically derive the optimal solution.
+However, the gradient $\nabla E$ can be computed numerically by simulating the wave equation using the adjoint-state method~\cite{FWI-gradient}.

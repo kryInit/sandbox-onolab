@@ -1,0 +1,104 @@
+% vec
+\newcommand{\vecx}{\bm{x}}
+\newcommand{\vecy}{\bm{y}}
+
+% utils
+\newcommand{\argmax}[1]{\underset{#1}{\mathrm{argmax}}}
+\newcommand{\argmin}[1]{\underset{#1}{\mathrm{argmin}}}
+\newcommand{\minimize}[1]{\underset{#1}{\mathrm{min}}}
+\newcommand{\maximize}[1]{\underset{#1}{\mathrm{min}}}
+\newcommand{\Norm}[2]{\lVert #1 \rVert}
+\newcommand{\LOneNorm}[1]{\lVert #1 \rVert _1}
+\newcommand{\LTwoNorm}[1]{\lVert #1 \rVert _2}
+\newcommand{\LOneTwoNorm}[1]{\lVert #1 \rVert _{1,2}}
+\newcommand{\TV}[1]{\mathrm{TV}(#1)}
+\newcommand{\realNumber}{\mathbb{R}}
+\newcommand{\intN}{\mathrm{N}}
+\newcommand{\intM}{\mathrm{M}}
+\newcommand{\BoxBall}{B_{\mathrm{box}}}
+\newcommand{\LOneTwoBall}{B_{\ell_{1,2}}}
+
+\newcommand{\LOneTwoNormDefinition}{\LOneTwoNorm{\vecx} \coloneq  \sum_{\mathfrak{g} \in \mathfrak{G}} \LTwoNorm{\vecx_\mathfrak{g}}}
+\newcommand{\TotalVariationDefinition}{\TV{\vecx} \coloneq \LOneTwoNorm{\diffOperator \vecx} = \sum_{i=1}^{\intN} \sqrt{d_{h,i}^2 + d_{v,i}^2}}
+\newcommand{\conjugateFunctionDefinition}{f^*(\vecx) \coloneq \sup_{\vecy \in \realNumber^N} \vecy^T \vecx - f(\vecy) }
+
+% indicator function
+\newcommand{\indicatorFunction}[2]{\iota_{#1}(#2)}
+\newcommand{\indicatorFunctionDefinition}{\indicatorFunction{C}{\vecx} \coloneq \begin{cases} 0 & \text{if } \vecx \in C, \\ \infty & \text{otherwise}. \end{cases} }
+
+% set
+\newcommand{\LOneTwoBallSetDefinition}{\left\{ \LOneTwoNorm{\cdot} \le \alpha \right\}}
+
+% proximity operator
+\newcommand{\proximityOperator}[2]{\mathrm{prox}_{#1}\left(#2\right)}
+\newcommand{\proximityOperatorDefinition}{\proximityOperator{ \gamma f }{\vecx} := \argmin{\vecy \in \realNumber^N} \ f(\vecy) + \frac{1}{2 \gamma} \LTwoNorm{\vecy - \vecx}^2 }
+\newcommand{\proximityOperatorDefinitionWithConvexConjugateFunction}{\proximityOperator{ \gamma f^* }{\vecx} = \vecx - \gamma \proximityOperator{ \frac 1 \gamma f }{\frac 1 \gamma \vecx} }
+\newcommand{\projBox}[1]{ P_{\BoxBall} \left( #1 \right) }
+\newcommand{\projBoxSolution}{ \projBox{\vecx} = \text{min}( \text{max} (\vecx, l), u) }
+\newcommand{\projLOneTwoBall}[1]{P_{\LOneTwoBall}\left(#1\right)}
+\newcommand{\projLOneTwoBallSolution}{
+    (\projLOneTwoBall{\vecx})_{\mathfrak{g}_i} =
+        \begin{cases}
+            0 & \text{if} \ \LTwoNorm{\vecx_{\mathfrak{g}_i}} = 0, \\
+            \bm \beta_i \frac {\vecx_{\mathfrak{g}_i}} {\LTwoNorm{\vecx_{\mathfrak{g}_i}}} & \text{otherwise},
+        \end{cases} \\
+}
+\newcommand{\projLOneTwoBallSolutionWhere}{
+    \bm \beta = P_{ \{ \LOneNorm{ \cdot } \le \alpha \} }\left( \left[ \LTwoNorm{ \vecx_{\mathfrak{g}_1} }, \ldots, \LTwoNorm{ \vecx_{\mathfrak{g}_N} } \right]^T \right) \\
+}
+\newcommand{\projLOneBall}[1]{P_{ \{ \LOneNorm{ \cdot } \le \alpha \} }(#1)}
+\newcommand{\projLOneBallSolution}{\projLOneBall{\vecx} = \text{SoftThrethold}(\vecx, \beta)}
+\newcommand{\projLOneBallSolutionWhere}{
+    \begin{aligned}
+        & \bm x_{\text{abs}} = \text{abs}(\vecx), \\
+        & \bm y              = \text{sort}_{\text{desc}}(\vecx_{\text{abs}}), \\
+        & \beta'             = \text{max} \left\{ \frac 1 i \left(\left(\sum_{j=1}^i \bm y_j\right) - \alpha\right) \middle| \ i = 1, \ldots, N \right\}, \\
+        & \beta              = \text{max} \left\{ \beta', 0 \right\}. \\
+    \end{aligned}
+}
+
+
+% Primal-Dual Splitting
+\newcommand{\PDSPrimal}{\minimize { \vecx \in \realNumber^N } \left\{ f(\vecx) + g(\vecx) + h(\bm{L} \vecx) \right\} }
+\newcommand{\PDSDual}{\minimize { \vecy \in \realNumber^M } \left\{ (f+g)^*(-\bm{L}^T \vecy) + h^*(\vecy) \right\} }
+\newcommand{\PDSSubStep}{
+\left \lfloor \ \
+    \begin{aligned}
+        & \vecx^{(k+1)} = \proximityOperator{\gamma_1 g}{\vecx^{(k)} - \gamma_1( \nabla f(\vecx^{(k)}) + \bm{L}^T \vecy^{(k)} )}, \\
+        & \vecy^{(k+1)} = \proximityOperator{\gamma_2 h^*}{\vecy^{(k)} + \gamma_2 \bm{L} (2\vecx^{(k+1)} - \vecx^{(k)}) }, \\
+    \end{aligned}
+\right.
+}
+
+% seismic + related proposed method
+\newcommand{\diffOperator}{\mathbf{D}}
+\newcommand{\velModel}{\bm{m}}
+\newcommand{\seismicData}{\bm{u}}
+
+% FWI objective
+\newcommand{\FWIObjectiveDefinition}{ E(\velModel) = \frac {1} {2} \LTwoNorm { \seismicData_{\mathrm{obs}} - \seismicData_{\mathrm{cal}}(\velModel) }^2 }
+\newcommand{\FWIGradientDefinition}{ \nabla E(\velModel) = \seismicData_{\mathrm{obs}} - \nabla \seismicData_{\mathrm{cal}(\velModel)} }
+\newcommand{\FWIObjectiveWithTVConstraint}{ E(\velModel) \ \ \ \text{s.t.} \ \  \begin{cases} \LOneTwoNorm{\diffOperator \velModel} \le \alpha, \\ \velModel \in [l,u]^N, \end{cases}}
+\newcommand{\FWIObjectiveWithTVConstraintWithIndicatorFunction}{ E(\velModel) + \indicatorFunction{\BoxBall}{\velModel} + \indicatorFunction{\LOneTwoBall}{\diffOperator \velModel} }
+
+\newcommand{\FWIWithPDS}{
+\left \lfloor \ \
+    \begin{aligned}
+        & \widetilde{\velModel} = \FWIWithPDSStepMTmp \\
+        & \velModel^{(k+1)}             = \FWIWithPDSStepM \\
+        & \widetilde{\vecy}     = \FWIWithPDSStepYTmp \\
+        & \vecy^{(k+1)}                 = \FWIWithPDSStepY.
+    \end{aligned}
+\right.
+}
+\newcommand{\FWIWithPDSStepMTmp}{ \velModel^{(k)} - \gamma_1 \left( \nabla E(\velModel^{(k)}) + \bm{D}^T \vecy^{(k)} \right) }
+\newcommand{\FWIWithPDSStepM}   { \projBox{\widetilde{\velModel}} }
+\newcommand{\FWIWithPDSStepYTmp}{ \vecy^{(k)} + \gamma_2 \bm{D} \left( 2\velModel^{(k+1)} - \velModel^{(k)} \right) }
+\newcommand{\FWIWithPDSStepY}   { \widetilde{\vecy} - \gamma_2 \projLOneTwoBall{\frac 1 {\gamma_2} {\widetilde{\bm y}}} }
+
+
+
+\newcommand{\FWIWithGradient}{ \velModel^{(k+1)} = \velModel^{(k)} - \gamma \left( \nabla E(\velModel^{(k)}) \right) }
+
+
+
