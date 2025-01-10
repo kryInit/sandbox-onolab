@@ -1,0 +1,14 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces The velocity models for experiments.}}{8}{figure.caption.5}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces The sinthesized seismic data corresponding to a single source waveform.}}{8}{figure.caption.6}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Velocity models [km/s] and their corresponding reconstructions. (c) is the best reconstruction result. (b) is over-smoothed with a stronger TV constraint, and (d) similar results to (a) with a weaker one. }}{8}{figure.caption.7}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Velocity models [km/s] and their corresponding reconstructions (with the noisy data). Similar to Fig.~\ref {fig:velocity-models-pure}, (g) is the best result, and (f)/(h) are the results with stronger/weaker TV constraint. }}{9}{figure.caption.8}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces SSIM against iters ($\alpha $ = 350).}}{9}{figure.caption.9}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces RMSE against $\alpha $.}}{9}{figure.caption.9}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces SSIM against $\alpha $.}}{9}{figure.caption.9}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }

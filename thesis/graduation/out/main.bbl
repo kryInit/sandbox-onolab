@@ -1,0 +1,210 @@
+\begin{thebibliography}{10}
+
+\bibitem{IEEEexample:BSTcontrol}
+
+
+\bibitem{constraint0}
+M.~V. Afonso, J.~M. Bioucas-Dias, and M.~Figueiredo.
+\newblock An augmented lagrangian approach to the constrained optimization
+  formulation of imaging inverse problems.
+\newblock {\em IEEE Trans. Image Process.}, 20(3):681--695, 2011.
+
+\bibitem{FWI-with-TV-regularization}
+Amsalu~Y Anagaw and Mauricio~D Sacchi.
+\newblock Full waveform inversion with total variation regularization.
+\newblock In {\em Recovery-CSPG CSEG CWLS Convention}, pages 1--4, 2011.
+
+\bibitem{FWI-with-tikhonov-regularization}
+Amir Asnaashari, Romain Brossier, St{\'e}phane Garambois, Fran{\c{c}}ois
+  Audebert, Pierre Thore, and Jean Virieux.
+\newblock Regularized seismic full waveform inversion with prior model
+  information.
+\newblock {\em Geophysics}, 78(2):R25--R36, 2013.
+
+\bibitem{CustomFWI1}
+Ebru Bozda{\u{g}}, Jeannot Trampert, and Jeroen Tromp.
+\newblock Misfit functions for full waveform inversion based on instantaneous
+  phase and envelope measurements.
+\newblock {\em Geophys. J. Int.}, 185(2):845--870, 2011.
+
+\bibitem{TGV}
+Kristian Bredies, Karl Kunisch, and Thomas Pock.
+\newblock Total generalized variation.
+\newblock {\em SIAM J. Imag. Sci.}, 3(3):492--526, 2010.
+
+\bibitem{constraint1}
+G.~Chierchia, N.~Pustelnik, J.-C. Pesquet, and B.~Pesquet-Popescu.
+\newblock Epigraphical projection and proximal tools for solving constrained
+  convex optimization problems.
+\newblock {\em Signal Image Video Process.}, 9(8):1737--1749, 2015.
+
+\bibitem{prox-convex-conjugate-function}
+Patrick~L Combettes and Noli~N Reyes.
+\newblock Moreau’s decomposition in banach spaces.
+\newblock {\em Math. Program.}, 139(1):103--114, 2013.
+
+\bibitem{PDS2}
+Laurent Condat.
+\newblock A primal--dual splitting method for convex optimization involving
+  lipschitzian, proximable and linear composite terms.
+\newblock {\em J. Optim. Theory Appl.}, 158(2):460--479, 2013.
+
+\bibitem{FWI-with-high-order-TV-regularization}
+Zeyuan Du, Dingjin Liu, Guochen Wu, Jiexiong Cai, Xin Yu, and Guanghui Hu.
+\newblock A high-order total-variation regularisation method for full-waveform
+  inversion.
+\newblock {\em J. Geophysics and Eng.}, 18(2):241--252, 2021.
+
+\bibitem{L1-ball-projection}
+John Duchi, Shai Shalev-Shwartz, Yoram Singer, and Tushar Chandra.
+\newblock Efficient projections onto the l 1-ball for learning in high
+  dimensions.
+\newblock In {\em Proceedings of the 25th international conference on Machine
+  learning}, pages 272--279, 2008.
+
+\bibitem{CustomFWI3}
+Bjorn Engquist and Brittany~D Froese.
+\newblock Application of the wasserstein metric to seismic signals.
+\newblock {\em arXiv preprint arXiv:1311.4581}, 2013.
+
+\bibitem{FWI-with-TV-constraint2}
+Ernie Esser, Llu{\'\i}s Guasch, Felix~J Herrmann, and Mike Warner.
+\newblock Constrained waveform inversion for automatic salt flooding.
+\newblock {\em Lead. Edge}, 35(3):235--239, 2016.
+
+\bibitem{FWI-with-TV-constraint}
+Ernie Esser, Lluis Guasch, Tristan van Leeuwen, Aleksandr~Y Aravkin, and
+  Felix~J Herrmann.
+\newblock Total variation regularization strategies in full-waveform inversion.
+\newblock {\em SIAM J. Imag. Sci.}, 11(1):376--406, 2018.
+
+\bibitem{FWI-with-TGV-regularization}
+Kai Gao and Lianjie Huang.
+\newblock Acoustic-and elastic-waveform inversion with total generalized
+  p-variation regularization.
+\newblock {\em Geophys. J. Int.}, 218(2):933--957, 2019.
+
+\bibitem{FWIApplicationNonDestructiveTesting0}
+Llu{\'\i}s Guasch, Oscar Calder{\'o}n~Agudo, Meng-Xing Tang, Parashkev Nachev,
+  and Michael Warner.
+\newblock Full-waveform inversion imaging of the human brain.
+\newblock {\em NPJ Digit. Med.}, 3(1):28, 2020.
+
+\bibitem{FWIApplicationGroundwater0}
+Anja Klotzsche, Jan van~der Kruk, Giovanni~Angelo Meles, Joseph Doetsch,
+  Hansruedi Maurer, and Niklas Linde.
+\newblock Full-waveform inversion of cross-hole ground-penetrating radar data
+  to characterize a gravel aquifer close to the thur river, switzerland.
+\newblock {\em Near surface geophysics}, 8(6):635--649, 2010.
+
+\bibitem{FWIApplicationGroundwater1}
+Anja Klotzsche, Harry Vereecken, and Jan van~der Kruk.
+\newblock Gpr full-waveform inversion of a variably saturated soil-aquifer
+  system.
+\newblock {\em J. Appl. Geophysics}, 170:103823, 2019.
+
+\bibitem{devito}
+Mathias Louboutin, Michael Lange, Fabio Luporini, Navjot Kukreja, Philipp~A
+  Witte, Felix~J Herrmann, Paulius Velesko, and Gerard~J Gorman.
+\newblock Devito (v3. 1.0): an embedded domain-specific language for finite
+  differences and geophysical exploration.
+\newblock {\em Geoscientific Model Develop.}, 12(3):1165--1187, 2019.
+
+\bibitem{CustomFWI2}
+Jingrui Luo and Ru-Shan Wu.
+\newblock Seismic envelope inversion: reduction of local minima and noise
+  resistance.
+\newblock {\em Geophys. Prospecting}, 63(3):597--614, 2015.
+
+\bibitem{CustomFWI4}
+L~Metivier, R~Brossier, Q~M{\'e}rigot, E~Oudet, and J~Virieux.
+\newblock Measuring the misfit between seismograms using an optimal transport
+  distance: application to full waveform inversion.
+\newblock {\em Geophys. J. Int.}, 205(1):345--377, 2016.
+
+\bibitem{constraint3}
+S.~Ono.
+\newblock Primal-dual plug-and-play image restoration.
+\newblock {\em IEEE Signal Process. Lett.}, 24(8):1108--1112, 2017.
+
+\bibitem{constraint4}
+S.~Ono.
+\newblock Efficient constrained signal reconstruction by randomized
+  epigraphical projection.
+\newblock In {\em Proc. IEEE Int. Conf. Acoust., Speech, Signal Process.,
+  (ICASSP)}, pages 4993--4997, 2019.
+
+\bibitem{constraint2}
+S.~Ono and I.~Yamada.
+\newblock Signal recovery with certain involved convex data-fidelity
+  constraints.
+\newblock {\em IEEE Trans. Signal Process.}, 63(22):6149--6163, 2015.
+
+\bibitem{constraints-vs-penalties-in-FWI}
+Bas Peters and Felix~J Herrmann.
+\newblock Constraints versus penalties for edge-preserving full-waveform
+  inversion.
+\newblock {\em Lead. Edge}, 36(1):94--100, 2017.
+
+\bibitem{FWI-with-TV-constraint4}
+Bas Peters, Brendan~R Smithyman, and Felix~J Herrmann.
+\newblock Projection methods and applications for seismic nonlinear inverse
+  problems with multiple constraints.
+\newblock {\em Geophysics}, 84(2):R251--R269, 2019.
+
+\bibitem{FWI-gradient}
+R-E Plessix.
+\newblock A review of the adjoint-state method for computing the gradient of a
+  functional with geophysical applications.
+\newblock {\em Geophys. J. Int.}, 167(2):495--503, 2006.
+
+\bibitem{FWI-with-directional-TV-regularization}
+Shan Qu, Eric Verschuur, and Yangkang Chen.
+\newblock Full-waveform inversion and joint migration inversion with an
+  automatic directional total variation constraint.
+\newblock {\em Geophysics}, 84(2):R175--R183, 2019.
+
+\bibitem{FWIApplicationNonDestructiveTesting1}
+Jing Rao, Jizhong Yang, Madis Ratassepp, and Zheng Fan.
+\newblock Multi-parameter reconstruction of velocity and density using
+  ultrasonic tomography based on full waveform inversion.
+\newblock {\em Ultrasonics}, 101:106004, 2020.
+
+\bibitem{TV}
+Leonid~I Rudin, Stanley Osher, and Emad Fatemi.
+\newblock Nonlinear total variation based noise removal algorithms.
+\newblock {\em Phys. D, Nonlinear Phenomena}, 60(1-4):259--268, 1992.
+
+\bibitem{CustomFWI0}
+Changsoo Shin and Dong-Joo Min.
+\newblock Waveform inversion using a logarithmic wavefield.
+\newblock {\em Geophysics}, 71(3):R31--R42, 2006.
+
+\bibitem{FWI0}
+Albert Tarantola.
+\newblock Inversion of seismic reflection data in the acoustic approximation.
+\newblock {\em Geophysics}, 49(8):1259--1266, 1984.
+
+\bibitem{tikhonov}
+AN~Tikhonov, AV~Goncharsky, VV~Stepanov, and AG~Yagola.
+\newblock {\em Numerical methods for the approximate solution of ill-posed
+  problems on compact sets}.
+\newblock Springer, 1995.
+
+\bibitem{FWI1}
+Jean Virieux and St{\'e}phane Operto.
+\newblock An overview of full-waveform inversion in exploration geophysics.
+\newblock {\em Geophysics}, 74(6):WCC1--WCC26, 2009.
+
+\bibitem{CustomFWI5}
+Michael Warner and Llu{\'\i}s Guasch.
+\newblock Adaptive waveform inversion: Theory.
+\newblock {\em Geophysics}, 81(6):R429--R445, 2016.
+
+\bibitem{FWI-with-TV-constraint3}
+Peng Yong, Wenyuan Liao, Jianping Huang, and Zhenchun Li.
+\newblock Total variation regularization for seismic waveform inversion using
+  an adaptive primal dual hybrid gradient method.
+\newblock {\em Inverse Problems}, 34(4):045006, 2018.
+
+\end{thebibliography}

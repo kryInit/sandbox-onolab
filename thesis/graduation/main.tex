@@ -19,7 +19,7 @@
 \usepackage[numbers,compress]{natbib}
 \usepackage{texnames}
 \usepackage{bm,bbm}
-\usepackage{orcidlink}
+%\usepackage{orcidlink}
 \usepackage{latexsym}
 \usepackage{array}
 \usepackage{mathtools}
@@ -57,7 +57,7 @@
     \frontmatter
     \maketitle
 
-    \chapter{Abstract} \label{ch:abstract}  \input{src/0-abstract}
+    \chapter{Abstract} \label{ch:abstract}  \input{src/0-summary}
 
     \tableofcontents
     \listoffigures
@@ -79,9 +79,9 @@
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    \begin{spacing}{0.84}
+%    \begin{spacing}{0.84}
 %		\small
         \bibliographystyle{plain}
         \bibliography{references}
-    \end{spacing}
+%    \end{spacing}
 \end{document}

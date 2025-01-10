@@ -1,0 +1,51 @@
+This is upBibTeX, Version 0.99d-j0.36-u1.30 (utf8.euc) (TeX Live 2024)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+The style file: plain.bst
+Database file #1: references.bib
+Warning--entry type for "IEEEexample:BSTcontrol" isn't style-file defined
+--line 1 of file references.bib
+Warning--to sort, need author or key in IEEEexample:BSTcontrol
+You've used 36 entries,
+            2118 wiz_defined-function locations,
+            743 strings with 11121 characters,
+and the built_in function-call counts, 13199 in all, are:
+= -- 1298
+> -- 656
+< -- 3
++ -- 263
+- -- 222
+* -- 1061
+:= -- 2189
+add.period$ -- 106
+call.type$ -- 36
+change.case$ -- 217
+chr.to.int$ -- 0
+cite$ -- 37
+duplicate$ -- 426
+empty$ -- 1001
+format.name$ -- 222
+if$ -- 2688
+int.to.chr$ -- 0
+int.to.str$ -- 36
+missing$ -- 36
+newline$ -- 181
+num.names$ -- 70
+pop$ -- 177
+preamble$ -- 1
+purify$ -- 183
+quote$ -- 0
+skip$ -- 301
+stack$ -- 0
+substring$ -- 1021
+swap$ -- 64
+text.length$ -- 3
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 142
+warning$ -- 1
+while$ -- 131
+width$ -- 38
+write$ -- 389
+is.kanji.str$ -- 0
+(There were 2 warnings)
