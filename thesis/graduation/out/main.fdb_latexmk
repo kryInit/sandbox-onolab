@@ -1,18 +1,18 @@
 # Fdb version 4
-["bibtex out/main"] 1736496816.31356 "out/main.aux" "out/main.bbl" "out/main" 1736496870.64352 0
+["bibtex out/main"] 1736499691.59682 "out/main.aux" "out/main.bbl" "out/main" 1736499698.2343 0
   "./references.bib" 1734073950.24971 14259 1922d4895c836873390f41511051e91b ""
   "/usr/local/texlive/2024/texmf-dist/bibtex/bst/base/plain.bst" 1292289607 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "out/main.aux" 1736496868.42132 10521 f9a703fe8dd439e31df010d4b42e09f2 "latex"
+  "out/main.aux" 1736499696.07654 10521 f9a703fe8dd439e31df010d4b42e09f2 "latex"
   (generated)
   "out/main.bbl"
   "out/main.blg"
   (rewritten before read)
-["dvipdf"] 1736496868.86499 "out/main.dvi" "out/main.pdf" "out/main" 1736496870.6494 0
-  "out/main.dvi" 1736496868.42524 72304 80fe6d63a6bf1676b27d2c5687375aef "latex"
+["dvipdf"] 1736499696.5238 "out/main.dvi" "out/main.pdf" "out/main" 1736499698.23974 0
+  "out/main.dvi" 1736499696.08136 72044 a506adfce3c8b2571bb81a1d5f7cf865 "latex"
   (generated)
   "out/main.pdf"
   (rewritten before read)
-["latex"] 1736496864.08693 "main.tex" "out/main.dvi" "main" 1736496870.64372 0
+["latex"] 1736499691.78355 "main.tex" "out/main.dvi" "main" 1736499698.2345 0
   "/usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/ptex-fonts/standard/goth10.tfm" 1463434352 1196 5981e79c37b2cfd27b3612a6783cd4b6 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/ptex-fonts/standard/min10.tfm" 1463434352 1196 1be730212205a270378fba11a44765dc ""
@@ -160,13 +160,13 @@
   "/usr/local/texlive/2024/texmf-var/web2c/euptex/platex.fmt" 1712983525 8157538 5d71fa2296126448334b9efb91ab58ea ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
   "cscover.sty" 1730765307 1764 c0340a5607fa878aa07ce04f0f3eb406 ""
-  "main.tex" 1736496785.80663 2430 98408d2ac9c8457288e93433f23df4ac ""
-  "out/main.aux" 1736496868.42132 10521 f9a703fe8dd439e31df010d4b42e09f2 "latex"
-  "out/main.bbl" 1736496816.49635 8267 8adabe7e794fcd1208e2e81166cbd3f1 "bibtex out/main"
-  "out/main.lof" 1736496868.42508 1318 b5f1707f68242f1e1bf15db922fa1b3e "latex"
-  "out/main.lot" 1736496868.42514 140 104a8a462b27a2267fd07b368245cdd0 "latex"
-  "out/main.out" 1736496868.42462 2051 37bb12813188c79b5047fd3182c89476 "latex"
-  "out/main.toc" 1736496868.42501 1003 4a8f31255db5f2acf595d5a599da8130 "latex"
+  "main.tex" 1736498768.58718 2469 8611c0271ad6508c74559f08ef499055 ""
+  "out/main.aux" 1736499696.07654 10521 f9a703fe8dd439e31df010d4b42e09f2 "latex"
+  "out/main.bbl" 1736499691.7712 8267 8adabe7e794fcd1208e2e81166cbd3f1 "bibtex out/main"
+  "out/main.lof" 1736499696.08113 1318 b5f1707f68242f1e1bf15db922fa1b3e "latex"
+  "out/main.lot" 1736499696.08124 140 104a8a462b27a2267fd07b368245cdd0 "latex"
+  "out/main.out" 1736499696.08053 2051 37bb12813188c79b5047fd3182c89476 "latex"
+  "out/main.toc" 1736499696.08104 1003 4a8f31255db5f2acf595d5a599da8130 "latex"
   "public/alpha-rmse.png" 1736013536.82979 63091 7b2c9542d4aa8fed9dd73136cd007441 ""
   "public/alpha-ssim.png" 1736013543.29159 64679 23dbe2e746a28d4a19cc3ddcfc104aca ""
   "public/alpha_150.png" 1735360926.618 37585 8049b93008d91c10098960a43533d9a8 ""
@@ -186,12 +186,12 @@
   "public/seismic_data_noisy.png" 1735880382.5395 243389 86a8be8e45d8362843dfae1d5f0f5d31 ""
   "public/true.png" 1735360724.86798 40467 761586468e9a61be9beb2a7fcd4118e3 ""
   "src/0-summary.tex" 1735918328.07565 1129 a2478106ca8dd210864eac92cb16649a ""
-  "src/1-introduction.tex" 1736494403.59441 4211 e623b7a5ebc37fce2959b471a153d17d ""
+  "src/1-introduction.tex" 1736499683.98839 4211 e623b7a5ebc37fce2959b471a153d17d ""
   "src/2-preliminaries.tex" 1736060984.19838 4239 f989820226d6918d7942949dc43ada34 ""
   "src/3-proposed-method.tex" 1736056705.57272 5711 24087d93a92caf6f400a57703e27daa7 ""
   "src/4-experiments.tex" 1736496809.711 5700 508ddd6a2f49c1a9e217c0b54e6717f8 ""
   "src/5-conclusion.tex" 1735928605.3368 617 dfc1989ca375d4ff80d4f9e1da31d781 ""
-  "src/acknowledgement.tex" 1736494822.7266 211 8fcc16b394327c1aa105c94f95972e52 ""
+  "src/acknowledgement.tex" 1736499620.99895 217 2db3c48bcb917cf4e499627fba77757a ""
   "src/command.tex" 1735830680.16944 5569 8ffe59a86ae58685ab66480145918b1d ""
   "src/control-bibtex.tex" 1728928963.96221 323 ac16298dbf502061794d4be91e46b77b ""
   "src/img/experiment-data.tex" 1736496850.86931 877 e7734d01b28f006e1cea1625a92e0fcc ""
