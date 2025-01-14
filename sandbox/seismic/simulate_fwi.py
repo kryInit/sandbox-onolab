@@ -292,7 +292,7 @@ def simulate_fwi(
 if __name__ == "__main__":
     # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 2000)
     # simulate_fwi(5000, 20, 1, "gradient", 1e-4, 100, None, 550)
-    simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 100)
+    simulate_fwi(100, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 100)
     # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 150)
     # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 200)
     # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 250)

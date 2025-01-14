@@ -264,5 +264,5 @@ def simulate_fwi(
 
 
 if __name__ == "__main__":
-    simulate_fwi(100, 20, 1, "gradient", 1e-4, None, 0)
-    simulate_fwi(100, 20, 1, "pds", 1e-4, 100, 350)
+    simulate_fwi(5000, 20, 1, "pds", 1e-4, 100, 350)
+    simulate_fwi(5000, 20, 1, "gradient", 1e-4, None, 0)

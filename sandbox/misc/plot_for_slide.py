@@ -23,20 +23,20 @@ def load(filename: str, label: str) -> npt.NDArray:
 
 
 files = {
-    'alpha:700': '2024-10-11_18-42-25,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=700,.npz',
-    'alpha:650': '2024-10-11_18-28-28,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=650,.npz',
-    'alpha:600': '2024-10-11_18-14-34,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=600,.npz',
-    'alpha:550': '2024-10-11_18-00-38,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=550,.npz',
-    'alpha:500': '2024-10-11_14-44-06,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=500,.npz',
-    'alpha:450': '2024-10-11_14-30-09,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=450,.npz',
-    'alpha:400': '2024-10-11_14-16-12,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=400,.npz',
-    'alpha:350': '2024-10-11_14-02-16,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=350,.npz',
-    'alpha:300': '2024-10-11_13-48-21,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=300,.npz',
-    'alpha:250': '2024-10-11_13-34-25,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=250,.npz',
-    'alpha:200': '2024-10-11_15-44-41,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=200,.npz',
-    'alpha:150': '2024-10-11_15-58-37,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=150,.npz',
-    'alpha:100': '2024-10-11_16-12-35,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=100,.npz',
-    'standard FWI': '2024-10-11_19-32-20,gradient,nshots=20,gamma1=0.0001,gamma2=None,niters=5000,sigma=0,alpha=None,.npz',
+    "alpha:700": "2024-10-11_18-42-25,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=700,.npz",
+    "alpha:650": "2024-10-11_18-28-28,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=650,.npz",
+    "alpha:600": "2024-10-11_18-14-34,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=600,.npz",
+    "alpha:550": "2024-10-11_18-00-38,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=550,.npz",
+    "alpha:500": "2024-10-11_14-44-06,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=500,.npz",
+    "alpha:450": "2024-10-11_14-30-09,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=450,.npz",
+    "alpha:400": "2024-10-11_14-16-12,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=400,.npz",
+    "alpha:350": "2024-10-11_14-02-16,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=350,.npz",
+    "alpha:300": "2024-10-11_13-48-21,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=300,.npz",
+    "alpha:250": "2024-10-11_13-34-25,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=250,.npz",
+    "alpha:200": "2024-10-11_15-44-41,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=200,.npz",
+    "alpha:150": "2024-10-11_15-58-37,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=150,.npz",
+    "alpha:100": "2024-10-11_16-12-35,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=100,.npz",
+    "standard FWI": "2024-10-11_19-32-20,gradient,nshots=20,gamma1=0.0001,gamma2=None,niters=5000,sigma=0,alpha=None,.npz",
     "alpha:700_noisy": "2024-11-05_02-22-21,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=1,alpha=700,.npz",
     "alpha:650_noisy": "2024-11-05_02-08-49,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=1,alpha=650,.npz",
     "alpha:600_noisy": "2024-11-05_01-55-17,pds_with_L12norm,nshots=20,gamma1=0.0001,gamma2=100,niters=5000,sigma=1,alpha=600,.npz",
@@ -113,14 +113,49 @@ dsize = 40
 # show_velocity_model_image(load(files['alpha:300'], 'arr_0')[dsize:-dsize, dsize:-dsize], vmax=4.5, vmin=1.5, cmap='coolwarm')
 # show_velocity_model_image(load(files['alpha:700'], 'arr_0')[dsize:-dsize, dsize:-dsize], vmax=4.5, vmin=1.5, cmap='coolwarm')
 
+import math
+
+fig, ax = plt.subplots(figsize=(16 * scale, 10 * scale))
+alpha = list(map(lambda x: int(x.split("alpha:")[1]), list(files.keys())[:13]))
+ssims_last = list(map(lambda x: (x[-1] / 5000) ** 0.5, vm_diffs[:13]))
+ssims_last_noisy = list(map(lambda x: (x[-1] / 5000) ** 0.5, vm_diffs[14:-1]))
+plt.axhline(y=(vm_diffs[13][-1] / 5000) ** 0.5, color="#460e44", linestyle="--", linewidth=2, label="Standard FWI method")
+plt.axhline(y=(vm_diffs[-1][-1] / 5000) ** 0.5, color="#00a381", linestyle="--", linewidth=2, label="Standard FWI method(noisy)")
+plt.plot(alpha, ssims_last, label="Proposed method", color="#460e44", linewidth=3)
+plt.plot(alpha, ssims_last_noisy, label="Proposed method(noisy)", color="#00a381", linewidth=3)
+plt.legend(fontsize=20)
+plt.ylabel("RMSE", fontsize=24)
+plt.xlabel("α", fontsize=24)
+# ax.set_xticklabels(ax.get_xticklabels(), fontsize=12)
+
+ax.set_ylim(0.30, 0.68)
+
+# yticks = [0.45, 0.50, 0.55, 0.60, 0.65]  # 任意の値
+# ax.set_yticks(yticks)
+# ax.set_yticklabels([f"{tick:.2f}" for tick in ytcks], fontsize=20)
+ax.set_xticklabels(ax.get_xticklabels(), fontsize=20)
+ax.set_yticklabels(ax.get_yticklabels(), fontsize=20)
+
+plt.subplots_adjust(left=0.14, right=0.995, bottom=0.15, top=0.995)
+plt.show()
+
+# fig.patch.set_alpha(0)
+# ax.set_facecolor((0, 0, 0, 0))
+# ax.spines["top"].set_visile(False)
+# ax.spines["right"].set_visible(False)
+# ax.spines["left"].set_linewidth(1.5)
+# ax.spines["bottom"].set_linewidth(1.5)
+# plt.savefig("alpha-ssim.png", bbox_inches="tight", pad_inches=0)
+
+
 fig, ax = plt.subplots(figsize=(16 * scale, 10 * scale))
 alpha = list(map(lambda x: int(x.split("alpha:")[1]), list(files.keys())[:13]))
 ssims_last = list(map(lambda x: x[-1], ssims[:13]))
 ssims_last_noisy = list(map(lambda x: x[-1], ssims[14:-1]))
-plt.axhline(y=ssims[13][-1], color="black", linestyle="--", linewidth=2, label="Standard FWI method")
-plt.axhline(y=ssims[-1][-1], color="black", linestyle=":", linewidth=2, label="Standard FWI method(noisy)")
-plt.plot(alpha, ssims_last, label="Proposed method", color="#000000", linewidth=3)
-plt.plot(alpha, ssims_last_noisy, label="Proposed method(noisy)", color="#cccccc", linewidth=3)
+plt.axhline(y=ssims[13][-1], color="#460e44", linestyle="--", linewidth=2, label="Standard FWI method")
+plt.axhline(y=ssims[-1][-1], color="#00a381", linestyle="--", linewidth=2, label="Standard FWI method(noisy)")
+plt.plot(alpha, ssims_last, label="Proposed method", color="#460e44", linewidth=3)
+plt.plot(alpha, ssims_last_noisy, label="Proposed method(noisy)", color="#00a381", linewidth=3)
 plt.legend(fontsize=20)
 plt.ylabel("SSIM", fontsize=24)
 plt.xlabel("α", fontsize=24)
@@ -128,40 +163,33 @@ plt.xlabel("α", fontsize=24)
 
 ax.set_ylim(0.41, 0.68)
 
-yticks = [0.45, 0.50, 0.55, 0.60, 0.65]  # 任意の値
-ax.set_yticks(yticks)
-ax.set_yticklabels([f"{tick:.2f}" for tick in yticks], fontsize=20)
+# yticks = [0.45, 0.50, 0.55, 0.60, 0.65]  # 任意の値
+# ax.set_yticks(yticks)
+# ax.set_yticklabels([f"{tick:.2f}" for tick in ytcks], fontsize=20)
 ax.set_xticklabels(ax.get_xticklabels(), fontsize=20)
+ax.set_yticklabels(ax.get_yticklabels(), fontsize=20)
 
-plt.subplots_adjust(left=0.155, right=0.995, bottom=0.15, top=0.995)
+plt.subplots_adjust(left=0.14, right=0.995, bottom=0.15, top=0.995)
 plt.show()
 
-# fig.patch.set_alpha(0)
-# ax.set_facecolor((0, 0, 0, 0))
-# ax.spines["top"].set_visible(False)
-# ax.spines["right"].set_visible(False)
-# ax.spines["left"].set_linewidth(1.5)
-# ax.spines["bottom"].set_linewidth(1.5)
-# plt.savefig("alpha-ssim.png", bbox_inches="tight", pad_inches=0)
 
+fig, ax = plt.subplots(figsize=(16 * scale, 10 * scale))
+plt.plot(np.linspace(0, 5000, 5000)[::10], ssims[13][::10], label="Standard FWI method", linestyle="--", color="#460e44", linewidth=2)
+plt.plot(np.linspace(0, 5000, 5000)[::10], ssims[-1][::10], label="Standard FWI method(noisy)", linestyle="--", color="#00a381", linewidth=3)
+plt.plot(np.linspace(0, 5000, 5000)[::10], ssims[7][::10], label="Proposed method", color="#460e44", linewidth=2)
+plt.plot(np.linspace(0, 5000, 5000)[::10], ssims[21][::10], label="Proposed method(noisy)", color="#00a381", linewidth=3)
 
-# fig, ax = plt.subplots(figsize=(16 * scale, 10 * scale))
-# # plt.plot(np.linspace(0, 5000, 5000)[::10], ssims[13][::10], label="Standard FWI method", linestyle="--", color="#000000", linewidth=2)
-# # plt.plot(np.linspace(0, 5000, 5000)[::10], ssims[7][::10], label="Proposed method", color="#000000", linewidth=2)
-# plt.plot(np.linspace(0, 5000, 5000)[::10], ssims[-1][::10], label="Standard FWI method(noisy)", linestyle=":", color="#000000", linewidth=3)
-# plt.plot(np.linspace(0, 5000, 5000)[::10], ssims[21][::10], label="Proposed method(noisy)", color="#cccccc", linewidth=3)
-#
-# ax.set_ylim(0.41, 0.68)
-# # ax.set_xlim(0, 5000)
-#
-# ax.set_xticklabels(ax.get_xticklabels(), fontsize=20)
-# ax.set_yticklabels(ax.get_yticklabels(), fontsize=20)
-#
-# plt.legend(fontsize=20)
-# plt.ylabel("SSIM", fontsize=24)
-# plt.xlabel("iterations", fontsize=24)
-# plt.subplots_adjust(left=0.14, right=0.995, bottom=0.15, top=0.995)
-# plt.show()
+ax.set_ylim(0.41, 0.68)
+# ax.set_xlim(0, 5000)
+
+ax.set_xticklabels(ax.get_xticklabels(), fontsize=20)
+ax.set_yticklabels(ax.get_yticklabels(), fontsize=20)
+
+plt.legend(fontsize=20)
+plt.ylabel("SSIM", fontsize=24)
+plt.xlabel("iterations", fontsize=24)
+plt.subplots_adjust(left=0.14, right=0.995, bottom=0.15, top=0.995)
+plt.show()
 
 # fig.patch.set_alpha(0)
 # ax.set_facecolor((0, 0, 0, 0))
