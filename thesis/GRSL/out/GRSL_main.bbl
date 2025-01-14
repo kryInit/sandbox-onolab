@@ -88,9 +88,8 @@ M.~Warner and L.~Guasch, ``Adaptive waveform inversion: Theory,''
 
 \bibitem[Tikhonov et~al.(1995)Tikhonov, Goncharsky, Stepanov, and
   Yagola]{tikhonov}
-A.~Tikhonov, A.~Goncharsky, V.~Stepanov, and A.~Yagola, \emph{Numerical methods
-  for the approximate solution of ill-posed problems on compact sets}.\hskip
-  1em plus 0.5em minus 0.4em\relax Springer, 1995.
+A.~Tikhonov, A.~Goncharsky, V.~Stepanov, and A.~Yagola, ``Numerical methods for
+  the approximate solution of ill-posed problems on compact sets,'' 1995.
 
 \bibitem[Rudin et~al.(1992)Rudin, Osher, and Fatemi]{TV}
 L.~I. Rudin, S.~Osher, and E.~Fatemi, ``Nonlinear total variation based noise
@@ -201,8 +200,8 @@ R.-E. Plessix, ``A review of the adjoint-state method for computing the
 \bibitem[Duchi et~al.(2008)Duchi, Shalev-Shwartz, Singer, and
   Chandra]{L1-ball-projection}
 J.~Duchi, S.~Shalev-Shwartz, Y.~Singer, and T.~Chandra, ``Efficient projections
-  onto the l 1-ball for learning in high dimensions,'' in \emph{Proceedings of
-  the 25th international conference on Machine learning}, 2008, pp. 272--279.
+  onto the l 1-ball for learning in high dimensions,'' in \emph{Proc. ICML},
+  vol.~25, 2008, pp. 272--279.
 
 \bibitem[Louboutin et~al.(2019)Louboutin, Lange, Luporini, Kukreja, Witte,
   Herrmann, Velesko, and Gorman]{devito}

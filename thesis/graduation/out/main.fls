@@ -267,10 +267,6 @@ INPUT out/main.lof
 INPUT out/main.lof
 INPUT out/main.lof
 OUTPUT out/main.lof
-INPUT out/main.lot
-INPUT out/main.lot
-INPUT out/main.lot
-OUTPUT out/main.lot
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/ptex-fonts/standard/tmin10.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/ptex-fonts/standard/min10.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr17.tfm
@@ -369,6 +365,8 @@ INPUT extractbb -B cropbox -O public/gradient.png
 INPUT ./public/alpha_150.png
 INPUT ./public/alpha_150.png
 INPUT extractbb -B cropbox -O public/alpha_150.png
+INPUT ./public/color-bar.png
+INPUT ./public/color-bar.png
 INPUT ./public/alpha_350.png
 INPUT ./public/alpha_350.png
 INPUT extractbb -B cropbox -O public/alpha_350.png
@@ -386,15 +384,14 @@ INPUT extractbb -B cropbox -O public/gradient_noisy.png
 INPUT ./public/alpha_150_noisy.png
 INPUT ./public/alpha_150_noisy.png
 INPUT extractbb -B cropbox -O public/alpha_150_noisy.png
+INPUT ./public/color-bar.png
+INPUT ./public/color-bar.png
 INPUT ./public/alpha_350_noisy.png
 INPUT ./public/alpha_350_noisy.png
 INPUT extractbb -B cropbox -O public/alpha_350_noisy.png
 INPUT ./public/alpha_550_noisy.png
 INPUT ./public/alpha_550_noisy.png
 INPUT extractbb -B cropbox -O public/alpha_550_noisy.png
-INPUT ./public/color-bar-min.png
-INPUT ./public/color-bar-min.png
-INPUT extractbb -B cropbox -O public/color-bar-min.png
 INPUT ./src/img/ssim-graph.tex
 INPUT ./src/img/ssim-graph.tex
 INPUT ./src/img/ssim-graph.tex

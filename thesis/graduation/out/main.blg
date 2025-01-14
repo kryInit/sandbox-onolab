@@ -1,51 +1,64 @@
 This is upBibTeX, Version 0.99d-j0.36-u1.30 (utf8.euc) (TeX Live 2024)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: main.aux
-The style file: plain.bst
+The style file: IEEEtranN.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: references.bib
-Warning--entry type for "IEEEexample:BSTcontrol" isn't style-file defined
---line 1 of file references.bib
-Warning--to sort, need author or key in IEEEexample:BSTcontrol
+-- IEEEtranN.bst version 1.14 (2015/08/26) by Michael Shell.
+-- http://www.michaelshell.org/tex/ieeetran/bibtex/
+-- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+** Natbib version - not for normal IEEE work.
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=200001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+** IEEEtran BST control entry "IEEEexample:BSTcontrol" detected.
+Warning--empty journal in tikhonov
+
+Done.
 You've used 36 entries,
-            2118 wiz_defined-function locations,
-            743 strings with 11121 characters,
-and the built_in function-call counts, 13199 in all, are:
-= -- 1298
-> -- 656
-< -- 3
-+ -- 263
+            4855 wiz_defined-function locations,
+            1189 strings with 15213 characters,
+and the built_in function-call counts, 37214 in all, are:
+= -- 3402
+> -- 1082
+< -- 351
++ -- 542
 - -- 222
-* -- 1061
-:= -- 2189
-add.period$ -- 106
+* -- 2119
+:= -- 5520
+add.period$ -- 70
 call.type$ -- 36
-change.case$ -- 217
-chr.to.int$ -- 0
+change.case$ -- 71
+chr.to.int$ -- 767
 cite$ -- 37
-duplicate$ -- 426
-empty$ -- 1001
-format.name$ -- 222
-if$ -- 2688
-int.to.chr$ -- 0
-int.to.str$ -- 36
-missing$ -- 36
-newline$ -- 181
-num.names$ -- 70
-pop$ -- 177
+duplicate$ -- 2397
+empty$ -- 2407
+format.name$ -- 307
+if$ -- 8476
+int.to.chr$ -- 1
+int.to.str$ -- 37
+missing$ -- 350
+newline$ -- 129
+num.names$ -- 105
+pop$ -- 765
 preamble$ -- 1
-purify$ -- 183
-quote$ -- 0
-skip$ -- 301
+purify$ -- 35
+quote$ -- 4
+skip$ -- 2803
 stack$ -- 0
-substring$ -- 1021
-swap$ -- 64
-text.length$ -- 3
+substring$ -- 1853
+swap$ -- 2012
+text.length$ -- 92
 text.prefix$ -- 0
-top$ -- 0
-type$ -- 142
+top$ -- 7
+type$ -- 563
 warning$ -- 1
-while$ -- 131
-width$ -- 38
-write$ -- 389
+while$ -- 186
+width$ -- 0
+write$ -- 464
 is.kanji.str$ -- 0
-(There were 2 warnings)
+(There was 1 warning)

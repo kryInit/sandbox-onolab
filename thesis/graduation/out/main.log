@@ -1,4 +1,4 @@
-This is e-upTeX, Version 3.141592653-p4.1.1-u1.30-230214-2.6 (utf8.euc) (TeX Live 2024) (preloaded format=platex 2024.4.13)  10 JAN 2025 18:01
+This is e-upTeX, Version 3.141592653-p4.1.1-u1.30-230214-2.6 (utf8.euc) (TeX Live 2024) (preloaded format=platex 2024.4.13)  12 JAN 2025 23:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -748,12 +748,6 @@ File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 
  [4
 
-] (out/main.lot)
-\tf@lot=\write6
-\openout6 = `main.lot'.
-
- [5
-
 ]
 Chapter 1.
 LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <20.74> not available
@@ -812,15 +806,10 @@ File: public/seismic_data.png Graphic file (type bmp)
 <public/seismic_data.png>
 File: public/seismic_data_noisy.png Graphic file (type bmp)
 <public/seismic_data_noisy.png>
-
-Overfull \hbox (7.68643pt too wide) in paragraph at lines 19--19
-[]|[]| 
- []
-
 File: public/seismic-data-color-bar.png Graphic file (type bmp)
 <public/seismic-data-color-bar.png>
 
-Overfull \vbox (27.48663pt too high) detected at line 23
+Overfull \vbox (58.78467pt too high) detected at line 23
  []
 
 ) (./src/img/experiment-results-pure.tex
@@ -828,12 +817,18 @@ File: public/gradient.png Graphic file (type bmp)
 <public/gradient.png>
 File: public/alpha_150.png Graphic file (type bmp)
 <public/alpha_150.png>
+File: public/color-bar.png Graphic file (type bmp)
+<public/color-bar.png>
+
+Overfull \vbox (113.82904pt too high) detected at line 14
+ []
+
 File: public/alpha_350.png Graphic file (type bmp)
 <public/alpha_350.png>
 File: public/alpha_550.png Graphic file (type bmp)
 <public/alpha_550.png>
 
-Overfull \hbox (122.59602pt too wide) in paragraph at lines 3--44
+Overfull \hbox (35.99998pt too wide) in paragraph at lines 3--27
  [][] 
  []
 
@@ -842,18 +837,18 @@ File: public/gradient_noisy.png Graphic file (type bmp)
 <public/gradient_noisy.png>
 File: public/alpha_150_noisy.png Graphic file (type bmp)
 <public/alpha_150_noisy.png>
+File: public/color-bar.png Graphic file (type bmp)
+<public/color-bar.png>
+
+Overfull \vbox (113.82904pt too high) detected at line 14
+ []
+
 File: public/alpha_350_noisy.png Graphic file (type bmp)
 <public/alpha_350_noisy.png>
 File: public/alpha_550_noisy.png Graphic file (type bmp)
 <public/alpha_550_noisy.png>
-File: public/color-bar-min.png Graphic file (type bmp)
-<public/color-bar-min.png>
 
-Overfull \vbox (73.01105pt too high) detected at line 37
- []
-
-
-Overfull \hbox (122.59602pt too wide) in paragraph at lines 3--43
+Overfull \hbox (35.99998pt too wide) in paragraph at lines 3--30
  [][] 
  []
 
@@ -866,7 +861,7 @@ File: public/alpha-ssim.png Graphic file (type bmp)
 <public/alpha-ssim.png>
 ) [7
 
-] [8] [9]) [10]
+]) [8] [9] [10]
 Chapter 5.
 (./src/5-conclusion.tex) [11
 
@@ -876,79 +871,77 @@ Chapter 5.
 
 ]
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 10.
+(Font)              No change on input line 27.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 15.
-LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 22.
-LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 28.
-LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 33.
+(Font)              No change on input line 31.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
 (Font)              No change on input line 39.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
 (Font)              No change on input line 44.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 50.
+(Font)              No change on input line 51.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 56.
+(Font)              No change on input line 57.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 62.
+(Font)              No change on input line 61.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 68.
+(Font)              No change on input line 67.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 73.
+(Font)              No change on input line 71.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 79.
+(Font)              No change on input line 76.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 85.
+(Font)              No change on input line 82.
+LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
+(Font)              No change on input line 87.
+LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
+(Font)              No change on input line 96.
+LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
+(Font)              No change on input line 101.
  [13
 
 ]
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 91.
-LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 98.
-LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 104.
+(Font)              No change on input line 107.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
 (Font)              No change on input line 111.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 117.
+(Font)              No change on input line 118.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 123.
+(Font)              No change on input line 124.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
 (Font)              No change on input line 128.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 134.
+(Font)              No change on input line 135.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 141.
+(Font)              No change on input line 140.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 147.
+(Font)              No change on input line 146.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 153.
+(Font)              No change on input line 152.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 159.
+(Font)              No change on input line 157.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 165.
+(Font)              No change on input line 164.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 171.
+(Font)              No change on input line 169.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 176.
+(Font)              No change on input line 174.
+LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
+(Font)              No change on input line 179.
+LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
+(Font)              No change on input line 183.
+LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
+(Font)              No change on input line 189.
+LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
+(Font)              No change on input line 193.
  [14]
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 181.
+(Font)              No change on input line 198.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 186.
+(Font)              No change on input line 203.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 190.
-LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 197.
-LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 202.
-LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
-(Font)              No change on input line 208.
+(Font)              No change on input line 211.
 ) [15] (out/main.aux)
  ***********
 pLaTeX2e <2023-02-14>+1, based on
@@ -956,15 +949,15 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 37BB12813188C79B5047FD3182C89476;2051.
+(rerunfilecheck)             Checksum: 36B007D135A37D2B03AFD9F0ED4144B3;2051.
  ) 
 Here is how much of TeX's memory you used:
- 18063 strings out of 474774
- 350704 string characters out of 5758801
+ 18040 strings out of 474774
+ 350163 string characters out of 5758801
  1938032 words of memory out of 5000000
- 40104 multiletter control sequences out of 15000+600000
+ 40085 multiletter control sequences out of 15000+600000
  583804 words of font info for 141 fonts, out of 8000000 for 9000
  929 hyphenation exceptions out of 8191
- 72i,15n,79p,538b,1137s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 72i,15n,79p,538b,1091s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on out/main.dvi (20 pages, 72044 bytes).
+Output written on out/main.dvi (19 pages, 71432 bytes).

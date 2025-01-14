@@ -16,46 +16,48 @@ Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
 Reallocated global_strs (elt_size=200001) to 20 items from 10.
 Reallocated glb_str_end (elt_size=4) to 20 items from 10.
 ** IEEEtran BST control entry "IEEEexample:BSTcontrol" detected.
+Warning--empty journal in tikhonov
 
 Done.
 You've used 36 entries,
             4855 wiz_defined-function locations,
-            1187 strings with 15267 characters,
-and the built_in function-call counts, 37163 in all, are:
-= -- 3387
+            1188 strings with 15211 characters,
+and the built_in function-call counts, 37214 in all, are:
+= -- 3402
 > -- 1082
-< -- 350
+< -- 351
 + -- 542
 - -- 222
-* -- 2113
-:= -- 5509
+* -- 2119
+:= -- 5520
 add.period$ -- 70
 call.type$ -- 36
-change.case$ -- 70
+change.case$ -- 71
 chr.to.int$ -- 767
-cite$ -- 36
-duplicate$ -- 2391
-empty$ -- 2421
+cite$ -- 37
+duplicate$ -- 2397
+empty$ -- 2407
 format.name$ -- 307
-if$ -- 8471
+if$ -- 8476
 int.to.chr$ -- 1
 int.to.str$ -- 37
-missing$ -- 349
+missing$ -- 350
 newline$ -- 129
 num.names$ -- 105
-pop$ -- 767
+pop$ -- 765
 preamble$ -- 1
 purify$ -- 35
 quote$ -- 4
-skip$ -- 2800
+skip$ -- 2803
 stack$ -- 0
-substring$ -- 1852
-swap$ -- 2007
-text.length$ -- 91
+substring$ -- 1853
+swap$ -- 2012
+text.length$ -- 92
 text.prefix$ -- 0
 top$ -- 7
-type$ -- 555
-warning$ -- 0
+type$ -- 563
+warning$ -- 1
 while$ -- 186
 width$ -- 0
-write$ -- 463
+write$ -- 464
+(There was 1 warning)
