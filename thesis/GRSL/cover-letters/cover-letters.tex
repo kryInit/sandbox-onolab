@@ -1,0 +1,97 @@
+% Cover letter using letter.cls
+\documentclass[11pt]{letter} % default is 10 pt
+%\usepackage{helvetica} % uses helvetica postscript font (download helvetica.sty)
+\usepackage{newcent}   % uses new century schoolbook postscript font
+% the following commands control the margins:
+\topmargin=-1in    % Make letterhead start about 1 inch from top of page
+\textheight=8.5in  % text height can be bigger for a longer letter
+\oddsidemargin=0pt % leftmargin is 1 inch
+\textwidth=6.5in   % textwidth of 6.5in leaves 1 inch for right margin
+
+\begin{document}
+
+
+\signature{Shunsuke Ono}                  % name for signature
+\longindentation=0pt                       % needed to get closing flush left
+\let\raggedleft\raggedright                % needed to get date flush left
+
+% \begin{letter}{Professor W. Clem Karl \\
+% Editor-in-Chief \\
+% IEEE Transactions on Image Processing \\
+% }
+\begin{letter}{Dr. Ronny Hänsch
+%Professor Simon H. Yueh\\
+%Professor Scott T. Acton \\
+%Professor William Clem Karl \\
+%Professor David A. Forsyth \\
+%Professor Sergios Theodoridis \\
+Editor-in-Chief \\
+IEEE Geoscience and Remote Sensing Letters
+% IEEE Signal Processing Letters
+% IEEE Transactions on Image Processing
+% IEEE Transactions on Visualization and Computer Graphics
+% IEEE Transactions on Computational Imaging \\
+% IEEE Transactions on Pattern Analysis and Machine Intelligence \\
+% IEEE Transactions on Signal Processing \\
+}
+
+\begin{center}
+\large\bf SHUNSUKE ONO \\
+ono@c.titech.ac.jp\\
+G3-52, 4259 Nagatsuta-cho, Midori-ku, Yokohama, \\Kanagawa, 226-8503, Japan
+\end{center}
+\vfill % forces letterhead to top of page
+
+
+
+\opening{Dear Professor Hänsch:}
+We hereby submit the manuscript entitled
+% ``Cartoon-Texture Image Decomposition Using Blockwise Low-Rank Texture Characterization''
+% by Shunsuke Ono, Takamichi Miyata, and Isao Yamada to be considered for publication in\\
+
+% the IEEE Transactions on Image Processing.
+%``Signal Recovery With Certain Involved Convex Data-fidelity Constraints''
+%by Shunsuke Ono and Isao Yamada to be considered for publication in
+%the IEEE Transactions on Signal Processing.
+%``$L_0$ Gradient Projection''
+%``Primal-Dual Plug-and-Play Image Restoration''
+%by Shunsuke Ono to be considered for publication in
+%the IEEE Signal Processing Letters.
+``Efficient and Accurate Full-Waveform Inversion with Total Variation Constraint''
+by Yudai Inada, Shingo Takemoto, and Shunsuke Ono to be considered for publication in
+the IEEE Geoscience and Remote Sensing Letters.
+Please find attached the main manuscript in PDF format.
+
+% This article proposes a cartoon-texture image decomposition framework
+% using a novel convex prior for texture characterization.
+
+%This article proposes a new destriping framework using a novel mathematical model for imaging data in remote sensing.
+
+%This article proposes a new denoising method based on graph signal processing for hyperspectral images.
+This article proposes an efficient and accurate Full-Waveform Inversion (FWI) algorithm with a Total Variation (TV) constraint for seismic data.
+We believe our work will be of interest to the readers of your journal.
+
+
+
+We declare that this manuscript is original, has not been published before
+and is not currently being considered for publication.
+%except in preliminary forms such as part of conference proceedings entitled
+%``Zero-gradient constraints for destriping of remote-sensing data'' (reference [35] in the manuscript).
+% and a technical report entitled
+% ``A blockwise low-rank prior for cartoon-texture image decomposition'' (reference [31] in the manuscript).
+%The manuscript has been read and approved by all named authors.
+
+We hope you find our manuscript suitable for publication and look forward to hearing from you.
+Thank you in advance for your kind handling.
+\closing{Sincerely yours,}
+
+
+\encl{}  				% Enclosures
+
+\end{letter}
+
+
+\end{document}
+
+
+

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.4.13)  12 JAN 2025 22:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.4.13)  14 JAN 2025 23:43
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1067,22 +1067,23 @@ LaTeX Font Info:    Trying to load font information for U+lasy on input line 3.
 
 (/usr/local/texlive/2024/texmf-dist/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
-)
-LaTeX Font Info:    Trying to load font information for U+euf on input line 6.
-
-(/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/ueuf.fd
-File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
 ) [1{/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr
 /local/texlive/2024/texmf-dist/fonts/enc/dvips/base/8r.enc}
 
 
-]) (./src/3-proposed-method.tex
+]
+LaTeX Font Info:    Trying to load font information for U+euf on input line 6.
+
+(/usr/local/texlive/2024/texmf-dist/tex/latex/amsfonts/ueuf.fd
+File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
+))
+(./src/3-proposed-method.tex
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
 put line 31.
-
-[2]
+ [2]
 \c@theorem=\count373
-) (./src/4-experiments.tex (./src/img/experiment-data.tex
+) (./src/4-experiments.tex
+(./src/img/experiment-data.tex
 <public/true.png, id=157, 1003.75pt x 501.875pt>
 File: public/true.png Graphic file (type png)
 <use public/true.png>
@@ -1200,12 +1201,12 @@ Package pdftex.def Info: public/iters-ssim-all-colored.png  used on input line
 <public/alpha-rmse-colored.png, id=176, 803.0pt x 501.875pt>
 File: public/alpha-rmse-colored.png Graphic file (type png)
 <use public/alpha-rmse-colored.png>
-Package pdftex.def Info: public/alpha-rmse-colored.png  used on input line 24.
+Package pdftex.def Info: public/alpha-rmse-colored.png  used on input line 25.
 (pdftex.def)             Requested size: 165.02597pt x 103.13774pt.
 <public/alpha-ssim-colored.png, id=177, 803.0pt x 501.875pt>
 File: public/alpha-ssim-colored.png Graphic file (type png)
 <use public/alpha-ssim-colored.png>
-Package pdftex.def Info: public/alpha-ssim-colored.png  used on input line 33.
+Package pdftex.def Info: public/alpha-ssim-colored.png  used on input line 35.
 (pdftex.def)             Requested size: 165.02597pt x 103.13774pt.
 ) [3 <./public/true.png (PNG copy)> <./public/initial.png (PNG copy)> <./public
 /color-bar.png> <./public/seismic_data.png> <./public/seismic_data_noisy.png> <
@@ -1231,11 +1232,11 @@ Package rerunfilecheck Info: File `GRSL_main.out' has not changed.
 (rerunfilecheck)             Checksum: CA1D3B5FD25D29B55EBFF802F8E66002;1560.
  ) 
 Here is how much of TeX's memory you used:
- 29212 strings out of 474116
- 597871 string characters out of 5743682
+ 29213 strings out of 474116
+ 597877 string characters out of 5743682
  1960187 words of memory out of 5000000
  50975 multiletter control sequences out of 15000+600000
- 604621 words of font info for 137 fonts, out of 8000000 for 9000
+ 606766 words of font info for 140 fonts, out of 8000000 for 9000
  1144 hyphenation exceptions out of 8191
  99i,17n,107p,547b,902s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
@@ -1272,7 +1273,7 @@ l/texlive/2024/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/
 f-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2024/texmf-dist/fon
 ts/type1/urw/times/utmri8a.pfb>
 Output written on /Users/rk/Documents/titech/2024/kenkyu/sandbox-onolab/thesis/
-GRSL/out/GRSL_main.pdf (5 pages, 1099624 bytes).
+GRSL/out/GRSL_main.pdf (5 pages, 1100803 bytes).
 PDF statistics:
  389 PDF objects out of 1000 (max. 8388607)
  288 compressed objects within 3 object streams
