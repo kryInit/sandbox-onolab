@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 
-from lib.seismic.model import SeismicModel
+from lib.seismic.devito_example import SeismicModel
 
 __all__ = ["demo_model"]
 

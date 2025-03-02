@@ -36,24 +36,7 @@ class VelocityModelGradientCalculator:
             self.geometry.src_positions[0, :] = source_locations[i, :]
 
             # 真のモデル: mode.vp を用いて、観測データ波形(observed_waveform)を計算
-            # self.simulator.forward(vp=self.true_model.vp, rec=observed_waveform)
-            rec, wavefields, summary = self.simulator.forward(vp=self.true_model.vp, save=True, rec=observed_waveform)
-
-            from lib.misc import datasets_root_path
-
-            data_path = datasets_root_path.joinpath("open-fwi/tmp")
-            data = np.load(data_path.joinpath("data1.npy"))
-
-            import matplotlib.pyplot as plt
-
-            from lib.misc import output_path
-            from lib.visualize import save_array3d_as_gif
-
-            # save_array3d_as_gif(wavefields.data, output_path.joinpath("wavefields.gif"), normalize='auto')
-            print(rec.shape)
-            # plt.imshow(rec.data, extent=(0, 1, 0, 1))
-            # print(f"min: {rec.data.min()}, max: {rec.data.max()}")
-            # plt.show()
+            self.simulator.forward(vp=self.true_model.vp, rec=observed_waveform)
 
             true_observed_waveforms.append(observed_waveform.data[:].copy())
         target = np.array(true_observed_waveforms)

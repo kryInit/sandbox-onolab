@@ -68,7 +68,7 @@ def simulate_fwi(
         gamma2 = None
 
     params = Params(
-        real_cell_size=Vec2D(100, 50),
+        real_cell_size=Vec2D(276, 76),
         cell_meter_size=Vec2D(10.0, 10.0),
         damping_cell_thickness=40,
         start_time=0,
@@ -77,7 +77,7 @@ def simulate_fwi(
         source_peek_time=100,
         source_frequency=0.01,
         n_shots=n_shots,
-        n_receivers=101,
+        n_receivers=273,
         noise_sigma=noise_sigma,
     )
 
@@ -132,7 +132,7 @@ def simulate_fwi(
             source_locations,
             receiver_locations,
             params.noise_sigma,
-            20,
+            14,
         )
     )
 
@@ -167,6 +167,8 @@ def simulate_fwi(
         while True:
             th += 1
             residual_norm_sum, grad = grad_calculator.calc_grad(v)
+
+            gamma1 = 0.1 * (0.99 ** th) / np.max(grad)
 
             if np.isnan(residual_norm_sum):
                 break
@@ -262,12 +264,13 @@ def simulate_fwi(
             )
             # show_velocity_model(grad[dsize:-dsize, dsize:-dsize], title=f"Velocity model at iteration {th + 1}", cmap='coolwarm')
             # show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
-            # if (th + 1) % 1000 == 0:
-            # show_velocity_model(v, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
+            if (th + 1) % 100 == 0:
+                show_velocity_model(v, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
             # show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
             if th == max_n_iters - 1:
                 break
-
+    except Exception as e:
+        print(e)
     finally:
         # ref: https://qiita.com/qualitia_cdev/items/f536002791671c6238e3
         signal.signal(signal.SIGTERM, signal.SIG_IGN)
@@ -278,8 +281,8 @@ def simulate_fwi(
         save_path = output_path.joinpath(filename)
         # np.savez(save_path, v, y, np.array(velocity_model_diff_history), np.array(residual_norm_sum_history), np.array(psnr_value_history), np.array(ssim_value_history))
 
-        v_core = v[dsize:-dsize, dsize:-dsize]
-        show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap="coolwarm")
+        # v_core = v[dsize:-dsize, dsize:-dsize]
+        # show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap="coolwarm")
 
         print(f"elapsed: {time.time() - start_time}")
         # 子プロセスを解放
@@ -290,9 +293,27 @@ def simulate_fwi(
 
 
 if __name__ == "__main__":
-    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 2000)
+    np
+
+    simulate_fwi(2000, 69, 0, "pds_with_L12norm", 1e-5, 100, None, 1000)
+    simulate_fwi(2000, 69, 0, "gradient", 1e-5, 100, None, 0)
+
+    # simulate_fwi(5000, 20, 0, "gradient", 1e-4, 100, None, 550)
+    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 100)
+    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 150)
+    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 200)
+    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 250)
+    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 300)
+    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 350)
+    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 400)
+    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 450)
+    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 500)
+    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 550)
+    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 600)
+    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 650)
+    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 700)
     # simulate_fwi(5000, 20, 1, "gradient", 1e-4, 100, None, 550)
-    simulate_fwi(100, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 100)
+    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 100)
     # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 150)
     # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 200)
     # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 250)

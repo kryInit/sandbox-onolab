@@ -152,8 +152,8 @@ def show_samping_waveform(
     plt.imshow(
         samples,
         cmap="gray",
-        vmin=-scale,
-        vmax=scale,
+        vmin=-1.0,
+        vmax=1.0,
         extent=(
             0,
             grid_extent[0] - damping_cell_thickness * cell_meter_size.x,
@@ -219,31 +219,7 @@ def main():
         params.damping_cell_thickness,
         params.cell_meter_size,
     )
-    # プロット設定
-    fig, ax = plt.subplots(figsize=(6, 4), facecolor="none", edgecolor="none")
-    ax.plot(source_waveform.data[:400], color="#003356", linewidth=15)
 
-    # 軸、タイトル、枠線、背景色を削除
-    ax.set_axis_off()
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.spines["bottom"].set_visible(False)
-    ax.spines["left"].set_visible(False)
-    ax.patch.set_alpha(0)
-    fig.patch.set_alpha(0)  # 図全体の背景を透過
-
-    # 余白を0に設定
-    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-
-    # グラフの表示
-    plt.savefig("transparent_plot.png", transparent=True, bbox_inches="tight", pad_inches=0)
-    # plt.show()
-    from pathlib import Path
-
-    print(Path().resolve())
-    import sys
-
-    sys.exit(-1)
     damping_model = generate_damping_model_devito_function(grid, params.damping_cell_thickness, params.damping_coefficient)
     velocity_model = create_simple_velocity_model_devito_function(grid, params.field_cell_size.y, params.damping_cell_thickness)
 
