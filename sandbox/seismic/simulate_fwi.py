@@ -145,9 +145,10 @@ def simulate_fwi(
         velocity_model_diff_history = []
         psnr_value_history = []
         ssim_value_history = []
+        var_diff_history = []
 
         v = grad_calculator.velocity_model.copy()
-        y = diff_op.D(v[dsize:-dsize, dsize:-dsize])
+        y = diff_op.D(v)
         th = -1
     else:
         saved_state = np.load(output_path.joinpath(parent_file_path))
@@ -157,6 +158,7 @@ def simulate_fwi(
         residual_norm_sum_history = list(saved_state["arr_3"])
         psnr_value_history = list(saved_state["arr_4"])
         ssim_value_history = list(saved_state["arr_5"])
+        var_diff_history = list(saved_state["arr_6"])
         th = len(residual_norm_sum_history) - 1
 
     nesterov_params = NesterovParams(v.copy(), 1, 0)
@@ -166,91 +168,90 @@ def simulate_fwi(
     try:
         while True:
             th += 1
-            residual_norm_sum, grad = grad_calculator.calc_grad(v)
+            prev_v = v.copy()
+            # tmp = np.sum(grad * grad)
+            # gamma1 = np.sqrt(((500 * (0.98 ** th)) + 20 * (0.9995 ** th)) / tmp)
 
-            gamma1 = 0.1 * (0.99 ** th) / np.max(grad)
-
-            if np.isnan(residual_norm_sum):
-                break
 
             if algorithm == "gradient":
+                residual_norm_sum, grad = grad_calculator.calc_grad(v)
+                if np.isnan(residual_norm_sum):
+                    break
                 v = v - gamma1 * grad
 
-            elif algorithm == "gd_nesterov":
-                tmp_v = v - gamma1 * grad
-
-                prev_v = nesterov_params.prev_v
-                next_prev_v = tmp_v.copy()
-                prev_rho = nesterov_params.rho
-                next_rho = (1 + (1 + 4 * prev_rho**2) ** 0.5) / 2
-                next_gamma = (prev_rho - 1) / nesterov_params.rho
-                nesterov_params = NesterovParams(next_prev_v, next_rho, next_gamma)
-
-                v = tmp_v + nesterov_params.gamma * (tmp_v - prev_v)
-
-            elif algorithm == "pds":
-                prev_v = v.copy()
-                tmp = grad.copy()
-                tmp[dsize:-dsize, dsize:-dsize] += diff_op.Dt(y)
-                v = v - gamma1 * tmp
-                v[dsize:-dsize, dsize:-dsize] = prox_box_constraint(v[dsize:-dsize, dsize:-dsize], vmin, vmax)
-                y = y + gamma2 * diff_op.D(2 * v[dsize:-dsize, dsize:-dsize] - prev_v[dsize:-dsize, dsize:-dsize])
-                y = y - gamma2 * proj_fast_l1_ball(y / gamma2, alpha)
-
             elif algorithm == "pds_with_L12norm":
-                prev_v = v.copy()
-
-                tmp = grad.copy()
-                tmp[dsize:-dsize, dsize:-dsize] += diff_op.Dt(y)
-                v = v - gamma1 * tmp
-                v[dsize:-dsize, dsize:-dsize] = prox_box_constraint(v[dsize:-dsize, dsize:-dsize], vmin, vmax)
-                y = y + gamma2 * diff_op.D(2 * v[dsize:-dsize, dsize:-dsize] - prev_v[dsize:-dsize, dsize:-dsize])
+                residual_norm_sum, grad = grad_calculator.calc_grad(v)
+                if np.isnan(residual_norm_sum):
+                    break
+                v = v - gamma1 * (grad + diff_op.Dt(y))
+                v = prox_box_constraint(v, vmin, vmax)
+                y = y + gamma2 * diff_op.D(2 * v - prev_v)
                 y = y - gamma2 * proj_L12_norm_ball(y / gamma2, alpha)
 
-            elif algorithm == "pds_nesterov":
-                prev_v_for_pds = v.copy()
 
-                tmp_v = v - gamma1 * (grad + diff_op.Dt(y))
-                tmp_v = prox_box_constraint(tmp_v, vmin, vmax)
-
-                y = y + gamma2 * diff_op.D(2 * tmp_v - prev_v_for_pds)
-                y = y - gamma2 * proj_fast_l1_ball(y / gamma2, alpha)
-
-                prev_v_for_nesterov = nesterov_params.prev_v
-                next_prev_v = tmp_v.copy()
+            elif algorithm == "gd_nesterov":
+                prev_v = nesterov_params.prev_v
                 prev_rho = nesterov_params.rho
-                next_rho = (1 + (1 + 4 * prev_rho**2) ** 0.5) / 2
-                next_gamma = (prev_rho - 1) / nesterov_params.rho
-                nesterov_params = NesterovParams(next_prev_v, next_rho, next_gamma)
+                rho = (1 + (1 + 4 * prev_rho**2) ** 0.5) / 2
+                gamma = (prev_rho - 1) / rho
 
-                v = tmp_v + nesterov_params.gamma * (tmp_v - prev_v_for_nesterov)
+                tmp_v = v + gamma * (v - prev_v)
+                nesterov_params = NesterovParams(v.copy(), rho, gamma)
 
-            elif algorithm == "L-BFGS":
-                v[:] = lbfgs.step(v.flatten(), residual_norm_sum, grad.flatten()).reshape(v.shape)
-                # v = v - gamma1 * grad
+                residual_norm_sum, grad = grad_calculator.calc_grad(tmp_v)
+                if np.isnan(residual_norm_sum):
+                    break
+
+                v = tmp_v - gamma1 * grad
+
+
+
+            elif algorithm == "pds_nesterov":
+                prev_v = nesterov_params.prev_v
+                prev_rho = nesterov_params.rho
+                rho = (1 + (1 + 4 * prev_rho**2) ** 0.5) / 2
+                gamma = (prev_rho - 1) / rho
+
+                tmp_v = v + gamma * (v - prev_v)
+                nesterov_params = NesterovParams(v.copy(), rho, gamma)
+
+                residual_norm_sum, grad = grad_calculator.calc_grad(tmp_v)
+                if np.isnan(residual_norm_sum):
+                    break
+
+                v = tmp_v - gamma1 * (grad + diff_op.Dt(y))
+                v = prox_box_constraint(v, vmin, vmax)
+                y = y + gamma2 * diff_op.D(2 * v - prev_v)
+                y = y - gamma2 * proj_L12_norm_ball(y / gamma2, alpha)
 
             v_core = v[dsize:-dsize, dsize:-dsize]
 
             velocity_model_diff = v_core - true_velocity_model
             psnr_value = calc_psnr(true_velocity_model, v_core, vmax)
             ssim_value = ssim(true_velocity_model, v_core, data_range=vmax - vmin)
+            var_diff = v - prev_v
 
             velocity_model_diff_history.append(np.sum(velocity_model_diff * velocity_model_diff))
             residual_norm_sum_history.append(residual_norm_sum)
             psnr_value_history.append(psnr_value)
             ssim_value_history.append(ssim_value)
+            var_diff_history.append(np.sum(var_diff * var_diff))
 
             improved_objective = th == 0 or residual_norm_sum_history[th] < residual_norm_sum_history[th - 1]
             improved_vm_diff = th == 0 or velocity_model_diff_history[th] < velocity_model_diff_history[th - 1]
             improved_psnr = th == 0 or psnr_value_history[th] > psnr_value_history[th - 1]
             improved_ssim = th == 0 or ssim_value_history[th] > ssim_value_history[th - 1]
+            decrease_var_diff = th == 0 or var_diff_history[th] < var_diff_history[th - 1]
 
             gzk = f"{Fore.GREEN}{Style.BRIGHT}↑{Fore.RESET}{Style.RESET_ALL}"
             gzj = f"{Fore.GREEN}{Style.BRIGHT}↓{Fore.RESET}{Style.RESET_ALL}"
             rzk = f"{Fore.RED}{Style.BRIGHT}↑{Fore.RESET}{Style.RESET_ALL}"
             rzj = f"{Fore.RED}{Style.BRIGHT}↓{Fore.RESET}{Style.RESET_ALL}"
 
-            current_diff = np.sum(np.abs(diff_op.D(v_core))) if algorithm != "pds_with_L12norm" else L12_norm(diff_op.D(v_core))
+            tv = L12_norm(diff_op.D(v))
+
+            if not improved_objective:
+                nesterov_params = NesterovParams(nesterov_params.prev_v, 1, 0)
 
             print(
                 f"iters: {th+1}, "
@@ -258,14 +259,15 @@ def simulate_fwi(
                 f"vm diff: {velocity_model_diff_history[th]: .3f} {gzj if improved_vm_diff else rzk}, "
                 f"psnr: {psnr_value: .4f} {gzk if improved_psnr else rzj}, "
                 f"ssim: {ssim_value: .4f} {gzk if improved_ssim else rzj}, "
+                f"TV: {tv: .4f}, "
+                f"var diff: {var_diff_history[th]: .4f} {gzj if decrease_var_diff else rzj}, "
                 f"rho: {nesterov_params.rho: .4f}, "
                 f"gamma: {nesterov_params.gamma: .4f}, "
-                f"diff: {current_diff: .4f}, "
             )
             # show_velocity_model(grad[dsize:-dsize, dsize:-dsize], title=f"Velocity model at iteration {th + 1}", cmap='coolwarm')
             # show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
-            if (th + 1) % 100 == 0:
-                show_velocity_model(v, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
+            # if (th + 1) % 100 == 0:
+            #     show_velocity_model(v, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
             # show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap='coolwarm')
             if th == max_n_iters - 1:
                 break
@@ -279,7 +281,7 @@ def simulate_fwi(
         current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         filename = f"{current_time},{algorithm},nshots={params.n_shots},gamma1={gamma1},gamma2={gamma2},niters={th+1},sigma={params.noise_sigma},alpha={alpha},.npz"
         save_path = output_path.joinpath(filename)
-        # np.savez(save_path, v, y, np.array(velocity_model_diff_history), np.array(residual_norm_sum_history), np.array(psnr_value_history), np.array(ssim_value_history))
+        # np.savez(save_path, v, y, np.array(velocity_model_diff_history), np.array(residual_norm_sum_history), np.array(psnr_value_history), np.array(ssim_value_history), np.array(var_diff_history))
 
         # v_core = v[dsize:-dsize, dsize:-dsize]
         # show_velocity_model(v_core, title=f"Velocity model at iteration {th + 1}", vmax=vmax, vmin=vmin, cmap="coolwarm")
@@ -293,41 +295,14 @@ def simulate_fwi(
 
 
 if __name__ == "__main__":
-    np
+    np.random.seed(42)
 
-    simulate_fwi(2000, 69, 0, "pds_with_L12norm", 1e-5, 100, None, 1000)
-    simulate_fwi(2000, 69, 0, "gradient", 1e-5, 100, None, 0)
+    simulate_fwi(2000, 69, 0, "pds_nesterov", 1e-5, 100, None, 1200)
+    # simulate_fwi(2000, 69, 10, "pds_nesterov", 1e-5, 100, None, 1200)
+    # simulate_fwi(2000, 69, 1, "gd_nesterov", 1e-5, 100, None, 1200)
+    # simulate_fwi(2000, 69, 5, "gd_nesterov", 1e-5, 100, None, 1200)
+    # simulate_fwi(2000, 69, 3, "gd_nesterov", 1e-5, 100, None, 1200)
+    # simulate_fwi(2000, 69, 10, "gd_nesterov", 1e-5, 100, None, 1200)
+    # simulate_fwi(2000, 69, 0, "pds_with_L12norm", 1e-5, 100, None, 1200)
+    # simulate_fwi(2000, 69, 0, "gradient", 1e-5, 100, None, 0)
 
-    # simulate_fwi(5000, 20, 0, "gradient", 1e-4, 100, None, 550)
-    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 100)
-    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 150)
-    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 200)
-    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 250)
-    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 300)
-    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 350)
-    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 400)
-    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 450)
-    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 500)
-    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 550)
-    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 600)
-    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 650)
-    # simulate_fwi(5000, 20, 0, "pds_with_L12norm", 1e-4, 100, None, 700)
-    # simulate_fwi(5000, 20, 1, "gradient", 1e-4, 100, None, 550)
-    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 100)
-    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 150)
-    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 200)
-    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 250)
-    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 300)
-    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 350)
-    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 400)
-    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 450)
-    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 500)
-    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 550)
-    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 600)
-    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 650)
-    # simulate_fwi(5000, 20, 1, "pds_with_L12norm", 1e-4, 100, None, 700)
-    # simulate_fwi(1000, 20, 0, "L-BFGS", 1e-1, 100, None, 0)
-    # simulate_fwi(5000, 20, 0, "gradient", 1e-4, 100, None, 0)
-    # simulate_fwi(2000, 20, 0, "gradient", 1e-4, 100, None)
-
-    # simulate_fwi(60000, 24, 1, "pds", 1e-5, 0.01, '2024-08-09_01-50-11,nshots=24,gamma1=1e-05,gamma2=0.01,niters=30000,sigma=1.npz')
