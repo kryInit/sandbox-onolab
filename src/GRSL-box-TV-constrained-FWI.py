@@ -294,6 +294,6 @@ def simulate_fwi(
 
 
 if __name__ == "__main__":
-    simulate_fwi(10, 69, 0, "pds_nesterov", 1e-4, 100, 2000)
+    simulate_fwi(5000, 69, 0, "pds_nesterov", 1e-4, 100, 2000)
     # ログを残したい場合は最後にパスを指定する
-    # simulate_fwi(10, 69, 0, "pds_nesterov", 1e-4, 100, 2000, Path("/home/kr/workspace/tmp.npz"))
+    # simulate_fwi(5000, 69, 0, "pds_nesterov", 1e-4, 100, 2000, Path("/home/kr/workspace/tmp.npz"))
