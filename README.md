@@ -29,9 +29,13 @@ poetry run python src/{...}.py
 ただし、その場合はdamping層の設定や入力データの設定を自前で行わなければならないため、ラッパーコードを用いた方が便利ではある（が、ライブラリとして提供されていない微妙に整理されていないコードをリポジトリに含めるのは気持ちが悪い, そもそも普通にscipyでやりたい気持ちはあるが、雑に実装するとdevitoの方が速かったのでこちらを使っている・・・
 
 
-## データセットについて(wip)
+## データセットについて
 githubにデータは含まれていない
 
-ここから落として使う: https://wiki.seg.org/wiki/SEG/EAGE_Salt_and_Overthrust_Models
+ここから落として使う: 
+- salt and overthrust models: https://wiki.seg.org/wiki/SEG/EAGE_Salt_and_Overthrust_Models
+- BP2004: https://wiki.seg.org/wiki/2004_BP_velocity_estimation_benchmark_model
 
-実際のdownload linkはこっち: https://s3.amazonaws.com/open.source.geoscience/open_data/seg_eage_models_cd/salt_and_overthrust_models.tar.gz
+- `src/SIP-box-TV-constrained-FWI.py`は`{project-root}/data-storage/salt-and-overthrust-models/3-D_Salt_Model/VEL_GRIDS/Saltf@@`を参照している
+- `src/GRSL-box-TV-constrained-FWI.py`は`{project-root}/data-storage/BP2004/vel_z6.25m_x12.5m_exact.segy`を参照している
+- （適宜変更してください）
