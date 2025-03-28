@@ -244,11 +244,10 @@ class FastParallelVelocityModelGradientCalculatorHelper:
         low = max(low, eps)
         high = min(high, 1 - eps)
 
-        b, a = butter(order, [low, high], btype='band')
+        b, a = butter(order, [low, high], btype="band")
 
         filtered_data = filtfilt(b, a, waveform_data, axis=1)
         return filtered_data
-
 
     def calc_grad(self, current_velocity_model: npt.NDArray, idx: int, low_cut: float, high_cut: float) -> Tuple[float, NDArray[np.float32]]:
         self.geometry.src_positions[0][:] = self.source_locations[idx]
@@ -270,7 +269,6 @@ class FastParallelVelocityModelGradientCalculatorHelper:
         # 雑なobjective計算
         objective = 0.5 * np.sum(np.abs(residual.data**2))
 
-
         # # 観測データと計算データの残差を計算
         # dt = self.simulator.dt / 1000
         # filtered_calculated_waveform = self.filter_data(calculated_waveform.data, low_cut, high_cut, dt)
@@ -281,7 +279,6 @@ class FastParallelVelocityModelGradientCalculatorHelper:
         # # 雑なobjective計算
         # true_residual = calculated_waveform.data - self.true_observed_waveforms[idx]
         # objective = 0.5 * np.sum(np.abs(true_residual**2))
-
 
         # ちゃんとしたobjective計算
         # objective = 0.5 * norm(residual) ** 2

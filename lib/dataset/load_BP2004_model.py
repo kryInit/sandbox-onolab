@@ -1,9 +1,11 @@
-from obspy.io.segy.segy import _read_segy
-from lib.misc.paths import datasets_root_path
 from pathlib import Path
 
 import numpy as np
 from numpy import typing as npt
+from obspy.io.segy.segy import _read_segy
+
+from lib.misc.paths import datasets_root_path
+
 
 def load_BP2004_model(data_path: Path) -> npt.NDArray[np.float64]:
     segy_data = _read_segy(data_path)
@@ -16,4 +18,3 @@ def load_BP2004_model(data_path: Path) -> npt.NDArray[np.float64]:
     assert np.max(velocity_model) == 4790.0
 
     return velocity_model
-

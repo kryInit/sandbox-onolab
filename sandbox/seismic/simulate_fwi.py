@@ -18,7 +18,7 @@ from lib.seismic import FastParallelVelocityModelGradientCalculator, FastParalle
 from lib.signal_processing.misc import calc_psnr, smoothing_with_gaussian_filter, zoom_and_crop
 from lib.signal_processing.norm import L12_norm
 from lib.signal_processing.proximal_operator import proj_fast_l1_ball, proj_L12_norm_ball, prox_box_constraint
-from lib.visualize import show_velocity_model, show_minimum_velocity_model
+from lib.visualize import show_minimum_velocity_model, show_velocity_model
 
 # devitoのlogの抑制
 set_log_level("WARNING")
@@ -167,7 +167,6 @@ def simulate_fwi(
                 y = y + gamma2 * diff_op.D(2 * v - prev_v)
                 y = y - gamma2 * proj_L12_norm_ball(y / gamma2, alpha)
 
-
             elif algorithm == "gd_nesterov":
                 prev_v = nesterov_params.prev_v
                 prev_rho = nesterov_params.rho
@@ -182,7 +181,6 @@ def simulate_fwi(
                     break
 
                 v = tmp_v - gamma1 * grad
-
 
             elif algorithm == "pds_nesterov":
                 prev_v = nesterov_params.prev_v
@@ -272,4 +270,3 @@ if __name__ == "__main__":
 
     # simulate_fwi(5000, 69, 0, "pds_nesterov", 1e-4, 1, None, 1400)
     simulate_fwi(5000, 69, 0, "pds_nesterov", 1e-4, 100, None, 2000)
-

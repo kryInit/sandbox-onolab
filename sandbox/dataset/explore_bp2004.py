@@ -1,5 +1,5 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from obspy.io.segy.segy import _read_segy
 
 from lib.dataset.load_BP2004_model import load_BP2004_model

@@ -3,12 +3,12 @@ import numpy as np
 import numpy.typing as npt
 from numpy._typing import NDArray
 
+import lib.signal_processing.diff_operator as diff_op
 from lib.dataset import load_seismic_datasets__salt_model
 from lib.dataset.load_BP2004_model import load_BP2004_model
 from lib.misc import datasets_root_path, output_path
 from lib.signal_processing.misc import calc_psnr, smoothing_with_gaussian_filter, zoom_and_crop
 from lib.signal_processing.norm import L12_norm
-import lib.signal_processing.diff_operator as diff_op
 from lib.visualize import show_minimum_velocity_model, show_velocity_model
 
 seismic_data_path = datasets_root_path.joinpath("salt-and-overthrust-models/3-D_Salt_Model/VEL_GRIDS/Saltf@@")
@@ -33,10 +33,7 @@ files = {
     # 'pds,0': '2025-03-02_20-02-55,pds_nesterov,nshots=69,gamma1=1e-05,gamma2=100,niters=2000,sigma=0,alpha=1200,.npz',
     # 'pds,1': '2025-03-02_20-40-26,pds_nesterov,nshots=69,gamma1=1e-05,gamma2=100,niters=2000,sigma=1,alpha=1200,.npz',
     # 'pds,5': '2025-03-02_21-57-35,pds_nesterov,nshots=69,gamma1=1e-05,gamma2=100,niters=2000,sigma=5,alpha=1200,.npz',
-
     # 'pds,0': '2025-03-03_02-24-42,pds_nesterov,nshots=69,gamma1=1e-05,gamma2=100,niters=2000,sigma=0,alpha=1200,.npz'
-
-
     # 'pds,2600': '2025-03-03_18-59-59,pds_nesterov,nshots=69,gamma1=1e-05,gamma2=100,niters=2000,sigma=5,alpha=2600,.npz',
     # 'pds,2400': '2025-03-03_18-23-03,pds_nesterov,nshots=69,gamma1=1e-05,gamma2=100,niters=2000,sigma=5,alpha=2400,.npz',
     # 'pds,2200': '2025-03-03_17-46-04,pds_nesterov,nshots=69,gamma1=1e-05,gamma2=100,niters=2000,sigma=5,alpha=2200,.npz',
@@ -50,7 +47,6 @@ files = {
     # 'pds,600': '2025-03-03_12-49-41,pds_nesterov,nshots=69,gamma1=1e-05,gamma2=100,niters=2000,sigma=5,alpha=600,.npz',
     # 'pds,400': '2025-03-03_12-12-51,pds_nesterov,nshots=69,gamma1=1e-05,gamma2=100,niters=2000,sigma=5,alpha=400,.npz',
     # 'pds,200': '2025-03-03_11-36-01,pds_nesterov,nshots=69,gamma1=1e-05,gamma2=100,niters=2000,sigma=5,alpha=200,.npz',
-
     # # 'pds,noisy,2000': '2025-03-16_04-32-14,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=1,alpha=2000,.npz',
     # # 'pds,noisy,1900': '2025-03-19_18-31-59,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=1,alpha=1900,.npz',
     # 'pds,noisy,1800': '2025-03-16_02-55-30,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=1,alpha=1800,.npz',
@@ -65,46 +61,43 @@ files = {
     # # 'pds,noisy,900': '2025-03-18_23-57-43,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=1,alpha=900,.npz',
     # # 'pds,noisy,800': '2025-03-15_15-37-20,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=1,alpha=800,.npz',
     # 'gd,noisy': '2025-03-15_14-00-09,gd_nesterov,nshots=69,gamma1=0.0001,gamma2=None,niters=397,sigma=1,alpha=0,.npz',
-
-    'pds,30000': '2025-03-21_15-01-44,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=30000,.npz',
-    'pds,9000': '2025-03-20_22-41-22,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=9000,.npz',
-    'pds,8600': '2025-03-20_21-05-05,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=8600,.npz',
-    'pds,8200': '2025-03-20_19-29-12,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=8200,.npz',
-    'pds,7800': '2025-03-20_17-52-51,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=7800,.npz',
-    'pds,7400': '2025-03-20_16-16-47,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=7400,.npz',
-    'pds,7000': '2025-03-20_14-40-20,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=7000,.npz',
-    'pds,6600': '2025-03-20_13-03-36,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=6600,.npz',
-    'pds,6200': '2025-03-20_11-26-37,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=6200,.npz',
-    'pds,5800': '2025-03-20_09-49-26,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=5800,.npz',
-    'pds,5400': '2025-03-20_08-12-06,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=5400,.npz',
-    'pds,5000': '2025-03-20_06-34-45,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=5000,.npz',
-    'pds,4600': '2025-03-20_04-57-28,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=4600,.npz',
-    'pds,4200': '2025-03-20_03-20-11,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=4200,.npz',
-    'pds,3800': '2025-03-20_01-42-52,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=3800,.npz',
-    'pds,3400': '2025-03-19_02-22-50,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=3400,.npz',
+    "pds,30000": "2025-03-21_15-01-44,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=30000,.npz",
+    "pds,9000": "2025-03-20_22-41-22,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=9000,.npz",
+    "pds,8600": "2025-03-20_21-05-05,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=8600,.npz",
+    "pds,8200": "2025-03-20_19-29-12,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=8200,.npz",
+    "pds,7800": "2025-03-20_17-52-51,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=7800,.npz",
+    "pds,7400": "2025-03-20_16-16-47,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=7400,.npz",
+    "pds,7000": "2025-03-20_14-40-20,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=7000,.npz",
+    "pds,6600": "2025-03-20_13-03-36,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=6600,.npz",
+    "pds,6200": "2025-03-20_11-26-37,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=6200,.npz",
+    "pds,5800": "2025-03-20_09-49-26,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=5800,.npz",
+    "pds,5400": "2025-03-20_08-12-06,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=5400,.npz",
+    "pds,5000": "2025-03-20_06-34-45,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=5000,.npz",
+    "pds,4600": "2025-03-20_04-57-28,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=4600,.npz",
+    "pds,4200": "2025-03-20_03-20-11,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=4200,.npz",
+    "pds,3800": "2025-03-20_01-42-52,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=3800,.npz",
+    "pds,3400": "2025-03-19_02-22-50,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=3400,.npz",
     # 'pds,3200': '2025-03-19_13-41-27,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=3200,.npz',
-    'pds,3000': '2025-03-19_03-59-43,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=3000,.npz',
+    "pds,3000": "2025-03-19_03-59-43,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=3000,.npz",
     # 'pds,2800': '2025-03-19_12-04-35,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=2800,.npz',
-    'pds,2600': '2025-03-19_05-36-38,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=2600,.npz',
+    "pds,2600": "2025-03-19_05-36-38,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=2600,.npz",
     # 'pds,2400': '2025-03-19_10-27-50,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=2400,.npz',
-    'pds,2200': '2025-03-19_07-13-46,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=2200,.npz',
+    "pds,2200": "2025-03-19_07-13-46,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=2200,.npz",
     # 'pds,2000': '2025-03-07_18-01-49,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=2000,.npz',
     # 'pds,1900': '2025-03-18_22-20-49,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=1900,.npz',
-    'pds,1800': '2025-03-07_16-26-39,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=1800,.npz',
+    "pds,1800": "2025-03-07_16-26-39,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=1800,.npz",
     # 'pds,1700': '2025-03-18_20-43-44,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=1700,.npz',
     # 'pds,1600': '2025-03-07_14-51-19,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=1600,.npz',
     # 'pds,1500': '2025-03-18_19-06-23,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=1500,.npz',
-    'pds,1400': '2025-03-07_13-16-15,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=1400,.npz',
+    "pds,1400": "2025-03-07_13-16-15,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=1400,.npz",
     # 'pds,1300': '2025-03-07_11-41-23,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=1300,.npz',
     # 'pds,1200': '2025-03-06_16-47-28,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=1200,.npz',
     # 'pds,1100': '2025-03-07_10-07-20,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=1100,.npz',
-    'pds,1000': '2025-03-07_08-32-43,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=1000,.npz',
+    "pds,1000": "2025-03-07_08-32-43,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=1000,.npz",
     # 'pds,900': '2025-03-18_15-51-45,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=900,.npz',
-    'pds,800': '2025-03-07_06-58-42,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=800,.npz',
+    "pds,800": "2025-03-07_06-58-42,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=800,.npz",
     # 'pds,600': '2025-03-19_08-50-47,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=600,.npz',
-
-    'gd': '2025-03-06_06-47-02,gradient,nshots=69,gamma1=0.0001,gamma2=None,niters=10000,sigma=0,alpha=500,.npz',
-
+    "gd": "2025-03-06_06-47-02,gradient,nshots=69,gamma1=0.0001,gamma2=None,niters=10000,sigma=0,alpha=500,.npz",
     # 'pds': '2025-03-06_18-21-38,pds,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=1200,.npz',
     # 'pds_nesterov': '2025-03-06_16-47-28,pds_nesterov,nshots=69,gamma1=0.0001,gamma2=100,niters=5000,sigma=0,alpha=1200,.npz',
     # 'pds0': '2025-03-07_02-39-08,pds_nesterov,nshots=69,gamma1=0.0006,gamma2=100,niters=5000,sigma=0,alpha=1200,.npz',
@@ -189,7 +182,7 @@ dsize = 40
 # show_minimum_velocity_model(np.repeat(load(files['gd'], 'arr_0')[dsize:-dsize, dsize:-dsize], 2, axis=0), 1.5, 4.5, cmap='coolwarm')
 # show_minimum_velocity_model(np.repeat(load(files['pds,800'], 'arr_0')[dsize:-dsize, dsize:-dsize], 2, axis=0), 1.5, 4.5, cmap='coolwarm')
 # show_minimum_velocity_model(np.repeat(load(files['pds,1400'], 'arr_0')[dsize:-dsize, dsize:-dsize], 2, axis=0), 1.5, 4.5, cmap='coolwarm')
-show_minimum_velocity_model(np.repeat(load(files['pds,30000'], 'arr_0')[dsize:-dsize, dsize:-dsize], 2, axis=0), 1.5, 4.5, cmap='coolwarm')
+show_minimum_velocity_model(np.repeat(load(files["pds,30000"], "arr_0")[dsize:-dsize, dsize:-dsize], 2, axis=0), 1.5, 4.5, cmap="coolwarm")
 # show_minimum_velocity_model(np.repeat(load(files['pds,1'], 'arr_0')[dsize:-dsize, dsize:-dsize], 2, axis=0), 1.5, 4.5, cmap='coolwarm')
 
 # tv = L12_norm(diff_op.D(load(files['gd'], 'arr_0')))
