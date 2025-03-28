@@ -7,6 +7,7 @@ import numpy.typing as npt
 from devito import Eq, Function, Inc, Operator, TimeFunction, norm, solve
 from numpy.typing import NDArray
 from scipy.ndimage import gaussian_filter
+from scipy.signal import butter, filtfilt
 
 from lib.seismic.devito_example import AcquisitionGeometry, Receiver, SeismicModel
 from lib.seismic.devito_example.acoustic import AcousticWaveSolver
@@ -52,9 +53,12 @@ class FastParallelVelocityModelGradientCalculator:
 
         self.true_observed_waveforms_memory = SharedMemory(create=True, size=self.n_shots * time_length * n_receivers * np.dtype(np.float32).itemsize)
         self.residual_norm_shared_memory = SharedMemory(create=True, size=self.n_shots * np.dtype(np.float32).itemsize)
+        self.freq_band_shared_memory = SharedMemory(create=True, size=self.n_shots * 2 * np.dtype(np.float32).itemsize)
         self.vm_grad_shared_memory = SharedMemory(create=True, size=self.n_shots * np.prod(vm_shape) * np.dtype(np.float32).itemsize)
+
         # self.true_observed_waveform = np.ndarray((self.n_shots, time_length, n_receivers), dtype=np.float32, buffer=self.residual_norm_shared_memory.buf)
         self.residual_norms = np.ndarray(self.n_shots, dtype=np.float32, buffer=self.residual_norm_shared_memory.buf)
+        self.freq_bands = np.ndarray((self.n_shots, 2), dtype=np.float32, buffer=self.freq_band_shared_memory.buf)
         self.vm_grads = np.ndarray((self.n_shots, vm_shape[0], vm_shape[1]), dtype=np.float32, buffer=self.vm_grad_shared_memory.buf)
 
         self.input_queue = Queue()
@@ -67,6 +71,7 @@ class FastParallelVelocityModelGradientCalculator:
                 args=(
                     props,
                     self.velocity_model_shared_memory.name,
+                    self.freq_band_shared_memory.name,
                     self.true_observed_waveforms_memory.name,
                     self.vm_grad_shared_memory.name,
                     self.residual_norm_shared_memory.name,
@@ -100,15 +105,17 @@ class FastParallelVelocityModelGradientCalculator:
 
         self.velocity_model_shared_memory.close()
         self.velocity_model_shared_memory.unlink()
-        self.true_observed_waveforms_memory.close()
-        self.true_observed_waveforms_memory.unlink()
+        self.freq_band_shared_memory.close()
+        self.freq_band_shared_memory.unlink()
         self.residual_norm_shared_memory.close()
         self.residual_norm_shared_memory.unlink()
         self.vm_grad_shared_memory.close()
         self.vm_grad_shared_memory.unlink()
 
-    def calc_grad(self, current_velocity_model: npt.NDArray) -> Tuple[float, NDArray[np.float32]]:
+    def calc_grad(self, current_velocity_model: npt.NDArray, low_cut: float = -1, high_cut: float = 1e8) -> Tuple[float, NDArray[np.float32]]:
         self.velocity_model[:] = current_velocity_model
+        self.freq_bands[:, 0] = low_cut
+        self.freq_bands[:, 1] = high_cut
 
         for i in range(self.n_shots):
             self.input_queue.put(i)
@@ -122,12 +129,13 @@ class FastParallelVelocityModelGradientCalculator:
             objective += self.residual_norms[i]
             grad_value += self.vm_grads[i]
 
-        return objective, grad_value
+        return objective, grad_value / self.n_shots
 
 
 def calc_grad_worker(
     props: FastParallelVelocityModelGradientCalculatorProps,
     velocity_model_shared_memory_name: str,
+    freq_band_shared_memory_name: str,
     true_observed_waveforms_shared_memory_name: str,
     vm_grad_shared_memory_name: str,
     residual_norm_shared_memory_name: str,
@@ -151,6 +159,9 @@ def calc_grad_worker(
     residual_norm_shared_memory = SharedMemory(name=residual_norm_shared_memory_name)
     residual_norm = np.ndarray(n_shots, dtype=np.float32, buffer=residual_norm_shared_memory.buf)
 
+    freq_band_shared_memory = SharedMemory(name=freq_band_shared_memory_name)
+    freq_band = np.ndarray((n_shots, 2), dtype=np.float32, buffer=freq_band_shared_memory.buf)
+
     grad_calculator = FastParallelVelocityModelGradientCalculatorHelper(props, true_observed_waveforms)
 
     # velocity_modelの初期化を行う
@@ -169,7 +180,7 @@ def calc_grad_worker(
             true_observed_waveforms[-idx - 1] = grad_calculator.calc_true_observed_waveform(-idx - 1)
         else:
             # grad計算
-            residual_norm[idx], vm_grad[idx] = grad_calculator.calc_grad(velocity_model, idx)
+            residual_norm[idx], vm_grad[idx] = grad_calculator.calc_grad(velocity_model, idx, freq_band[idx][0], freq_band[idx][1])
 
         output_queue.put(0)
 
@@ -221,7 +232,25 @@ class FastParallelVelocityModelGradientCalculatorHelper:
         self.simulator.forward(vp=self.true_model.vp, rec=observed_waveform)
         return FastParallelVelocityModelGradientCalculatorHelper._add_gauss_noise(observed_waveform.data.copy(), self.noise_sigma)
 
-    def calc_grad(self, current_velocity_model: npt.NDArray, idx: int) -> Tuple[float, NDArray[np.float32]]:
+    def filter_data(self, waveform_data: npt.NDArray, low_cut: float, high_cut: float, dt: float, order: int = 4) -> npt.NDArray:
+        eps = 1e-5
+        nyquist = 0.5 / dt
+        low = low_cut / nyquist
+        high = high_cut / nyquist
+
+        if low < eps and high > 1 - eps:
+            return waveform_data
+
+        low = max(low, eps)
+        high = min(high, 1 - eps)
+
+        b, a = butter(order, [low, high], btype='band')
+
+        filtered_data = filtfilt(b, a, waveform_data, axis=1)
+        return filtered_data
+
+
+    def calc_grad(self, current_velocity_model: npt.NDArray, idx: int, low_cut: float, high_cut: float) -> Tuple[float, NDArray[np.float32]]:
         self.geometry.src_positions[0][:] = self.source_locations[idx]
 
         grad = Function(name="grad", grid=self.true_model.grid)
@@ -240,6 +269,19 @@ class FastParallelVelocityModelGradientCalculatorHelper:
 
         # 雑なobjective計算
         objective = 0.5 * np.sum(np.abs(residual.data**2))
+
+
+        # # 観測データと計算データの残差を計算
+        # dt = self.simulator.dt / 1000
+        # filtered_calculated_waveform = self.filter_data(calculated_waveform.data, low_cut, high_cut, dt)
+        # filtered_observed_waveform = self.filter_data(self.true_observed_waveforms[idx], low_cut, high_cut, dt)
+        # # print("diff:", np.sum(np.abs(filtered_calculated_waveform - calculated_waveform.data)), ", ", np.sum(np.abs(filtered_observed_waveform - self.true_observed_waveforms[idx])))
+        # residual.data[:] = filtered_calculated_waveform - filtered_observed_waveform
+        #
+        # # 雑なobjective計算
+        # true_residual = calculated_waveform.data - self.true_observed_waveforms[idx]
+        # objective = 0.5 * np.sum(np.abs(true_residual**2))
+
 
         # ちゃんとしたobjective計算
         # objective = 0.5 * norm(residual) ** 2
